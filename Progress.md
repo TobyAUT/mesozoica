@@ -4,7 +4,33 @@
 > (Stand, offene Fehler, geänderte Dateien, nächste Schritte). Kurz & konzentriert halten.
 > Ausführliche Historie/Übergabe steht in `HANDOFF.md`.
 
-_Zuletzt aktualisiert: 2026-07-13 · Modell: Claude_
+_Zuletzt aktualisiert: 2026-07-13 (Session 4) · Modell: Claude_
+
+## Session 4 — UI-Fixes + Modell-Diagnose
+
+- ✅ „Mesozoica"-Hero steht jetzt **ganz am Anfang** (vor Devon/Dunkleosteus). Counter bleibt monoton.
+- ✅ Nav-Jitter behoben: `layoutId`-Shared-Layout-Unterstrich entfernt → statischer Unterstrich.
+- ✅ Rechte Timeline: **jeder Punkt eigene themen-passende Farbe** (`chapterDotColor`, HSL nach Ära+Index).
+- ✅ `velociraptor-like` um 180° gedreht (`rotation:[0,2.44,0]`).
+- ✅ Gebaut, 20/20 Tests, deployed (main + gh-pages). Reihenfolge im DOM verifiziert.
+
+### Modell-Status & Antwort „anderer Loader oder anderer Dateityp?"
+
+**Kurz: In fast allen Fällen hilft KEIN anderer Loader — das Problem ist die DATEI. Bitte GLB liefern.**
+
+| Modell | Status | Grund | Lösung |
+|---|---|---|---|
+| Carnotaurus, Triceratops, T. rex, Velociraptor-like, Alexornis | ✅ lädt | GLB ok | — |
+| **Plesiosaurus, Spinosaurus** | ✅ lädt (FBX) | Low-Poly-FBX + Texturen | am Gerät Textur/Ausrichtung prüfen |
+| Dunkleosteus, Sauropod, Morrison, Tylosaurus, Olorotitan, Mosasaurus | ⛔ Platzhalter | **Keine Datei vorhanden** (`modelPath` leer) | **GLB liefern** |
+| Dilophosaurus, Pteranodon-like (Pterodon) | ⛔ | **`.blend`** — three.js kann Blender-Dateien NICHT laden | in Blender **als GLB exportieren** |
+| Concavenator (580 MB), Feathered Velociraptor (242 MB), Dino2.stl (370 MB) | ⛔ | **Riesen-Druck-STL** (Mio. Tris, keine Textur) → Browser hängt | offline dezimieren → **GLB (≤10–20 MB)** |
+| Stylized Indoraptor, „Pterosaur" (generic-pterosaur) | ⛔ | **Kaputter GLB-Skin-Export** (zerlegte Fragmente) | sauberer **GLB-Re-Export** |
+| `uploads_files_3154100_model.obj` (13 MB), `obj.rar` | ❓ | unbekanntes Tier / `.rar` nicht entpackbar | identifizieren, als GLB/OBJ liefern |
+
+Empfohlenes Format überall: **GLB/glTF** (kompakt, mit Textur/Rig), ~1–2K Texturen, ≤10–20 MB.
+FBX funktioniert auch (Plesiosaurus/Spinosaurus). STL/OBJ nur für kleine, statische Meshes sinnvoll.
+
 
 ---
 
