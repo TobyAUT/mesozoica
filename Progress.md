@@ -4,7 +4,25 @@
 > (Stand, offene Fehler, geänderte Dateien, nächste Schritte). Kurz & konzentriert halten.
 > Ausführliche Historie/Übergabe steht in `HANDOFF.md`.
 
-_Zuletzt aktualisiert: 2026-07-13 (Session 4) · Modell: Claude_
+_Zuletzt aktualisiert: 2026-07-13 (Session 5) · Modell: Claude_
+
+## Session 5 — 4 neue GLB-Modelle integriert
+
+Inspiziert via `scripts/inspect-glb.mjs` (alle Blender-Export, **kein Rig, keine Animation** → static/procedural):
+- **Plesio.glb** → `plesiosaurus.glb` (13 MB, texturiert) — ersetzt das FBX. `proceduralWholeObject`.
+- **Spino.glb** → `spinosaurus.glb` (17 MB, texturiert) — ersetzt das FBX. `static`.
+- **TylosaurusNoAnimation.glb** → `tylosaurus.glb` (0,24 MB, **ohne Texturen**, nur Materialfarben) —
+  war vorher „pending/cartoon", jetzt echtes Modell → Status `nonDinosaur` (Meeresreptil). `proceduralWholeObject`.
+- **Quetzal.glb** → `quetzalcoatlus.glb` (1,6 MB) — **NEUER Eintrag** (Latest Cretaceous, Pterosaurier),
+  ersetzt den nicht-ladbaren `pteranodon-like`-Platzhalter (Pterodon `.blend`). `proceduralWholeObject`.
+- Manifest/Kapitel/Credits aktualisiert (Credits auto aus Manifest). Chronologie & Klassifikation korrekt.
+- **Cleanup (in Papierkorb, reversibel):** `public/models/{plesiosaurus,spinosaurus}` (alte FBX-Ordner),
+  `plesiosaurus_export.zip`, `spinosaur_export.zip`, `Pterodon.blend1`, `DTWTF7ib02U.zip`.
+- Gebaut, 20/20 Tests, deployed (main + gh-pages).
+- ⚠️ **Skalierung/Ausrichtung sind geschätzt** (flache Meeresreptilien werden durch die
+  höhenbasierte Auto-Normalisierung zu lang → per `scale` kompensiert: Plesio 0.32, Tylo 0.28,
+  Quetzal 0.62). **Am echten Gerät visuell nachjustieren** (Frozen-rAF verhindert Vorschau hier).
+
 
 ## Session 4 — UI-Fixes + Modell-Diagnose
 
