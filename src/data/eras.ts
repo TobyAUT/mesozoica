@@ -92,13 +92,24 @@ export interface Chapter {
  * "specimen pending" state but keep their place in the timeline.
  */
 export const CHAPTERS: readonly Chapter[] = [
+  // ── Title / hero first, so "Mesozoica" opens the page ──
+  {
+    id: 'prologue',
+    kind: 'prologue',
+    title: 'Mesozoica',
+    subtitle: 'A journey through deep time',
+    mya: 400,
+    accent: 'triassic',
+    backgroundId: 'prologue',
+    weight: 1.1,
+  },
   // ── Before the dinosaurs (Devonian ocean) ──
   {
     id: 'before-dinosaurs',
     kind: 'era-intro',
     eraId: 'devonian',
     title: 'Before the Dinosaurs',
-    mya: 400,
+    mya: 395,
     accent: 'cretaceous',
     backgroundId: 'devonian-ocean',
     weight: 1.15,
@@ -109,19 +120,9 @@ export const CHAPTERS: readonly Chapter[] = [
     creatureId: 'dunkleosteus',
     title: 'The armoured fish',
     subtitle: 'A placoderm — not a dinosaur',
-    mya: 370,
+    mya: 372,
     accent: 'cretaceous',
     backgroundId: 'devonian-ocean',
-    weight: 1.1,
-  },
-  {
-    id: 'prologue',
-    kind: 'prologue',
-    title: 'Mesozoica',
-    subtitle: 'A journey through the age of dinosaurs',
-    mya: 252,
-    accent: 'triassic',
-    backgroundId: 'prologue',
     weight: 1.1,
   },
   {

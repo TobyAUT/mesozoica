@@ -7,12 +7,15 @@ import { useExperience } from '@/store/experienceStore';
 import { scrollToChapter } from '@/hooks/useScrollController';
 import { cn } from '@/utils/cn';
 
-const ACCENT_VAR: Record<string, string> = {
-  triassic: '#c1683a',
-  jurassic: '#b79a4a',
-  cretaceous: '#5a9a97',
-  extinction: '#c96a3c',
-};
+// Base hue/saturation per era; each point then varies within its family so every marker on the
+// strip has its own distinct accent colour (index-driven, stays on-theme).
+const ACCENT_HUE: Record<string, number> = { triassic: 20, jurassic: 48, cretaceous: 176, extinction: 24 };
+const ACCENT_SAT: Record<string, number> = { triassic: 62, jurassic: 54, cretaceous: 46, extinction: 74 };
+function chapterDotColor(accent: string, index: number): string {
+  const h = (ACCENT_HUE[accent] ?? 176) + ((index * 13) % 44) - 22;
+  const l = 46 + ((index * 9) % 26);
+  return `hsl(${h}deg, ${ACCENT_SAT[accent] ?? 46}%, ${l}%)`;
+}
 
 /**
  * Fixed vertical geological timeline (desktop). Shows era/creature markers, the active marker,
@@ -46,14 +49,14 @@ export function GeologicalTimeline() {
           style={{ height: '0%' }}
         />
         <ul className="relative flex h-full flex-col justify-between">
-          {CHAPTER_RANGES.map(({ chapter }) => {
+          {CHAPTER_RANGES.map(({ chapter }, index) => {
             const creature = chapter.creatureId ? CREATURE_BY_ID[chapter.creatureId] : null;
             const label =
               creature?.displayName ??
               chapter.title ??
               chapter.id;
             const isActive = chapter.id === activeId;
-            const dotColor = ACCENT_VAR[chapter.accent];
+            const dotColor = chapterDotColor(chapter.accent, index);
             return (
               <li key={chapter.id} className="group flex items-center">
                 <button

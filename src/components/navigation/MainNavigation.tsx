@@ -62,12 +62,13 @@ export function MainNavigation() {
               )}
             >
               {l.label}
-              {activeChapterId === l.chapterId && (
-                <motion.span
-                  layoutId="nav-underline"
-                  className="absolute inset-x-2 -bottom-0.5 h-px bg-cretaceous"
-                />
-              )}
+              {/* Static underline (no shared-layout animation → no scroll jitter). */}
+              <span
+                className={cn(
+                  'absolute inset-x-2 -bottom-0.5 h-px bg-cretaceous transition-opacity duration-200',
+                  activeChapterId === l.chapterId ? 'opacity-100' : 'opacity-0',
+                )}
+              />
             </button>
           ))}
           <span className="mx-1 h-4 w-px bg-white/10" />

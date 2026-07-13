@@ -230,7 +230,7 @@ const raw: CreatureInput[] = [
     creditRequired: true,
     scale: 1,
     position: [0, 0, 0],
-    rotation: [0, -0.7, 0],
+    rotation: [0, 2.44, 0], // turned 180° (−0.7 + π)
     cameraPreset: { position: [4, 1.9, 5.2], target: [0, 1.1, 0], fov: 40, transition: 2.2 },
     availableAnimations: [],
     preferredAnimation: null,
