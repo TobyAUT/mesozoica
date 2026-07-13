@@ -1,0 +1,174 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --accent: #6aa39c;
+  color-scheme: dark;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: #0b0c0e;
+  color: #f4efe6;
+  font-family: theme('fontFamily.sans');
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Lenis smooth scroll requirements */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+/* Fluid type scale */
+h1,
+.type-display {
+  font-family: theme('fontFamily.serif');
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  line-height: 0.98;
+  font-size: clamp(2.75rem, 8vw, 7rem);
+}
+h2,
+.type-title {
+  font-family: theme('fontFamily.serif');
+  font-weight: 300;
+  letter-spacing: -0.01em;
+  line-height: 1.05;
+  font-size: clamp(1.75rem, 4.5vw, 3.5rem);
+}
+.type-eyebrow {
+  font-size: 0.72rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+
+/* Accessible focus ring */
+:where(a, button, [role='button'], input, select, [tabindex]):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Film grain overlay, applied by a fixed element */
+.grain::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 60;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Subtle vignette */
+.vignette::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 55;
+  background: radial-gradient(120% 100% at 50% 40%, transparent 55%, rgba(0, 0, 0, 0.55) 100%);
+}
+
+/* Custom cursor (pointer devices only; toggled by a class on <html>) */
+.has-cursor * {
+  cursor: none !important;
+}
+.cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  pointer-events: none;
+  z-index: 100;
+  transform: translate(-50%, -50%);
+  transition: width 0.2s, height 0.2s, background 0.3s;
+  will-change: transform;
+}
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(244, 239, 230, 0.4);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 100;
+  transform: translate(-50%, -50%);
+  will-change: transform;
+}
+
+html[data-model-hover='true'] .cursor-ring {
+  width: 48px;
+  height: 48px;
+  border-color: rgba(244, 239, 230, 0.8);
+}
+
+@media (min-width: 1024px) {
+  main p {
+    font-size: 1.3rem;
+    line-height: 1.75;
+  }
+
+  .type-eyebrow {
+    font-size: 0.88rem;
+  }
+
+  .main-nav :is(button, a) {
+    letter-spacing: 0.01em;
+  }
+
+  .main-nav .nav-wordmark {
+    font-size: 1.6rem;
+  }
+
+  .main-nav [role='switch'],
+  .main-nav [aria-label='Graphics quality'] {
+    color: rgba(244, 239, 230, 0.86);
+    font-size: 0.82rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: #2a2d33;
+  border-radius: 4px;
+}
+
+[data-creature-panel] {
+  scrollbar-width: none;
+}
+
+[data-creature-panel]::-webkit-scrollbar {
+  display: none;
+}

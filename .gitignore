@@ -1,0 +1,15 @@
+node_modules
+dist
+dist-ssr
+*.local
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+
+# Raw downloaded source assets (multi-GB: archives, .blend, print STLs). The web-ready assets
+# live under public/. Keep these out of the repo.
+/Models/
+/Images/
+
+# Scratch
+*.log
