@@ -1,6 +1,6 @@
-import { AlertTriangle, ExternalLink, CheckCircle2 } from 'lucide-react';
+import { AlertTriangle, ExternalLink, CheckCircle2, Volume2 } from 'lucide-react';
 import { PageShell } from './PageShell';
-import { MODEL_CREDITS, ASSET_CREDITS } from '@/data/credits';
+import { MODEL_CREDITS, AUDIO_CREDITS, ASSET_CREDITS } from '@/data/credits';
 
 /**
  * Credits page. Unresolved licences are surfaced LOUDLY (amber warning) so attribution can never
@@ -19,7 +19,10 @@ export default function CreditsPage() {
         <div className="mb-8 flex items-start gap-3 rounded-xl border border-amber-400/30 bg-amber-400/10 p-4 text-amber-100">
           <AlertTriangle size={18} className="mt-0.5 shrink-0" />
           <div className="text-sm">
-            <strong>{unresolvedCount} model licence{unresolvedCount > 1 ? 's' : ''} still need verification.</strong>{' '}
+            <strong>
+              {unresolvedCount} model licence{unresolvedCount > 1 ? 's' : ''} still need
+              verification.
+            </strong>{' '}
             Author and licence must be confirmed on each Sketchfab page before publishing. These are
             shown below with blank fields — they are not omitted.
           </div>
@@ -43,12 +46,34 @@ export default function CreditsPage() {
             {MODEL_CREDITS.map((m) => (
               <tr key={m.creatureId} className="border-b border-white/5 align-top">
                 <td className="py-3 pr-4 text-bone">{m.displayName}</td>
-                <td className="py-3 pr-4 text-bone/70">{m.sourceTitle}</td>
+                <td className="py-3 pr-4 text-bone/70">
+                  <span>{m.sourceTitle}</span>
+                  {m.attributionText && (
+                    <span className="mt-1 block max-w-md text-xs leading-relaxed text-bone/50">
+                      {m.attributionText}
+                    </span>
+                  )}
+                </td>
                 <td className="py-3 pr-4">
                   {m.author ?? <span className="text-amber-300/80">TODO_VERIFY</span>}
                 </td>
                 <td className="py-3 pr-4">
-                  {m.license ?? <span className="text-amber-300/80">TODO_VERIFY</span>}
+                  {m.license ? (
+                    m.licenseUrl ? (
+                      <a
+                        href={m.licenseUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-cretaceous hover:underline"
+                      >
+                        {m.license} <ExternalLink size={12} />
+                      </a>
+                    ) : (
+                      m.license
+                    )
+                  ) : (
+                    <span className="text-amber-300/80">TODO_VERIFY</span>
+                  )}
                 </td>
                 <td className="py-3 pr-4">
                   {m.sourceUrl ? (
@@ -79,6 +104,22 @@ export default function CreditsPage() {
             ))}
           </tbody>
         </table>
+      </div>
+
+      <h2 className="type-title mb-4 text-2xl text-bone">Audio</h2>
+      <div className="mb-12 grid gap-3 sm:grid-cols-2">
+        {AUDIO_CREDITS.map((audio) => (
+          <div
+            key={audio.creatureId}
+            className="flex items-start gap-3 rounded-xl border border-white/10 bg-ink-800/50 p-4"
+          >
+            <Volume2 size={17} className="mt-0.5 shrink-0 text-cretaceous" />
+            <div>
+              <div className="text-sm font-medium text-bone">{audio.displayName}</div>
+              <p className="mt-1 text-xs text-bone/60">Audio creator: {audio.author}</p>
+            </div>
+          </div>
+        ))}
       </div>
 
       <h2 className="type-title mb-4 text-2xl text-bone">Backgrounds, sound, fonts & sources</h2>

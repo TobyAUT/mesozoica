@@ -54,32 +54,30 @@ export function ExperienceCanvas({ reducedMotion }: Props) {
       <div className="relative h-full w-full">
         <ErrorBoundary
           label="WebGL canvas"
-          fallback={
-            <div className="absolute inset-0 bg-gradient-to-b from-ink-800 to-ink-900" />
-          }
+          fallback={<div className="absolute inset-0 bg-gradient-to-b from-ink-800 to-ink-900" />}
         >
           <Canvas
-          shadows={quality.shadows && !degraded}
-          dpr={quality.dpr}
-          // Measure via offsetWidth/Height (layout-based) so a position:fixed ancestor can't
-          // leave the canvas stuck at its default 300x150 when ResizeObserver doesn't fire.
-          resize={{ offsetSize: true }}
-          gl={{
-            antialias: quality.tier !== 'low',
-            powerPreference: 'high-performance',
-            toneMapping: THREE.NeutralToneMapping,
-          }}
-          style={{ touchAction: 'pan-y' }}
-          camera={{ position: [6, 3, 9], fov: 44, near: 0.1, far: 200 }}
-          frameloop="always"
-        >
-          <ManualResize />
-          <PerformanceMonitor onDecline={() => setDegraded(true)} />
-          <AdaptiveDpr pixelated />
-          <TimelineScene
-            quality={{ ...quality, postprocessing: quality.postprocessing && !degraded }}
-            reducedMotion={reducedMotion}
-          />
+            shadows={false}
+            dpr={quality.dpr}
+            // Measure via offsetWidth/Height (layout-based) so a position:fixed ancestor can't
+            // leave the canvas stuck at its default 300x150 when ResizeObserver doesn't fire.
+            resize={{ offsetSize: true }}
+            gl={{
+              antialias: quality.tier !== 'low',
+              powerPreference: 'high-performance',
+              toneMapping: THREE.NeutralToneMapping,
+            }}
+            style={{ touchAction: 'pan-y' }}
+            camera={{ position: [6, 3, 9], fov: 44, near: 0.1, far: 200 }}
+            frameloop="always"
+          >
+            <ManualResize />
+            <PerformanceMonitor onDecline={() => setDegraded(true)} />
+            <AdaptiveDpr pixelated />
+            <TimelineScene
+              quality={{ ...quality, postprocessing: quality.postprocessing && !degraded }}
+              reducedMotion={reducedMotion}
+            />
           </Canvas>
         </ErrorBoundary>
       </div>

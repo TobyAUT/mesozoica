@@ -17,11 +17,15 @@ export type ScientificStatus = z.infer<typeof scientificStatusSchema>;
 export const creatureGroupSchema = z.enum([
   'theropod',
   'sauropod',
+  'sauropodomorph',
   'ceratopsian',
   'ankylosaur',
+  'stegosaur',
+  'ornithopod',
   'pachycephalosaur',
   'hadrosaur',
   'marineReptile',
+  'synapsid',
   'pterosaur',
   'avialan',
   'fish',
@@ -98,7 +102,7 @@ export const creatureSchema = z.object({
   /** One concise, source-backed fact. */
   keyFact: z.string().nullable(),
   factSource: z.string().nullable(),
-  /** Local path under /public. Empty string means "asset pending". Alias: assetPath. */
+  /** Local path under /public for the runtime model. Alias: assetPath in older notes. */
   modelPath: z.string(),
   /** Container format for the loader registry. Defaults to glb for existing entries. */
   assetFormat: modelAssetFormatSchema.default('glb'),
@@ -108,9 +112,15 @@ export const creatureSchema = z.object({
   materialPath: z.string().nullable().default(null),
   /** Optional base folder for external textures (OBJ/glTF). */
   textureBasePath: z.string().nullable().default(null),
+  /** Optional one-shot creature sound exposed from the facts panel. */
+  audioPath: z.string().nullable().default(null),
   sourceUrl: z.string().url().nullable(),
   author: z.string().nullable(),
   license: z.string().nullable(),
+  /** Link to the license text (e.g. the Creative Commons deed). Rendered clickable in credits. */
+  licenseUrl: z.string().url().nullable().default(null),
+  /** Exact attribution wording supplied by the creator or asset source. */
+  attributionText: z.string().nullable().default(null),
   creditRequired: z.boolean(),
   /** Uniform scale multiplier applied AFTER auto-normalising the model to a target height. */
   scale: z.number().positive().default(1),
@@ -121,6 +131,8 @@ export const creatureSchema = z.object({
   availableAnimations: z.array(z.string()).default([]),
   preferredAnimation: z.string().nullable(),
   animationMode: animationModeSchema.default('native'),
+  /** Optional pause after each native clip loop, in seconds. */
+  animationPauseSeconds: z.number().min(0).default(0),
   backgroundId: z.string(),
   /** Terrestrial by default; underwater/aerialCoastal drive the water-transition system. */
   sceneType: sceneTypeSchema.default('terrestrial'),

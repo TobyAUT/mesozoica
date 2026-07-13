@@ -39,6 +39,28 @@ float noise(vec2 p){
   return mix(mix(a,b,u.x), mix(c,d,u.x), u.y);
 }
 
+float bubbleLayer(vec2 uv, float columns, float rows, float speed, float seedOffset){
+  vec2 p = vec2(uv.x * columns, uv.y * rows - uTime * speed);
+  vec2 cell = floor(p);
+  vec2 local = fract(p) - 0.5;
+  float seed = hash(cell + seedOffset);
+  local.x += (hash(cell + vec2(3.1, 7.7) + seedOffset) - 0.5) * 0.62;
+  local.y += (hash(cell + vec2(8.2, 2.4) + seedOffset) - 0.5) * 0.42;
+  local.y *= (columns / rows) * (uResolution.y / max(uResolution.x, 1.0));
+
+  float radius = mix(0.038, 0.078, seed);
+  float distanceToCentre = length(local);
+  float outer = 1.0 - smoothstep(radius * 0.76, radius, distanceToCentre);
+  float inner = 1.0 - smoothstep(radius * 0.34, radius * 0.56, distanceToCentre);
+  float ring = max(outer - inner, 0.0);
+  float glint = 1.0 - smoothstep(
+    radius * 0.08,
+    radius * 0.24,
+    length(local - vec2(-radius * 0.34, radius * 0.34))
+  );
+  return ring + glint * 0.42;
+}
+
 void main(){
   vec2 uv = vUv;
   // Waterline height rises with progress; a little slack so it fully clears top & bottom.
@@ -63,12 +85,13 @@ void main(){
   float caustic = noise(vec2(uv.x*10.0 + uTime*0.25, uv.y*10.0 - uTime*0.2));
   caustic = pow(caustic, 3.0) * (0.6 + 0.4*nearSurface);
 
-  // Suspended particles.
-  float parts = step(0.995, hash(floor(vec2(uv.x*140.0, uv.y*140.0 - uTime*4.0))));
+  // Two sparse layers of circular bubbles moving upward at different speeds.
+  float bubbles = bubbleLayer(uv, 9.0, 5.0, 0.72, 2.7)
+                + bubbleLayer(uv, 14.0, 8.0, 1.05, 8.4) * 0.55;
 
   vec3 col = uWaterColor * (0.55 + 0.5*depth);
   col += vec3(0.35,0.55,0.5) * caustic * 0.5;
-  col += vec3(0.7,0.85,0.85) * parts * 0.5;
+  col += vec3(0.72,0.92,0.94) * bubbles * (0.32 + nearSurface * 0.22);
   col += distort * 0.06;
 
   // Bright crest highlight right at the waterline.

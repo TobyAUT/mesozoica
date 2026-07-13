@@ -63,15 +63,17 @@ export default function HomePage() {
       <AudioManager />
 
       {/* Active creature info panel */}
-      <div className="pointer-events-none fixed bottom-1 left-6 z-30 hidden max-w-[32rem] sm:block lg:left-20">
+      <div className="pointer-events-none fixed left-[20rem] top-1/2 z-30 hidden -translate-y-1/2 lg:block 2xl:left-[21rem]">
         <AnimatePresence mode="wait">
           {showPanel && creature && <CreatureInfoPanel key={creature.id} creature={creature} />}
         </AnimatePresence>
       </div>
-      {/* Mobile: panel sits above the timeline bar */}
-      <div className="pointer-events-none fixed inset-x-4 bottom-14 z-30 sm:hidden">
+      {/* Mobile/tablet: panel sits above the timeline bar. */}
+      <div className="pointer-events-none fixed inset-x-4 bottom-14 z-30 lg:hidden">
         <AnimatePresence mode="wait">
-          {showPanel && creature && <CreatureInfoPanel key={`m-${creature.id}`} creature={creature} />}
+          {showPanel && creature && (
+            <CreatureInfoPanel key={`m-${creature.id}`} creature={creature} />
+          )}
         </AnimatePresence>
       </div>
 

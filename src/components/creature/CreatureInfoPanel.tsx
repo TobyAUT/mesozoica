@@ -1,5 +1,6 @@
+import { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
-import { MapPin, Ruler, Utensils, Clock, ExternalLink, Box, Info } from 'lucide-react';
+import { MapPin, Ruler, Utensils, Clock, ExternalLink, Box, Info, Volume2 } from 'lucide-react';
 import { ScientificStatusBadge } from './ScientificStatusBadge';
 import { useExperience } from '@/store/experienceStore';
 import type { Creature } from '@/data/types';
@@ -31,10 +32,32 @@ function Row({ icon, label, value }: { icon: React.ReactNode; label: string; val
  */
 export function CreatureInfoPanel({ creature }: { creature: Creature }) {
   const setExplore = useExperience((s) => s.setExploreMode);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
   const timeRange =
     creature.approximateTimeStartMya != null && creature.approximateTimeEndMya != null
       ? `${formatMya(creature.approximateTimeStartMya)}–${formatMya(creature.approximateTimeEndMya)} Mya`
       : 'To be verified';
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    return () => {
+      audio?.pause();
+    };
+  }, [creature.id]);
+
+  const playSound = async () => {
+    if (!creature.audioPath || isPlaying) return;
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.currentTime = 0;
+    setIsPlaying(true);
+    try {
+      await audio.play();
+    } catch {
+      setIsPlaying(false);
+    }
+  };
 
   return (
     <motion.aside
@@ -43,19 +66,34 @@ export function CreatureInfoPanel({ creature }: { creature: Creature }) {
       exit={{ opacity: 0, y: 16, filter: 'blur(6px)' }}
       transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
       data-creature-panel
-      className="pointer-events-auto w-[min(92vw,26rem)] rounded-2xl border border-white/10 bg-ink-900/78 p-5 shadow-2xl backdrop-blur-md sm:p-6 lg:max-h-[calc(100svh-6.5rem)] lg:w-[30rem] lg:overflow-y-auto lg:overscroll-contain lg:p-7"
+      className="pointer-events-auto w-[min(92vw,26rem)] rounded-2xl border border-white/10 bg-ink-900/78 p-5 shadow-2xl backdrop-blur-md sm:p-6 lg:max-h-[calc(100svh-8.5rem)] lg:w-[22rem] lg:overflow-y-auto lg:overscroll-contain lg:p-6 xl:w-[24rem] 2xl:w-[26rem]"
     >
+      {creature.audioPath && (
+        <audio
+          ref={audioRef}
+          src={`${import.meta.env.BASE_URL}${creature.audioPath.replace(/^\//, '')}`}
+          preload="none"
+          onEnded={() => setIsPlaying(false)}
+          onError={() => setIsPlaying(false)}
+        />
+      )}
       <div className="mb-3 flex items-center justify-between gap-3">
         <ScientificStatusBadge creature={creature} />
-        <span className="type-eyebrow text-[0.6rem] text-muted lg:text-[0.72rem]">{creature.period}</span>
+        <span className="type-eyebrow text-[0.6rem] text-muted lg:text-[0.72rem]">
+          {creature.period}
+        </span>
       </div>
 
       <h2 className="type-title mb-1 text-3xl text-bone">{creature.displayName}</h2>
       {creature.scientificName && (
-        <p className="mb-4 font-serif text-sm italic text-muted lg:text-lg">{creature.scientificName}</p>
+        <p className="mb-4 font-serif text-sm italic text-muted lg:text-lg">
+          {creature.scientificName}
+        </p>
       )}
 
-      <p className="mb-5 text-sm leading-relaxed text-bone/80 lg:text-lg">{creature.shortDescription}</p>
+      <p className="mb-5 text-sm leading-relaxed text-bone/80 lg:text-lg">
+        {creature.shortDescription}
+      </p>
 
       <div className="mb-5 grid grid-cols-2 gap-x-4 gap-y-3.5">
         <Row icon={<Clock size={15} />} label="When" value={timeRange} />
@@ -83,7 +121,9 @@ export function CreatureInfoPanel({ creature }: { creature: Creature }) {
           </div>
           <p className="text-sm leading-relaxed text-bone/85 lg:text-lg">{creature.keyFact}</p>
           {creature.factSource && (
-            <p className="mt-1.5 text-[0.68rem] text-muted lg:text-sm">Source: {creature.factSource}</p>
+            <p className="mt-1.5 text-[0.68rem] text-muted lg:text-sm">
+              Source: {creature.factSource}
+            </p>
           )}
         </div>
       )}
@@ -95,6 +135,19 @@ export function CreatureInfoPanel({ creature }: { creature: Creature }) {
         >
           <Box size={15} /> Explore in 3D
         </button>
+        {creature.audioPath && (
+          <button
+            type="button"
+            onClick={playSound}
+            disabled={isPlaying}
+            className="inline-flex items-center gap-1.5 rounded-full border border-white/15 px-4 py-2 text-sm text-bone/80 transition hover:border-white/40 hover:text-bone disabled:cursor-default disabled:opacity-60 lg:text-base"
+            aria-label={
+              isPlaying ? 'Tyrannosaurus sound is playing' : 'Play Tyrannosaurus sound once'
+            }
+          >
+            <Volume2 size={14} /> {isPlaying ? 'Playing' : 'Play'}
+          </button>
+        )}
         {creature.sourceUrl && (
           <a
             href={creature.sourceUrl}

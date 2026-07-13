@@ -27,9 +27,9 @@ function isMobileDevice(): boolean {
 }
 
 const PRESETS: Record<'high' | 'balanced' | 'low', Omit<ResolvedQuality, 'isMobile'>> = {
-  high: { tier: 'high', dpr: [1, 2], shadows: true, postprocessing: true, particles: 320 },
-  balanced: { tier: 'balanced', dpr: [1, 1.5], shadows: true, postprocessing: true, particles: 160 },
-  low: { tier: 'low', dpr: [0.75, 1], shadows: false, postprocessing: false, particles: 60 },
+  high: { tier: 'high', dpr: [1, 2], shadows: true, postprocessing: true, particles: 380 },
+  balanced: { tier: 'balanced', dpr: [1, 1.5], shadows: true, postprocessing: true, particles: 210 },
+  low: { tier: 'low', dpr: [0.75, 1], shadows: false, postprocessing: false, particles: 80 },
 };
 
 /** Resolves the user's quality choice ('auto' → detected tier) into concrete render settings. */

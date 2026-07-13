@@ -33,7 +33,7 @@ export function normaliseModel(root: THREE.Object3D, targetHeight = 3.2): number
   return scale;
 }
 
-/** Enable shadow casting/receiving on all meshes and tidy materials for scene lighting. */
+/** Prepare independent materials and disable model shadows for the image-backed scene. */
 export function prepareForScene(root: THREE.Object3D): void {
   root.traverse((obj) => {
     const mesh = obj as THREE.Mesh;
@@ -66,8 +66,8 @@ export function prepareForScene(root: THREE.Object3D): void {
           standard.emissiveIntensity = 0.08;
         }
       }
-      mesh.castShadow = true;
-      mesh.receiveShadow = true;
+      mesh.castShadow = false;
+      mesh.receiveShadow = false;
       // Animated Sketchfab skins often keep bind-pose bounds that no longer contain the posed
       // body. Culling those bounds hides the body while separate eyes/teeth remain visible.
       mesh.frustumCulled = !(mesh as THREE.SkinnedMesh).isSkinnedMesh;

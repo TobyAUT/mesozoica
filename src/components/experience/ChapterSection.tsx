@@ -21,9 +21,8 @@ const ACCENT_TEXT: Record<string, string> = {
 };
 
 /**
- * One DOM section per narrative chapter. These create the scroll length; the fixed canvas +
- * info-panel overlay react to the active chapter. Text stays in the DOM for accessibility —
- * the canvas holds no essential readable text.
+ * One DOM section per narrative chapter. These create the scroll length; the fixed canvas and
+ * info-panel overlay react to the active chapter. Text stays in the DOM for accessibility.
  */
 export function ChapterSection({ chapter }: { chapter: Chapter }) {
   const era = chapter.eraId ? eraById(chapter.eraId) : null;
@@ -44,7 +43,7 @@ export function ChapterSection({ chapter }: { chapter: Chapter }) {
               <div className="type-eyebrow mb-5 text-cretaceous">{chapter.subtitle}</div>
               <h1 className="type-display mb-6 text-bone">Mesozoica</h1>
               <p className="mx-auto max-w-xl text-base leading-relaxed text-bone/70">
-                For 186 million years, dinosaurs ruled the Earth. Scroll through deep time — from
+                For 186 million years, dinosaurs ruled the Earth. Scroll through deep time from
                 the recovery after the greatest extinction, to the asteroid that ended an era, to
                 the birds that carried the lineage into today.
               </p>
@@ -68,32 +67,35 @@ export function ChapterSection({ chapter }: { chapter: Chapter }) {
             </div>
             <h2 className="type-display mb-6 text-bone">{chapter.title}</h2>
             <p className="text-lg leading-relaxed text-bone/75">
-              Warm, humid river deltas spread between muddy banks and dense fern growth.
+              {chapter.blurb ??
+                'Warm, humid river deltas spread between muddy banks and dense fern growth.'}
             </p>
           </motion.div>
         )}
 
         {(chapter.kind === 'creature' || chapter.kind === 'marine') && creature && (
-          <motion.div {...reveal} className="max-w-xl">
-            <div className="mb-3 flex items-center gap-3">
-              <ScientificStatusBadge creature={creature} />
-              <span className="type-eyebrow text-[0.6rem] text-muted">{chapter.title}</span>
-            </div>
-            <h2 className="type-title mb-3 text-bone">{creature.displayName}</h2>
-            {/* Screen-reader text alternative for the 3D scene (brief §18). */}
-            <p className="max-w-lg text-base leading-relaxed text-bone/70">
-              {creature.shortDescription}
-            </p>
-            {!creature.enabled || !creature.modelPath ? (
-              <p className="mt-4 inline-block rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs text-muted">
-                {import.meta.env.DEV
-                  ? creature.modelPath
-                    ? 'Model export incompatible — a clean GLB is required.'
-                    : 'Model asset pending — add the GLB to enable.'
-                  : 'Specimen currently unavailable'}
+          // On lg+ the short text is anchored just to the RIGHT of the fixed facts panel
+          // (a small, constant gap), so it never overlaps the panel or drifts on wide screens.
+          <div
+            className={cn(
+              'lg:absolute lg:left-[43rem] lg:top-1/2 lg:-translate-y-1/2 xl:left-[45rem] 2xl:left-[48rem]',
+              creature.enabled && creature.modelPath && 'hidden sm:block',
+            )}
+          >
+            <motion.div
+              {...reveal}
+              className="max-w-xl sm:max-w-md lg:max-w-[17rem] xl:max-w-[19rem] 2xl:max-w-sm"
+            >
+              <div className="mb-3 flex items-center gap-3">
+                <ScientificStatusBadge creature={creature} />
+                <span className="type-eyebrow text-[0.6rem] text-muted">{chapter.title}</span>
+              </div>
+              <h2 className="type-title mb-3 text-bone">{creature.displayName}</h2>
+              <p className="max-w-lg text-base leading-relaxed text-bone/70">
+                {creature.shortDescription}
               </p>
-            ) : null}
-          </motion.div>
+            </motion.div>
+          </div>
         )}
 
         {chapter.kind === 'extinction' && (
@@ -101,9 +103,9 @@ export function ChapterSection({ chapter }: { chapter: Chapter }) {
             <div className="type-eyebrow mb-4 text-extinction">{chapter.subtitle}</div>
             <h2 className="type-display mb-6 text-bone">Impact</h2>
             <p className="text-lg leading-relaxed text-bone/75">
-              A city-sized asteroid struck what is now the Yucatán Peninsula. Firestorms, tsunamis,
-              and a global winter followed. Around three-quarters of all species — including every
-              non-avian dinosaur — vanished.
+              A city-sized asteroid struck what is now the Yucatan Peninsula. Firestorms, tsunamis,
+              and a global winter followed. Around three-quarters of all species, including every
+              non-avian dinosaur, vanished.
             </p>
           </motion.div>
         )}
@@ -114,7 +116,7 @@ export function ChapterSection({ chapter }: { chapter: Chapter }) {
             <h2 className="type-display mb-6 text-bone">The dinosaurs never left</h2>
             <p className="mb-8 text-lg leading-relaxed text-bone/75">
               One lineage survived: the birds. Every sparrow, hawk, and heron alive today is a
-              living dinosaur — the last chapter of a story 250 million years in the making.
+              living dinosaur, the last chapter of a story 250 million years in the making.
             </p>
             <a
               href={`${import.meta.env.BASE_URL}creatures`}

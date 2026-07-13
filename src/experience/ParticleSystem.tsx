@@ -12,6 +12,25 @@ interface Props {
 export function ParticleSystem({ count, color = '#cbb892', reducedMotion }: Props) {
   const points = useRef<THREE.Points>(null);
 
+  const particleDisc = useMemo(() => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 32;
+    canvas.height = 32;
+    const ctx = canvas.getContext('2d')!;
+    const gradient = ctx.createRadialGradient(13, 11, 1, 16, 16, 15);
+    gradient.addColorStop(0, 'rgba(255,255,255,0.95)');
+    gradient.addColorStop(0.42, 'rgba(255,255,255,0.52)');
+    gradient.addColorStop(0.78, 'rgba(255,255,255,0.18)');
+    gradient.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.arc(16, 16, 15, 0, Math.PI * 2);
+    ctx.fill();
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.colorSpace = THREE.SRGBColorSpace;
+    return texture;
+  }, []);
+
   const positions = useMemo(() => {
     const arr = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
@@ -40,10 +59,12 @@ export function ParticleSystem({ count, color = '#cbb892', reducedMotion }: Prop
         <bufferAttribute attach="attributes-position" args={[positions, 3]} />
       </bufferGeometry>
       <pointsMaterial
-        size={0.045}
+        size={0.035}
         color={color}
+        map={particleDisc}
         transparent
-        opacity={0.5}
+        opacity={0.55}
+        alphaTest={0.08}
         sizeAttenuation
         depthWrite={false}
       />

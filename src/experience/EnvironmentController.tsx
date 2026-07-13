@@ -37,21 +37,7 @@ export function EnvironmentController({ backgroundId }: Props) {
     <>
       <ambientLight color="#ffffff" intensity={0.8} />
       <hemisphereLight ref={fill} color="#ffffff" groundColor="#8a8a8a" intensity={0.95} />
-      <directionalLight
-        ref={key}
-        color="#ffffff"
-        position={[6, 9, 4]}
-        intensity={2.15}
-        castShadow
-        shadow-mapSize={[1024, 1024]}
-        shadow-camera-near={1}
-        shadow-camera-far={40}
-        shadow-camera-left={-12}
-        shadow-camera-right={12}
-        shadow-camera-top={12}
-        shadow-camera-bottom={-12}
-        shadow-bias={-0.0005}
-      />
+      <directionalLight ref={key} color="#ffffff" position={[6, 9, 4]} intensity={2.15} />
     </>
   );
 }

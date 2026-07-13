@@ -6,6 +6,8 @@ import * as THREE from 'three';
 import type { Creature } from '@/data/types';
 import { normaliseModel, prepareForScene, pickClip } from '@/utils/model';
 import { withBase } from '@/utils/asset';
+import { scrollRef } from '@/store/scrollRef';
+import { resolveChapter } from '@/utils/timeline';
 import { NON_GLTF_LOADER, normaliseLoaded, isGltf } from './modelLoaders';
 
 interface Props {
@@ -64,11 +66,16 @@ interface PresenterProps extends Props {
  * models never fake a skeleton; aquatic/flying models get a subtle whole-object drift and never
  * deform. A SkeletonUtils clone keeps everything local to this creature.
  */
-function ModelPresenter({ creature, active, scene, animations, targetHeight = 3.2 }: PresenterProps) {
+function ModelPresenter({
+  creature,
+  active,
+  scene,
+  animations,
+  targetHeight = 3.2,
+}: PresenterProps) {
   const viewportWidth = useThree((state) => state.size.width);
-  // On tablet/desktop the info card occupies the left third; nudge the animal into clear space.
-  const compactModelOffset: Readonly<Record<string, number>> = { alexornis: 2.6 };
-  const stageOffsetX = viewportWidth >= 640 ? (compactModelOffset[creature.id] ?? 3.6) : 0;
+  // Desktop layout reads left-to-right: timeline, facts, copy, then the model.
+  const stageOffsetX = viewportWidth >= 1024 ? 3.8 : 0;
 
   // Independent instance; wrapped so a Z-up source can be corrected without fighting normalisation.
   const model = useMemo(() => {
@@ -84,7 +91,7 @@ function ModelPresenter({ creature, active, scene, animations, targetHeight = 3.
   const group = useRef<THREE.Group>(null);
   const userRotation = useRef(0);
   const drag = useRef({ active: false, lastX: 0 });
-  const { actions, names } = useAnimations(animations, group);
+  const { actions, mixer, names } = useAnimations(animations, group);
 
   const startDrag = (event: ThreeEvent<PointerEvent>) => {
     event.stopPropagation();
@@ -130,11 +137,40 @@ function ModelPresenter({ creature, active, scene, animations, targetHeight = 3.
     const clip = pickClip(animations, creature.preferredAnimation);
     if (!clip || !actions[clip.name]) return;
     const action = actions[clip.name]!;
-    action.reset().fadeIn(0.6).play();
+    let timeout: number | null = null;
+    const pauseMs = (creature.animationPauseSeconds ?? 0) * 1000;
+    const playOnce = () => {
+      action.reset().fadeIn(0.6).play();
+    };
+
+    if (pauseMs > 0) {
+      action.setLoop(THREE.LoopOnce, 1);
+      action.clampWhenFinished = true;
+      const onFinished = (event: { action: THREE.AnimationAction }) => {
+        if (event.action !== action) return;
+        timeout = window.setTimeout(playOnce, pauseMs);
+      };
+      mixer.addEventListener('finished', onFinished);
+      playOnce();
+      return () => {
+        if (timeout) window.clearTimeout(timeout);
+        mixer.removeEventListener('finished', onFinished);
+        action.fadeOut(0.4);
+      };
+    }
+
+    playOnce();
     return () => {
       action.fadeOut(0.4);
     };
-  }, [actions, animations, creature.preferredAnimation, creature.animationMode]);
+  }, [
+    actions,
+    animations,
+    creature.preferredAnimation,
+    creature.animationMode,
+    creature.animationPauseSeconds,
+    mixer,
+  ]);
 
   // Fade opacity in/out, preserving each material's authored alphaMode.
   const fade = useRef(0);
@@ -144,7 +180,9 @@ function ModelPresenter({ creature, active, scene, animations, targetHeight = 3.
       const m = o as THREE.Mesh;
       if (m.isMesh) {
         const mats = Array.isArray(m.material) ? m.material : [m.material];
-        mats.forEach((mat) => list.push({ material: mat, opacity: mat.opacity, transparent: mat.transparent }));
+        mats.forEach((mat) =>
+          list.push({ material: mat, opacity: mat.opacity, transparent: mat.transparent }),
+        );
       }
     });
     return list;
@@ -153,7 +191,10 @@ function ModelPresenter({ creature, active, scene, animations, targetHeight = 3.
   const baseY = creature.position[1];
 
   useFrame((_, delta) => {
-    const target = active ? 1 : 0;
+    const { local } = resolveChapter(scrollRef.progress);
+    // Fade the model in only once the chapter's text is on screen (text reveals ~mid-section).
+    const delayedOpacity = THREE.MathUtils.smoothstep(local, 0.46, 0.64);
+    const target = active ? delayedOpacity : 0;
     fade.current += (target - fade.current) * Math.min(1, delta * 3.5);
     for (const { material, opacity, transparent } of materials) {
       material.opacity = transparent ? opacity * fade.current : opacity;
@@ -165,8 +206,10 @@ function ModelPresenter({ creature, active, scene, animations, targetHeight = 3.
     // Whole-object motion only — the mesh is never deformed procedurally.
     if (mode === 'proceduralWholeObject') {
       // Gentle swim/glide for aquatic and flying models. Damped, non-repetitive-looking.
-      group.current.rotation.y = creature.rotation[1] + userRotation.current + Math.sin(t * 0.24) * 0.12;
-      group.current.rotation.z = Math.sin(t * 0.4) * 0.03;
+      group.current.rotation.x = creature.rotation[0];
+      group.current.rotation.y =
+        creature.rotation[1] + userRotation.current + Math.sin(t * 0.24) * 0.12;
+      group.current.rotation.z = creature.rotation[2] + Math.sin(t * 0.4) * 0.03;
       group.current.position.y = baseY + Math.sin(t * 0.5) * 0.08;
     } else {
       // Native models with no clip get a barely-there breathing sway; static/disabled stay put.

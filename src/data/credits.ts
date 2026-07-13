@@ -15,6 +15,7 @@ export interface ModelCredit {
   displayName: string;
   author: string | null;
   license: string | null;
+  licenseUrl: string | null;
   sourceUrl: string | null;
   changesMade: string;
   attributionText: string | null;
@@ -28,12 +29,31 @@ export const MODEL_CREDITS: ModelCredit[] = CREATURES.map((c: Creature) => ({
   displayName: c.displayName,
   author: c.author,
   license: c.license,
+  licenseUrl: c.licenseUrl,
   sourceUrl: c.sourceUrl,
   changesMade:
     'Converted/streamed as local GLB; auto-centred, scale-normalised, and re-lit for the scene. Geometry and textures unmodified.',
-  attributionText: null,
+  attributionText: c.attributionText,
   resolved: c.author != null && c.license != null,
 }));
+
+export interface AudioCredit {
+  creatureId: string;
+  displayName: string;
+  file: string;
+  author: string;
+  resolved: boolean;
+}
+
+export const AUDIO_CREDITS: AudioCredit[] = [
+  {
+    creatureId: 'tyrannosaurus-rex',
+    displayName: 'Tyrannosaurus rex sound',
+    file: '/audio/tyrannosaurus-rex-studiomod.mp3',
+    author: 'StudioMod',
+    resolved: true,
+  },
+];
 
 export interface AssetCredit {
   category: 'Background' | 'Sound' | 'Font' | 'Data source' | 'Library';
@@ -46,19 +66,22 @@ export const ASSET_CREDITS: AssetCredit[] = [
   {
     category: 'Background',
     name: 'Volcanic wasteland (prologue & extinction)',
-    detail: 'Supplied by the project owner (AI-generated concept image). All other era backdrops are procedurally rendered CSS gradients.',
+    detail:
+      'Supplied by the project owner (AI-generated concept image). All other era backdrops are procedurally rendered CSS gradients.',
     resolved: true,
   },
   {
     category: 'Sound',
     name: 'Ambient beds (per era)',
-    detail: 'No audio assets supplied yet. The audio system is wired but silent until files are added to /public/audio.',
+    detail:
+      'No looping era ambience has been supplied yet. Creature one-shot sounds are credited separately.',
     resolved: false,
   },
   {
     category: 'Font',
     name: 'System font stack',
-    detail: 'Uses the OS system sans-serif and serif (Inter/Fraunces if installed) — loaded locally, no third-party font requests, DSGVO-friendly.',
+    detail:
+      'Uses the OS system sans-serif and serif (Inter/Fraunces if installed) — loaded locally, no third-party font requests, DSGVO-friendly.',
     resolved: true,
   },
   {

@@ -1,6 +1,6 @@
 # High-Level Architecture
 
-Last updated: 2026-07-13 20:31 +02:00
+Last updated: 2026-07-14 00:07 +02:00
 
 ```mermaid
 flowchart TD
@@ -63,7 +63,7 @@ Programmatic jumps use `scrollToChapter`, which maps a chapter ID to global prog
 
 - Canvas ownership: [src/experience/ExperienceCanvas.tsx](../src/experience/ExperienceCanvas.tsx) owns the R3F `Canvas`, performance monitor, DPR/quality settings, and fallback.
 - Render loop: R3F handles scene frames; per-frame camera and model updates read refs instead of React state where possible.
-- Model lifecycle: [src/experience/TimelineScene.tsx](../src/experience/TimelineScene.tsx) mounts only the active enabled model or a pending specimen fallback.
+- Model lifecycle: [src/experience/TimelineScene.tsx](../src/experience/TimelineScene.tsx) mounts only the active enabled model.
 - Loaders: GLB/GLTF uses drei `useGLTF`; FBX/OBJ/STL/PLY are routed through [src/experience/modelLoaders.ts](../src/experience/modelLoaders.ts).
 - Disposal: cloned scenes are prepared/normalized per active model; verify disposal behavior before introducing persistent multi-model mounting.
 - Animation mixers: [src/experience/CreatureModel.tsx](../src/experience/CreatureModel.tsx) uses drei `useAnimations` and only plays native clips when `animationMode` is `native`.
@@ -76,7 +76,7 @@ Programmatic jumps use `scrollToChapter`, which maps a chapter ID to global prog
 - Current active model: mounted by [src/experience/TimelineScene.tsx](../src/experience/TimelineScene.tsx).
 - Next asset preloading: [src/experience/TimelineScene.tsx](../src/experience/TimelineScene.tsx) preloads only the next enabled GLB/GLTF model with `useGLTF.preload`; non-GLTF formats load on demand.
 - Lazy route loading: [src/app/App.tsx](../src/app/App.tsx) lazy-loads route pages.
-- Error handling: model rendering is wrapped in [src/components/system/ErrorBoundary.tsx](../src/components/system/ErrorBoundary.tsx), with a pending specimen fallback for missing creature models.
+- Error handling: model rendering is wrapped in [src/components/system/ErrorBoundary.tsx](../src/components/system/ErrorBoundary.tsx); missing or disabled entries are not part of the active manifest.
 - Format support: `glb`, `gltf`, `fbx`, `obj`, `stl`, and `ply` are schema-supported; OBJ+MTL chaining is not currently implemented.
 - Base path: public asset URLs go through [src/utils/asset.ts](../src/utils/asset.ts) or `import.meta.env.BASE_URL` helpers for GitHub Pages compatibility.
 
@@ -85,7 +85,8 @@ Programmatic jumps use `scrollToChapter`, which maps a chapter ID to global prog
 - Desktop and mobile overlays are split in [src/pages/HomePage.tsx](../src/pages/HomePage.tsx), with separate mobile navigation/timeline components.
 - Reduced motion is synced in [src/hooks/useReducedMotion.ts](../src/hooks/useReducedMotion.ts) and affects Lenis smoothing, camera drift, particles, postprocessing, cursor behavior, and water animation.
 - Keyboard/navigation support includes route links and command palette behavior in [src/components/navigation/CommandPalette.tsx](../src/components/navigation/CommandPalette.tsx).
-- Fallback behavior includes DOM text sections, CSS backgrounds, pending specimen placeholders, and route fallback UI.
+- Fallback behavior includes DOM text sections, CSS backgrounds, and route fallback UI.
+- Desktop creature chapters are arranged left-to-right as geological timeline, facts panel, chapter copy, and right-side 3D model. Tablet/mobile keep the compact bottom panel layout.
 
 # Architectural Decisions
 
@@ -94,6 +95,10 @@ Programmatic jumps use `scrollToChapter`, which maps a chapter ID to global prog
 - GLB/GLTF stays on `useGLTF`; other loaders are isolated in a registry.
 - Scientific identity is separate from mesh quality through `scientificStatus`, notes, and credit fields.
 - The water system is a separate screen-space renderer so it does not risk destabilizing the main R3F scene.
+- Aquatic chapters add sparse circular shader bubbles that rise only inside the submerged area.
+- Creature data can expose an optional one-shot `audioPath`; the facts panel owns playback and audio credits are listed separately.
+- Native creature clips can define an optional `animationPauseSeconds`; Alexornis currently uses a 7 second replay pause.
+- Model and contact shadows are disabled because the visual stage uses image-backed environments.
 - Assets are served from `public` and resolved with the Vite base path for GitHub Pages.
 
 # Known Risks

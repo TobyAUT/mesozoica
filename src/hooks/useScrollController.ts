@@ -48,9 +48,10 @@ export function useScrollController(reducedMotion: boolean): void {
       const chapter = range.chapter;
       if (chapter.id !== lastChapterId) {
         lastChapterId = chapter.id;
-        const creatureId = chapter.kind === 'creature' || chapter.kind === 'marine'
-          ? chapter.creatureId ?? null
-          : null;
+        const creatureId =
+          chapter.kind === 'creature' || chapter.kind === 'marine'
+            ? (chapter.creatureId ?? null)
+            : null;
         setActive(chapter.id, creatureId);
 
         // Reflect creature chapters in the URL hash for deep links, without adding history entries.
@@ -94,11 +95,23 @@ export function useScrollController(reducedMotion: boolean): void {
 
 /** Programmatic navigation used by the timeline, nav links, and command palette. */
 export function scrollToChapter(id: string, immediate = false): void {
-  const p = progressForChapterId(id);
-  if (p == null) return;
   const el = document.documentElement;
   const max = el.scrollHeight - el.clientHeight;
-  const targetY = p * max;
+  const section = document.getElementById(id);
+  const p = progressForChapterId(id);
+  if (!section && p == null) return;
+  const targetY = section
+    ? Math.min(
+        max,
+        Math.max(
+          0,
+          section.getBoundingClientRect().top +
+            window.scrollY +
+            section.offsetHeight / 2 -
+            window.innerHeight / 2,
+        ),
+      )
+    : p! * max;
   if (lenisInstance) lenisInstance.scrollTo(targetY, { immediate, duration: immediate ? 0 : 1.4 });
   else window.scrollTo({ top: targetY, behavior: immediate ? 'auto' : 'smooth' });
 }

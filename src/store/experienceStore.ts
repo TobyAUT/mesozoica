@@ -3,12 +3,10 @@ import { create } from 'zustand';
 export type Quality = 'auto' | 'high' | 'balanced' | 'low';
 
 interface ExperienceState {
-  // ── discrete scroll-driven state (set only when the value changes) ──
   activeChapterId: string;
   activeCreatureId: string | null;
   setActive: (chapterId: string, creatureId: string | null) => void;
 
-  // ── user preferences (persisted) ──
   scientificMode: boolean;
   toggleScientificMode: () => void;
 
@@ -24,10 +22,6 @@ interface ExperienceState {
   reducedMotion: boolean;
   setReducedMotion: (v: boolean) => void;
 
-  // ── which T. rex model is the hero (config option, brief §Model 9) ──
-  primaryTrexId: 'tyrannosaurus-rex' | 'tyrannosaurus-rex-alternate';
-
-  // ── transient UI ──
   exploreMode: boolean;
   setExploreMode: (v: boolean) => void;
   menuOpen: boolean;
@@ -35,7 +29,6 @@ interface ExperienceState {
   commandOpen: boolean;
   setCommandOpen: (v: boolean) => void;
 
-  // ── preloader ──
   ready: boolean;
   setReady: (v: boolean) => void;
 }
@@ -107,8 +100,6 @@ export const useExperience = create<ExperienceState>((set, get) => ({
 
   reducedMotion: false,
   setReducedMotion: (reducedMotion) => set({ reducedMotion }),
-
-  primaryTrexId: 'tyrannosaurus-rex',
 
   exploreMode: false,
   setExploreMode: (exploreMode) => set({ exploreMode }),

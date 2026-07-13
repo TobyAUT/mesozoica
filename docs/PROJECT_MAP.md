@@ -1,11 +1,11 @@
 # Project Map
 
-Last updated: 2026-07-13 20:41 +02:00  
+Last updated: 2026-07-14 00:07 +02:00  
 Current branch: `main`
 
 Mesozoica is a Vite + React + TypeScript interactive prehistoric timeline. It combines DOM scroll chapters, GSAP/Lenis scroll orchestration, Zustand state, React Three Fiber, local GLB models, and WebP backgrounds to move from Devonian pre-dinosaur seas through the end-Cretaceous extinction.
 
-Current implementation status: The main timeline route is implemented at `/` and `/timeline`, with secondary pages for creatures, about, methodology, and credits. Chapter order is data-driven from [src/data/eras.ts](../src/data/eras.ts), creature/model behavior from [src/data/creatures.ts](../src/data/creatures.ts), and backgrounds from [src/data/backgrounds.ts](../src/data/backgrounds.ts). Enabled runtime models are GLBs in [public/models](../public/models); several manifest entries remain disabled or pending. The last recorded verification in [PROGRESS.md](../PROGRESS.md) shows lint, typecheck, tests, and production build passing, with one existing lint warning.
+Current implementation status: The main timeline route is implemented at `/` and `/timeline`, with secondary pages for creatures, about, methodology, and credits. Chapter order is data-driven from [src/data/eras.ts](../src/data/eras.ts), creature/model behavior from [src/data/creatures.ts](../src/data/creatures.ts), and backgrounds from [src/data/backgrounds.ts](../src/data/backgrounds.ts). The active creature manifest contains only model-backed GLB entries in [public/models](../public/models). The last recorded verification in [PROGRESS.md](../PROGRESS.md) shows lint, typecheck, tests, and production build status.
 
 ## 1. Read This First
 
@@ -102,7 +102,7 @@ Curated tree only; excludes `node_modules`, `dist`, caches, and individual binar
     └── optimize-images.mjs
 ```
 
-Audio and font folders do not currently exist under [public](../public). Audio wiring exists in [src/components/controls/AudioManager.tsx](../src/components/controls/AudioManager.tsx), but no audio assets were found.
+The project has one creature effect audio file under [public/audio](../public/audio). Looping ambience files referenced by [src/components/controls/AudioManager.tsx](../src/components/controls/AudioManager.tsx) are not present.
 
 ## 3. Application Entry Points
 
@@ -173,7 +173,7 @@ Treat these manifests as the source of truth for timeline, model, background, an
 | Older background folder | [public/backgrounds](../public/backgrounds) | Contains `wasteland.png`; current manifest uses `public/Images` for prologue/extinction. |
 | Raw model downloads | [Models](../Models) | Raw, duplicate, or not-runtime-ready model files; do not enable without inspection/conversion. |
 | Raw source images | [Images](../Images) | Source ocean PNGs; runtime images are WebP under `public/Images`. |
-| Audio | Missing | No `public/audio` folder or audio files currently found. |
+| Audio | [public/audio](../public/audio) | Contains the one-shot T. rex StudioMod sound; looping ambience assets are still absent. |
 | Fonts | Missing | No local font files outside dependencies; CSS uses system stacks. |
 
 See [docs/ASSET_MAP.md](ASSET_MAP.md) for the detailed asset inventory, missing assets, duplicate assets, and license status.
@@ -220,7 +220,7 @@ Configuration files:
 
 ## 10. Search Hints
 
-- Creature ID: `tyrannosaurus-rex`, `plesiosaurus`, `stylized-indoraptor`, `mosasaurus`.
+- Creature ID: `tyrannosaurus-rex`, `plesiosaurus`, `quetzalcoatlus`, `mosasaurus`.
 - Background ID: `latest-cretaceous`, `devonian-ocean`, `late-cretaceous-ocean`.
 - Timeline/chapter math: `CHAPTERS`, `CHAPTER_RANGES`, `progressForChapterId`, `myaAtProgress`.
 - Scroll system: `ScrollTrigger`, `Lenis`, `scrollRef`, `setActive`.
