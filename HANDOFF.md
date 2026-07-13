@@ -1,8 +1,60 @@
 # Mesozoica — Handoff
 
-Timestamp: 2026-07-13 · Model: Claude (fable-5) · Branch: (no git repo)
-Prior session log (German, Codex): `AENDERUNGEN_SESSION_CLAUDE.md` — treat as history; this file is the
-canonical ongoing handoff going forward.
+Timestamp: 2026-07-13 · Model: Claude (fable-5) · Repo: https://github.com/TobyAUT/mesozoica (main)
+Live site: **https://tobyaut.github.io/mesozoica/** (GitHub Pages, gh-pages branch)
+Prior session log (German, Codex): `AENDERUNGEN_SESSION_CLAUDE.md` — history.
+
+---
+
+## ⭐ SESSION 3 (latest) — assets, EU compliance, performance, deploy
+
+**Done this session:**
+- **Ocean backgrounds**: the 4 supplied AI ocean images wired to Devonian / Early-Jurassic /
+  Tylosaurus / Mosasaurus scenes, converted to WebP with a **light gaussian blur baked in**
+  (`scripts/optimize-images.mjs`, sharp). Mosasaurus got its own `late-cretaceous-ocean-mosasaurus`
+  backdrop so Tylosaurus & Mosasaurus differ.
+- **Performance**: all 10 land backgrounds PNG→WebP (~24 MB → ~2.5 MB total, no visible loss).
+  Base-path-aware asset loading (`utils/asset.ts withBase`) so images/models resolve under the
+  Pages sub-path. Raw `Models/` + `Images/` (multi-GB) gitignored.
+- **Two new models actually wired**: Plesiosaurus + Spinosaurus **low-poly FBX + PBR textures**
+  (extracted from the `*_export.zip`s into `public/models/{plesiosaurus,spinosaurus}/`), `enabled:true`,
+  via the FBX loader. ⚠️ NOT visually verified (Browser pane freezes rAF) — check textures/orientation
+  in a real browser; if sideways set `upAxis:'z'`; FBX PBR channel mapping may need a tweak.
+- **EU AI Act (Art. 50) transparency**: small persistent "KI-generiertes Bild · AI-generated" marker
+  on-screen while an AI backdrop shows (`components/system/AiImageMarker.tsx`) + a privacy/AI footer
+  disclosure in `PageShell`. `backgrounds.ts` gained an `aiGenerated` flag (all backdrops are AI).
+- **Portfolio**: added Mesozoica as the FIRST project in `Personal Page/App.jsx` (`PROJECTS[0]`,
+  links to the live site; cards now honour a `url` field). NOTE: Personal Page is a **separate repo/app** —
+  rebuild & deploy it there to publish that change.
+- **Deploy**: pushed to GitHub `main`; built with `BASE_PATH=/mesozoica/`; published `dist` to the
+  `gh-pages` branch; enabled Pages. Live URL above. (Token lacked `workflow` scope, so a branch deploy
+  is used instead of an Actions workflow — see Next Steps to switch to Actions.)
+
+**STILL TODO (ran out of budget / blocked):**
+1. **Remove the Sketchfab-only pending models + their credits** (user request). These have a
+   Sketchfab `sourceUrl`, no local asset, and will never be delivered — safe to delete from
+   `src/data/creatures.ts` AND their chapters in `src/data/eras.ts`. Candidates:
+   `protoceratops, stegoceras, styracosaurus, saichania, generic-sauropod, morrison-dinosaurs,
+   tupuxuara, tyrannosaurus-rex-alternate, stylized-crested-theropod, generic-pterosaur, mosasaurus-alt`.
+   Chapters to also remove: `generic-sauropod, morrison-dinosaurs, generic-pterosaur`. Credits are
+   auto-generated from `CREATURES`, so removing the entries removes their credit rows automatically.
+   After removing, delete now-orphaned GLBs (`public/models/generic-pterosaur.glb` 23 MB, etc.) and
+   run `npm test` (a test references `progressForChapterId('tyrannosaurus-rex')` — keep T. rex).
+2. **The other downloaded models cannot be runtime-loaded as-is:**
+   - `Dilophosaurus` (`*_Dilophosaurus+rig+.blend`) and `Pterodon` (`*_Pterodon.blend1`) are **Blender
+     files** — three.js cannot read `.blend`. Export to GLB in Blender, drop in `public/models/`,
+     set `modelPath` + `assetFormat:'glb'` + `enabled:true`.
+   - `Concavenator` (580 MB STL), `Dino2.stl` (370 MB), `Velociraptor looking` (242 MB STL zip) are
+     **3D-print STLs** far too heavy for the web. Decimate + convert to GLB offline (Blender / gltf
+     tools) to a few MB, remove print bases/supports, THEN wire (`assetFormat:'stl'`→better `'glb'`).
+   - `uploads_files_6902129_obj.rar` — no extractor installed; extract manually, inspect, wire the OBJ
+     (`assetFormat:'obj'`, add `materialPath` if it ships an `.mtl` — OBJ+MTL chaining is still TODO in
+     `modelLoaders.ts`).
+   - `uploads_files_3154100_model.obj` (13 MB standalone OBJ) — unknown creature; identify, then wire.
+3. **Optional**: switch Pages to an Actions workflow (needs a token with `workflow` scope:
+   `gh auth refresh -s workflow`, then re-add `.github/workflows/deploy.yml`). Consider Git LFS or
+   compressing `carnotaurus.glb` (98 MB) — it's near GitHub's 100 MB limit and slow on mobile.
+4. **Verify the live site** loads on a phone once the first Pages build finishes (~1–2 min).
 
 ---
 
