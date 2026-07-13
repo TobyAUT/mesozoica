@@ -3,6 +3,9 @@
 Timestamp: 2026-07-13 · Model: Claude (fable-5) · Repo: https://github.com/TobyAUT/mesozoica (main)
 Live site: **https://tobyaut.github.io/mesozoica/** (GitHub Pages, gh-pages branch)
 Prior session log (German, Codex): `AENDERUNGEN_SESSION_CLAUDE.md` — history.
+Latest work log: **`Progress.md`** (Session 5 = 4 new GLBs integrated: Plesiosaurus, Spinosaurus,
+Tylosaurus, Quetzalcoatlus; FBX folders retired). Also: Mesozoica hero now opens the page, nav
+scroll-jitter fixed, per-point timeline colours, velociraptor-like turned 180°.
 
 ---
 
