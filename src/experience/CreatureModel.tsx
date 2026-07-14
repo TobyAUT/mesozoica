@@ -74,8 +74,12 @@ function ModelPresenter({
   targetHeight = 3.2,
 }: PresenterProps) {
   const viewportWidth = useThree((state) => state.size.width);
-  // Desktop layout reads left-to-right: timeline, facts, copy, then the model.
-  const stageOffsetX = viewportWidth >= 1024 ? 3.8 : 0;
+  const isDesktop = viewportWidth >= 1024;
+  // Desktop layout reads left-to-right: timeline, facts, copy, then the model (staged right of
+  // the side panel). Mobile has no side panel, so centre the model horizontally — the authored
+  // x-offset only exists to compose around the desktop text and would push it off the narrow frame.
+  const stageOffsetX = isDesktop ? 3.8 : 0;
+  const modelX = isDesktop ? creature.position[0] + stageOffsetX : 0;
 
   // Independent instance; wrapped so a Z-up source can be corrected without fighting normalisation.
   const model = useMemo(() => {
@@ -221,7 +225,7 @@ function ModelPresenter({
   return (
     <group
       ref={group}
-      position={[creature.position[0] + stageOffsetX, creature.position[1], creature.position[2]]}
+      position={[modelX, creature.position[1], creature.position[2]]}
       rotation={creature.rotation}
       scale={creature.scale}
       onPointerDown={startDrag}

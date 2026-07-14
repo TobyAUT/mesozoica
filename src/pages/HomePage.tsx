@@ -68,8 +68,8 @@ export default function HomePage() {
           {showPanel && creature && <CreatureInfoPanel key={creature.id} creature={creature} />}
         </AnimatePresence>
       </div>
-      {/* Mobile/tablet: panel sits above the timeline bar. */}
-      <div className="pointer-events-none fixed inset-x-4 bottom-14 z-30 lg:hidden">
+      {/* Mobile/tablet: panel sits in the reserved bottom band, below the model. */}
+      <div className="pointer-events-none fixed inset-x-3 bottom-3 z-30 lg:hidden">
         <AnimatePresence mode="wait">
           {showPanel && creature && (
             <CreatureInfoPanel key={`m-${creature.id}`} creature={creature} />

@@ -2,6 +2,20 @@
 
 Last updated: 2026-07-14 (Claude session — mobile order + per-model tuning pass)
 
+# Mobile framing overhaul (2026-07-14, Claude)
+
+The mobile info card had **no height cap** (desktop is scrollable, mobile wasn't) so it rendered
+full-content-height (~450px) over the centered fullscreen model — dinos vanished behind it. Also
+the per-model x-offsets + `stageOffsetX=3.8` are tuned for the desktop side-panel layout, so on
+mobile (no side panel) models were pushed off the narrow frame.
+
+- [ExperienceCanvas.tsx](src/experience/ExperienceCanvas.tsx): canvas wrapper is now `bottom-[40svh] lg:bottom-0` — on mobile the WebGL view occupies the top ~60%, reserving the bottom band for the card (verified: wrapper 0–487px on 375×812). Full-screen again at lg.
+- [CreatureInfoPanel.tsx](src/components/creature/CreatureInfoPanel.tsx): mobile card capped `max-h-[38svh] overflow-y-auto overscroll-contain` so it sits in the bottom band and scrolls instead of covering the model.
+- [HomePage.tsx](src/pages/HomePage.tsx): mobile panel container moved to `inset-x-3 bottom-3` (was `inset-x-4 bottom-14`).
+- [CreatureModel.tsx](src/experience/CreatureModel.tsx): on mobile the model is horizontally centred (`modelX = 0`), ignoring `stageOffsetX` and the authored `position[0]` (which only exists to compose around the desktop text). Desktop framing unchanged.
+- Net order on mobile: heading (top) -> 3D model (top ~60%) -> info card (bottom band), no overlap. The squarer canvas box also cuts the portrait camera pull-back (~1.72x -> ~1.30x) so models read larger.
+- Verified: typecheck 0, tests 20/20, build 0; desktop canvas still full-height (720/720 at 1280×720). Note: the in-app Browser pane freezes rAF so the WebGL canvas stays 300×150 there — real browsers size it via ExperienceCanvas ManualResize.
+
 # Tuning Pass 2 (2026-07-14, Claude)
 
 - **Mobile layout order fixed** in [src/components/experience/ChapterSection.tsx](src/components/experience/ChapterSection.tsx): creature/marine sections now use `items-start lg:items-center` and the heading block gets `mt-24 lg:mt-0` (dropped the old `hidden sm:block`), so on phones the order reads heading (top) -> 3D model (fixed fullscreen canvas) -> facts panel (fixed bottom). Verified in-browser at 375px: Herrerasaurus heading top ~172px, panel bottom-anchored, no console errors.

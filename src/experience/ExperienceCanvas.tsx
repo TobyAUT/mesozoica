@@ -47,7 +47,10 @@ export function ExperienceCanvas({ reducedMotion }: Props) {
   const [degraded, setDegraded] = useState(false);
 
   return (
-    <div className="fixed inset-0 z-10" aria-hidden="true">
+    // On mobile the canvas is inset above the bottom info card so the model is never hidden
+    // behind it (order: heading, model, card). Full-screen again from lg where the panel is on
+    // the left.
+    <div className="fixed inset-x-0 top-0 bottom-[40svh] z-10 lg:bottom-0" aria-hidden="true">
       {/* `relative` wrapper gives the canvas a non-null offsetParent so R3F's react-use-measure
           can size it. Without it, a position:fixed ancestor makes offsetParent null and the
           canvas stays stuck at the default 300x150. */}

@@ -66,7 +66,7 @@ export function CreatureInfoPanel({ creature }: { creature: Creature }) {
       exit={{ opacity: 0, y: 16, filter: 'blur(6px)' }}
       transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
       data-creature-panel
-      className="pointer-events-auto w-[min(92vw,26rem)] rounded-2xl border border-white/10 bg-ink-900/78 p-5 shadow-2xl backdrop-blur-md sm:p-6 lg:max-h-[calc(100svh-8.5rem)] lg:w-[22rem] lg:overflow-y-auto lg:overscroll-contain lg:p-6 xl:w-[24rem] 2xl:w-[26rem]"
+      className="pointer-events-auto max-h-[38svh] w-[min(94vw,26rem)] overflow-y-auto overscroll-contain rounded-2xl border border-white/10 bg-ink-900/78 p-5 shadow-2xl backdrop-blur-md sm:p-6 lg:max-h-[calc(100svh-8.5rem)] lg:w-[22rem] lg:overflow-y-auto lg:overscroll-contain lg:p-6 xl:w-[24rem] 2xl:w-[26rem]"
     >
       {creature.audioPath && (
         <audio
