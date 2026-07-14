@@ -28,12 +28,15 @@ export function ChapterSection({ chapter }: { chapter: Chapter }) {
   const era = chapter.eraId ? eraById(chapter.eraId) : null;
   const creature = chapter.creatureId ? CREATURE_BY_ID[chapter.creatureId] : null;
   const minH = `${Math.round(chapter.weight * 100)}svh`;
+  const isCreature = chapter.kind === 'creature' || chapter.kind === 'marine';
 
   return (
     <section
       id={chapter.id}
       aria-label={chapter.title}
-      className="relative flex w-full items-center"
+      // Creature chapters: on mobile the heading sits at the TOP of the section (model fills
+      // the screen, facts panel is fixed at the bottom); on lg+ everything re-centres.
+      className={cn('relative flex w-full', isCreature ? 'items-start lg:items-center' : 'items-center')}
       style={{ minHeight: minH }}
     >
       <div className="mx-auto w-full max-w-[1600px] px-6 lg:px-16">
@@ -79,7 +82,9 @@ export function ChapterSection({ chapter }: { chapter: Chapter }) {
           <div
             className={cn(
               'lg:absolute lg:left-[43rem] lg:top-1/2 lg:-translate-y-1/2 xl:left-[45rem] 2xl:left-[48rem]',
-              creature.enabled && creature.modelPath && 'hidden sm:block',
+              // Mobile order: heading pinned to the TOP of the section, model fills the screen
+              // behind it, facts panel sits fixed at the bottom -> heading, model, info panel.
+              creature.enabled && creature.modelPath && 'mt-24 lg:mt-0',
             )}
           >
             <motion.div

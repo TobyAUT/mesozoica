@@ -1,6 +1,12 @@
 # Current Project State
 
-Last updated: 2026-07-14 (Claude session — 16 new specimens added)
+Last updated: 2026-07-14 (Claude session — mobile order + per-model tuning pass)
+
+# Tuning Pass 2 (2026-07-14, Claude)
+
+- **Mobile layout order fixed** in [src/components/experience/ChapterSection.tsx](src/components/experience/ChapterSection.tsx): creature/marine sections now use `items-start lg:items-center` and the heading block gets `mt-24 lg:mt-0` (dropped the old `hidden sm:block`), so on phones the order reads heading (top) -> 3D model (fixed fullscreen canvas) -> facts panel (fixed bottom). Verified in-browser at 375px: Herrerasaurus heading top ~172px, panel bottom-anchored, no console errors.
+- **Per-model adjustments** in [src/data/creatures.ts](src/data/creatures.ts): Dunkleosteus pos y 1.2->0.8; Herrerasaurus scale 1.6->2.08 (+30%) & pos y 0->-1.8; Plateosaurus scale 0.2->0.04 (/5); Dilophosaurus scale 0.4->0.48 (+20%) & rotation y -0.5->2.6416 (flipped 180°); Cryolophosaurus pos y -0.5->-1.8; Plesiosaurus pos y 1.1->0.8 & rotation y -0.6->-0.5127 (+5° left); Pistosaurus pos x 0->-0.8 & **animationMode native->proceduralWholeObject** (native swim clip drove the root transform and blocked drag-rotation — every other marine reptile already uses procedural, which rotates); Cetiosaurus scale 0.07->0.0175 (/4); Megalosaurus pos x 0.6->0.8; Huayangosaurus scale 0.1->0.01 (/10); Allosaurus pos y 0->-1.8; Diplodocus pos x 0->2.5; Argentinosaurus scale 0.055->0.01375 (/4); Tylosaurus pos y 1.25->0.55; Quetzalcoatlus pos x 1.2->-0.5 (back in frame); T. rex scale 1.2->1.44 (+20%) & pos x 0->0.8.
+- Verified: typecheck 0, tests 20/20, build 0, dev server no console errors.
 
 # Tuning Pass (2026-07-14, Claude — follow-up)
 
