@@ -40,7 +40,11 @@ export function ChapterSection({ chapter }: { chapter: Chapter }) {
           ? 'items-start'
           : isCreature
             ? 'items-start lg:items-center'
-            : 'items-center',
+            : // Video chapters stretch their content wrapper so the STICKY text block inside can
+              // stay pinned on screen for the whole frame-by-frame video scrub.
+              chapter.kind === 'extinction' || chapter.kind === 'finale'
+              ? 'items-stretch'
+              : 'items-center',
       )}
       style={{ '--section-h': minH } as CSSProperties}
     >
@@ -110,7 +114,9 @@ export function ChapterSection({ chapter }: { chapter: Chapter }) {
         )}
 
         {chapter.kind === 'extinction' && (
-          <motion.div {...reveal} className="mx-auto max-w-2xl text-center">
+          // Sticky: the copy stays on screen while the meteor video is scrubbed through the whole
+          // (extra-long) section, releasing right as the next section arrives.
+          <motion.div {...reveal} className="sticky top-[34svh] mx-auto max-w-2xl text-center">
             <div className="type-eyebrow mb-4 text-extinction">{chapter.subtitle}</div>
             <h2 className="type-display mb-6 heading-hero">Impact</h2>
             <p className="text-lg leading-relaxed text-bone/75">
@@ -123,7 +129,8 @@ export function ChapterSection({ chapter }: { chapter: Chapter }) {
         )}
 
         {chapter.kind === 'finale' && (
-          <motion.div {...reveal} className="mx-auto max-w-2xl text-center">
+          // Sticky like the extinction copy: visible over the birds video until the footer.
+          <motion.div {...reveal} className="sticky top-[30svh] mx-auto max-w-2xl text-center">
             <div className="type-eyebrow mb-4 text-cretaceous">{chapter.subtitle}</div>
             <h2 className="type-display mb-6 heading-hero">The dinosaurs never left</h2>
             <p className="mb-8 text-lg leading-relaxed text-bone/75">

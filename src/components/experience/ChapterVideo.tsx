@@ -39,6 +39,24 @@ export function ChapterVideo({ chapterId, src, phoneSrc, holdLastFrame = false }
     const video = videoRef.current;
     if (!range || !video) return;
 
+    // Frame-accurate scrubbing needs ONE in-flight seek at a time: firing currentTime on every
+    // scroll event cancels the previous seek before the decoder ever presents a frame ("you see
+    // nothing and then it's over"). Queue only the newest target and apply it on `seeked`.
+    let pendingSeek: number | null = null;
+    const seekTo = (t: number) => {
+      if (video.seeking) {
+        pendingSeek = t;
+        return;
+      }
+      if (Math.abs(video.currentTime - t) > 1 / 60) video.currentTime = t;
+    };
+    const onSeeked = () => {
+      if (pendingSeek === null) return;
+      const t = pendingSeek;
+      pendingSeek = null;
+      seekTo(t);
+    };
+
     const update = () => {
       const span = range.end - range.start || 1;
       const local = clamp((scrollRef.progress - range.start) / span);
@@ -53,12 +71,12 @@ export function ChapterVideo({ chapterId, src, phoneSrc, holdLastFrame = false }
 
       if (fade > 0.001 && video.duration && !failed.current) {
         // Stop just short of duration so the decoder reliably presents the LAST frame.
-        const t = Math.min(
-          clamp((local - READ[0]) / (READ[1] - READ[0])) * video.duration,
-          video.duration - 0.05,
+        seekTo(
+          Math.min(
+            clamp((local - READ[0]) / (READ[1] - READ[0])) * video.duration,
+            video.duration - 0.05,
+          ),
         );
-        // Seek only on meaningful change; per-pixel seeking would thrash the decoder.
-        if (Math.abs(video.currentTime - t) > 1 / 30) video.currentTime = t;
       }
     };
 
@@ -73,10 +91,12 @@ export function ChapterVideo({ chapterId, src, phoneSrc, holdLastFrame = false }
     window.addEventListener(SCROLL_PROGRESS_EVENT, update);
     video.addEventListener('error', onError);
     video.addEventListener('loadedmetadata', update);
+    video.addEventListener('seeked', onSeeked);
     return () => {
       window.removeEventListener(SCROLL_PROGRESS_EVENT, update);
       video.removeEventListener('error', onError);
       video.removeEventListener('loadedmetadata', update);
+      video.removeEventListener('seeked', onSeeked);
     };
   }, [chapterId, holdLastFrame, source]);
 
@@ -87,7 +107,9 @@ export function ChapterVideo({ chapterId, src, phoneSrc, holdLastFrame = false }
       src={withBase(source)}
       muted
       playsInline
-      preload="metadata"
+      // Buffer the whole (small) file up front — scrubbing through unbuffered ranges stalls the
+      // decoder and shows black instead of frames.
+      preload="auto"
       aria-hidden="true"
       style={{ opacity: 0, visibility: 'hidden' }}
       className="pointer-events-none fixed inset-0 z-[5] h-full w-full object-cover"

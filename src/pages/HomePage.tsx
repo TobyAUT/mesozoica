@@ -100,10 +100,10 @@ export default function HomePage() {
           <ChapterSection key={chapter.id} chapter={chapter} />
         ))}
 
-        {/* Page end: the finale video holds its last frame behind this small legal footer. */}
-        <footer className="pointer-events-auto relative z-20 px-6 pb-20 pt-10 text-center text-[0.7rem] text-bone/60 lg:pb-8">
-          <div className="mx-auto max-w-md rounded-2xl border border-white/10 bg-ink-900/70 px-5 py-4 backdrop-blur-md">
-            <nav className="mb-1.5 flex items-center justify-center gap-4">
+        {/* Page end: full-width legal footer — the LAST element, over the held final video frame. */}
+        <footer className="pointer-events-auto relative z-20 w-full border-t border-white/10 bg-ink-900/85 text-center text-[0.72rem] text-bone/60 backdrop-blur-md">
+          <div className="mx-auto flex max-w-5xl flex-col items-center gap-2 px-6 pb-16 pt-6 lg:pb-6">
+            <nav className="flex items-center gap-5">
               <Link to="/legal#impressum" className="transition hover:text-bone">
                 Impressum
               </Link>

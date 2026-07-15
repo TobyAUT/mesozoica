@@ -1,5 +1,23 @@
 # Current Project State
 
+# Session 2026-07-15 #4 (Claude) — full-width footer, reliable frame scrub, sticky video copy
+
+- **Footer** is now a full-width bar (border-top, ink scrim, centred content) as the true LAST
+  element of the page, over the held final video frame ([HomePage.tsx](src/pages/HomePage.tsx)).
+- **Video scrub de-bugged**: root cause of "you see nothing and then it's over" was seek
+  thrashing — every scroll event set `currentTime`, cancelling the previous seek before the
+  decoder presented a frame, plus `preload="metadata"` left the file unbuffered (seeks into
+  unbuffered ranges show black). Fix in [ChapterVideo.tsx](src/components/experience/ChapterVideo.tsx):
+  ONE in-flight seek at a time (newest target queued, applied on `seeked`) + `preload="auto"`
+  so the 2–4 MB files buffer fully. Upgrade path if a device still struggles: pre-rendered
+  image-sequence scrubbing.
+- **Sticky chapter copy**: the Impact text stays pinned on screen (sticky, upper third) through
+  the whole meteor scrub until the birds section arrives; the finale text does the same until
+  the footer ([ChapterSection.tsx](src/components/experience/ChapterSection.tsx) — video
+  sections use `items-stretch` so the sticky block can travel).
+
+Verified: typecheck 0, tests 28/28, lint 0 errors (1 pre-existing warning), build 0.
+
 # Session 2026-07-15 #3 (Claude) — AI video markers, long video scrub, legal footer
 
 Verified locally: typecheck 0, tests 28/28, lint 0 errors (1 pre-existing warning), build 0, no
