@@ -1,6 +1,29 @@
 # Current Project State
 
-Last updated: 2026-07-15 (Claude session 2 — content pass: SEO, era/creature texts, Spinosaurus, heading colours)
+Last updated: 2026-07-15 (Claude session 3 — fonts, legibility, LIVE gh-pages deploy fixed)
+
+# Session 2026-07-15 #3 (Claude) — typography + deploy
+
+Live at **https://tobyaut.github.io/mesozoica/** (verified: new title, 37 sections, self-hosted
+fonts loading, sand headings, **0 failed resources**, 0 console errors).
+
+- **Self-hosted fonts** (were declared but never loaded → system fallback). Added three OFL variable
+  families via `@fontsource-variable/*`, imported in [main.tsx](src/main.tsx), wired in
+  [tailwind.config.ts](tailwind.config.ts): Fraunces (serif display), Inter (sans body), Space
+  Grotesk (eyebrows/labels). Bundled at build time, no CDN (DSGVO-safe).
+- **Green eyebrow legibility**: brightened the four era accents (Cretaceous teal #5a9a97→#74c0ba the
+  most) and gave `.type-eyebrow` a text-shadow outline in [globals.css](src/styles/globals.css).
+- **Bigger small text**: eyebrows + info-card description/stat/keyfact sizes bumped for readability.
+- **Cryolophosaurus name clipping fixed**: the info-card name rendered at 56px (`.type-title` beat
+  `text-3xl`), overflowing the card and cutting the final "s". Capped to `!text-[2.35rem]` +
+  `break-words` in [CreatureInfoPanel.tsx](src/components/creature/CreatureInfoPanel.tsx).
+- **Deploy fixed & made reproducible**: the old gh-pages build baked a Git-Bash-mangled base
+  (`/Program Files/Git/mesozoica/…`) so the live link was broken. Added `npm run deploy`
+  (`cross-env BASE_PATH=/mesozoica/ npm run build && gh-pages -d dist -t`) — cross-env passes the
+  literal base so cmd/PowerShell can't mangle it. Republished with correct `/mesozoica/` base.
+  NOTE: build the deploy from PowerShell/cmd, NOT Git Bash (Bash mangles the `/mesozoica/` arg).
+
+
 
 # Session 2026-07-15 #2 (Claude) — content + polish pass
 
