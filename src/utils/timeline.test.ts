@@ -6,6 +6,8 @@ import {
   formatMya,
   progressForChapterId,
   clamp,
+  smoothstep,
+  creatureFade,
 } from './timeline';
 import { CHAPTERS, TIME_START_MYA, TIME_END_MYA } from '@/data/eras';
 
@@ -78,5 +80,23 @@ describe('clamp', () => {
     expect(clamp(-1)).toBe(0);
     expect(clamp(2)).toBe(1);
     expect(clamp(0.5)).toBe(0.5);
+  });
+});
+
+describe('smoothstep', () => {
+  it('clamps below/above the edges and eases in between', () => {
+    expect(smoothstep(0.2, 0.8, 0)).toBe(0);
+    expect(smoothstep(0.2, 0.8, 1)).toBe(1);
+    expect(smoothstep(0.2, 0.8, 0.5)).toBeCloseTo(0.5, 6);
+  });
+});
+
+describe('creatureFade', () => {
+  it('is invisible early, full mid-chapter, and gone before the boundary', () => {
+    expect(creatureFade(0)).toBe(0); // before the text is on screen
+    expect(creatureFade(0.4)).toBe(0); // still ramping up
+    expect(creatureFade(0.7)).toBeCloseTo(1, 5); // fully visible mid-section
+    expect(creatureFade(0.95)).toBe(0); // faded out before the next heading
+    expect(creatureFade(1)).toBe(0);
   });
 });

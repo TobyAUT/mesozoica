@@ -58,6 +58,17 @@ h2,
   text-transform: uppercase;
 }
 
+/* Section headings sit over photographic backdrops that range from bright sky to dark ocean.
+   A warm luminous sand tone keeps them on the earthy/fossil palette while a layered dark shadow
+   guarantees they separate from any scene — identical on mobile and desktop. */
+.heading-hero {
+  color: #f7e2b0;
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.55),
+    0 2px 16px rgba(0, 0, 0, 0.7),
+    0 0 40px rgba(0, 0, 0, 0.35);
+}
+
 /* Accessible focus ring */
 :where(a, button, [role='button'], input, select, [tabindex]):focus-visible {
   outline: 2px solid var(--accent);
@@ -171,4 +182,12 @@ html[data-model-hover='true'] .cursor-ring {
 
 [data-creature-panel]::-webkit-scrollbar {
   display: none;
+}
+
+/* The WebGL canvas: reserve horizontal drags for model rotation, let vertical gestures scroll the
+   page. Set on the canvas element itself (R3F's touch-action lives on its container) so every
+   touch device — including browsers that don't apply the ancestor's touch-action — rotates on
+   horizontal drag without hijacking or blocking the scroll. */
+canvas {
+  touch-action: pan-y;
 }

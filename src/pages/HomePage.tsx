@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { AnimatePresence } from 'motion/react';
 import { ExperienceCanvas } from '@/experience/ExperienceCanvas';
 import { BackgroundTransition } from '@/components/experience/BackgroundTransition';
 import { WaterlineTransition } from '@/components/experience/WaterlineTransition';
@@ -62,19 +61,13 @@ export default function HomePage() {
       <CreatureExplorer />
       <AudioManager />
 
-      {/* Active creature info panel */}
-      <div className="pointer-events-none fixed left-[20rem] top-1/2 z-30 hidden -translate-y-1/2 lg:block 2xl:left-[21rem]">
-        <AnimatePresence mode="wait">
-          {showPanel && creature && <CreatureInfoPanel key={creature.id} creature={creature} />}
-        </AnimatePresence>
+      {/* Active creature info panel — nudged closer to the geological timeline on the left. */}
+      <div className="pointer-events-none fixed left-[17rem] top-1/2 z-30 hidden -translate-y-1/2 lg:block 2xl:left-[18rem]">
+        {showPanel && creature && <CreatureInfoPanel key={creature.id} creature={creature} />}
       </div>
       {/* Mobile/tablet: panel sits in the reserved bottom band, below the model. */}
       <div className="pointer-events-none fixed inset-x-3 bottom-3 z-30 lg:hidden">
-        <AnimatePresence mode="wait">
-          {showPanel && creature && (
-            <CreatureInfoPanel key={`m-${creature.id}`} creature={creature} />
-          )}
-        </AnimatePresence>
+        {showPanel && creature && <CreatureInfoPanel key={`m-${creature.id}`} creature={creature} />}
       </div>
 
       {/* Scroll length: one section per chapter */}

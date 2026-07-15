@@ -26,7 +26,7 @@ const raw: CreatureInput[] = [
     diet: 'carnivore',
     lengthMeters: 8,
     shortDescription:
-      'A lightly-built predator instantly recognisable by the two thick horns above its eyes and unusually tiny arms. Known from a single, remarkably complete skeleton.',
+      'Carnotaurus was an approximately eight-metre-long abelisaurid predator from Late Cretaceous Argentina. It had two thick horns above its eyes, a short deep skull and extremely reduced forelimbs. Preserved skin impressions show scales across the known areas of its body.',
     keyFact:
       'Carnotaurus had the smallest forelimbs relative to body size of any large predatory dinosaur.',
     factSource: 'Natural History Museum, London — Dinosaurs directory',
@@ -64,7 +64,7 @@ const raw: CreatureInput[] = [
     diet: 'carnivore',
     lengthMeters: null,
     shortDescription:
-      'A small, agile "raptor" of the dromaeosaur family. The source model is tagged Velociraptor, but its anatomy is not presented here as an exact, scientifically verified reconstruction.',
+      'This model is presented as a generic dromaeosaur rather than an exact Velociraptor reconstruction. The real Velociraptor lived in Late Cretaceous Mongolia, measured about two metres long and almost certainly possessed feathers as well as an enlarged curved toe claw.',
     keyFact:
       'The real Velociraptor was turkey-sized and almost certainly feathered — far from its film portrayal.',
     factSource: 'American Museum of Natural History — Velociraptor',
@@ -101,7 +101,7 @@ const raw: CreatureInput[] = [
     diet: 'omnivore',
     lengthMeters: null,
     shortDescription:
-      'A tiny prehistoric bird (avialan). This model represents the film character "Alex" from Walking With Dinosaurs, identified as an Alexornis — a genus of small Late Cretaceous bird.',
+      'Alexornis was a small prehistoric bird from the Late Cretaceous of Mexico. It belonged to an extinct group of early birds called enantiornithines. Because the displayed model is based on a film character, it should not be treated as an exact scientific reconstruction.',
     keyFact:
       'Birds are living dinosaurs: the only lineage of dinosaurs to survive the end-Cretaceous extinction.',
     factSource: 'Natural History Museum, London — Are birds dinosaurs?',
@@ -141,24 +141,21 @@ const raw: CreatureInput[] = [
     diet: 'piscivore',
     lengthMeters: 15,
     shortDescription:
-      'An enormous sail-backed predator adapted to a semi-aquatic life hunting fish in vast river systems.',
+      'Spinosaurus was a giant sail-backed theropod from Late Cretaceous North Africa. Its conical teeth, narrow jaws and paddle-like tail indicate strong adaptations for feeding in aquatic environments. How efficiently it swam and how much time it spent in deep water remain debated.',
     keyFact: 'Spinosaurus is the longest predatory dinosaur currently known.',
     factSource: 'National Geographic Society — Spinosaurus',
-    modelPath: '/models/spinosaurus-animated.glb',
+    modelPath: '/models/spinosaurus.glb',
     assetFormat: 'glb',
     animationMode: 'static',
-    sourceUrl: 'https://skfb.ly/6TvuE',
-    author: 'seirogan',
-    license: 'Creative Commons Attribution',
-    licenseUrl: 'http://creativecommons.org/licenses/by/4.0/',
-    attributionText:
-      '"Spinosaurus_animation" (https://skfb.ly/6TvuE) by seirogan is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).',
+    sourceUrl: null,
+    author: null,
+    license: null,
     creditRequired: true,
     scale: 1.15,
     position: [0, 0, 0],
     rotation: [0, -0.5, 0],
     cameraPreset: { position: [4.2, 2.6, 7.2], target: [0, 1.95, 0], fov: 38, transition: 2.6 },
-    availableAnimations: ['Armature|ArmatureAction'],
+    availableAnimations: [],
     preferredAnimation: null,
     backgroundId: 'late-cretaceous-delta',
     accentTheme: 'cretaceous',
@@ -166,7 +163,7 @@ const raw: CreatureInput[] = [
     enabled: true,
     hideInScientificMode: false,
     notes:
-      'Animated rigged GLB (native clip "Armature|ArmatureAction"). Replaces the earlier static Spinosaurus.',
+      'Static non-rigged GLB (spinosaurus.glb) — the reliable, always-visible model. The animated rig (spinosaurus-animated.glb) collapsed in bind/native pose and is kept unused. Author/licence for this static mesh are unverified (TODO_VERIFY).',
   },
   {
     id: 'triceratops',
@@ -183,7 +180,7 @@ const raw: CreatureInput[] = [
     diet: 'herbivore',
     lengthMeters: 9,
     shortDescription:
-      'One of the last and largest horned dinosaurs, bearing three facial horns and a massive bony frill.',
+      'Triceratops was a large horned herbivore that lived in North America during the final two million years of the Cretaceous. Its three horns, beak and broad frill were used in feeding, display and defence. It shared its environment with Tyrannosaurus rex.',
     keyFact:
       'Triceratops lived alongside — and was likely prey for — Tyrannosaurus rex in the final days of the age of dinosaurs.',
     factSource: 'Smithsonian National Museum of Natural History',
@@ -221,7 +218,7 @@ const raw: CreatureInput[] = [
     diet: 'carnivore',
     lengthMeters: 12,
     shortDescription:
-      'The apex predator of the latest Cretaceous of North America, combining enormous bone-crushing jaws with keen senses.',
+      'Tyrannosaurus rex was a massive tyrannosaurid predator from the latest Cretaceous of North America. Adults reached around 12 metres or more and possessed a powerful, bone-crushing bite. Fossil evidence indicates that T. rex both hunted living animals and scavenged carcasses.',
     keyFact:
       'A T. rex bite could exert over 30,000 newtons of force — among the most powerful of any land animal.',
     factSource: 'Smithsonian National Museum of Natural History',
@@ -260,7 +257,7 @@ const raw: CreatureInput[] = [
     diet: 'carnivore',
     lengthMeters: 12,
     shortDescription:
-      'A giant marine reptile — NOT a dinosaur — that ruled the Late Cretaceous seas. Mosasaurs were closer relatives of modern monitor lizards and snakes.',
+      'Mosasaurus was a giant marine reptile, not a dinosaur. This specialised ocean-going squamate lived during the Late Cretaceous and was related to the broader lineage that includes modern lizards and snakes. Its powerful jaws made it a major marine predator.',
     keyFact:
       'Mosasaurus was one of the last and largest mosasaurs, a group of ocean-going lizards, not dinosaurs.',
     factSource: 'Natural History Museum, London — Sea monsters',
@@ -304,7 +301,7 @@ const raw: CreatureInput[] = [
     diet: 'carnivore',
     lengthMeters: null,
     shortDescription:
-      'An armoured placoderm fish — NOT a dinosaur, and living over 100 million years before the first dinosaurs. Instead of teeth it bore self-sharpening bony blades. Much of its body beyond the armoured head is not securely known, so the full-body reconstruction is uncertain.',
+      'Dunkleosteus was a large armoured placoderm fish from the Late Devonian, not a dinosaur. Instead of true teeth, it used sharpened bony plates to capture and cut prey. Because mainly its armoured head is preserved, its complete body shape remains uncertain.',
     keyFact:
       'Dunkleosteus had one of the most powerful bites of any fish, using bony shearing plates rather than teeth.',
     factSource: 'American Museum of Natural History — Placoderms',
@@ -353,7 +350,7 @@ const raw: CreatureInput[] = [
     diet: 'carnivore',
     lengthMeters: 3.5,
     shortDescription:
-      'A long-necked marine reptile — NOT a dinosaur, despite the source title — that swam with four large flippers. This asset is a theme-park/statue prop, so its proportions are a stylised prop reconstruction rather than a museum-grade one.',
+      'Plesiosaurus was a marine reptile, not a dinosaur. It lived in Early Jurassic seas and had a relatively small head, a long neck and four powerful flippers. It probably hunted fish and other small marine animals in shallow coastal waters.',
     keyFact:
       'Plesiosaurs were marine reptiles that used four wing-like flippers to "fly" underwater.',
     factSource: 'Natural History Museum, London — Sea reptiles',
@@ -397,7 +394,7 @@ const raw: CreatureInput[] = [
     diet: 'carnivore',
     lengthMeters: 12,
     shortDescription:
-      'A giant mosasaur — a marine reptile, NOT a dinosaur — that hunted the Late Cretaceous seas with a long, streamlined body and powerful tail.',
+      'Tylosaurus was a giant mosasaur, not a dinosaur. It hunted in the Late Cretaceous Western Interior Seaway of North America and used a powerful tail for propulsion. Fossil evidence shows that mosasaurs consumed a wide range of marine prey.',
     keyFact: 'Tylosaurus was one of the largest mosasaurs, a group of sea-going lizards.',
     factSource: 'Natural History Museum, London — Sea monsters',
     factSources: ['Natural History Museum, London — Sea monsters'],
@@ -440,7 +437,7 @@ const raw: CreatureInput[] = [
     diet: 'carnivore',
     lengthMeters: null,
     shortDescription:
-      'A colossal azhdarchid pterosaur — a flying reptile, NOT a dinosaur — with a wingspan of around 10–11 metres, among the largest animals ever to fly. It likely foraged on the ground like a giant stork.',
+      'Quetzalcoatlus was a giant azhdarchid pterosaur, not a dinosaur. With an estimated wingspan of around 10–11 metres, it was among the largest flying animals known. Evidence suggests that it also spent considerable time walking and searching for food on the ground.',
     keyFact: 'Quetzalcoatlus stood as tall as a giraffe yet could still take to the air.',
     factSource: 'Smithsonian National Museum of Natural History',
     factSources: ['Smithsonian National Museum of Natural History'],
@@ -488,7 +485,7 @@ const raw: CreatureInput[] = [
     diet: 'herbivore',
     lengthMeters: 1,
     shortDescription:
-      'A stocky, tusked plant-eater — a dicynodont synapsid, NOT a dinosaur — that thrived in the aftermath of the greatest mass extinction, becoming one of the most common land animals of the Early Triassic.',
+      'Lystrosaurus was a tusked dicynodont synapsid, not a dinosaur. This stocky herbivore became widespread during the Early Triassic and was one of the most common large land vertebrates to survive the ecological crisis following the end-Permian mass extinction.',
     keyFact:
       'In the earliest Triassic, Lystrosaurus made up the vast majority of large land vertebrates — a rare "disaster survivor" of the end-Permian extinction.',
     factSource: 'Natural History Museum, London',
@@ -531,7 +528,7 @@ const raw: CreatureInput[] = [
     diet: 'carnivore',
     lengthMeters: 4,
     shortDescription:
-      'A lightly-built early predatory dinosaur from the Late Triassic — one of the oldest dinosaurs known, from a time when dinosaurs were still a minor part of the fauna.',
+      'Herrerasaurus was one of the earliest well-known predatory dinosaurs. It lived in Late Triassic Argentina about 231 million years ago and walked on two powerful hind legs. Its exact position near the base of the dinosaur family tree remains scientifically debated.',
     keyFact:
       'Herrerasaurus is among the earliest known dinosaurs, living around 231 million years ago.',
     factSource: 'American Museum of Natural History',
@@ -574,7 +571,7 @@ const raw: CreatureInput[] = [
     diet: 'herbivore',
     lengthMeters: 8,
     shortDescription:
-      'A large early plant-eating dinosaur (a sauropodomorph) from the Late Triassic of Europe, walking on its hind legs with a long neck — an early relative of the giant sauropods to come.',
+      'Plateosaurus was a large Late Triassic sauropodomorph from Europe and an early relative of the later giant sauropods. It mainly moved on two legs, ate plants and possessed strong hands with a prominent thumb claw. Numerous skeletons make it one of the best-known Triassic dinosaurs.',
     keyFact:
       'Plateosaurus was one of the first really large plant-eating dinosaurs, known from many skeletons across Europe.',
     factSource: 'Natural History Museum, London',
@@ -617,7 +614,7 @@ const raw: CreatureInput[] = [
     diet: 'carnivore',
     lengthMeters: 7,
     shortDescription:
-      'One of the earliest large predatory dinosaurs, recognised by the pair of thin crests on its head. Its real anatomy had no venom or neck frill — those are film inventions.',
+      'Dilophosaurus was an Early Jurassic predatory dinosaur from North America that reached about seven metres in length. Its two thin skull crests were probably used for display or recognition. There is no fossil evidence that it had venom or an expandable neck frill.',
     keyFact:
       'Dilophosaurus was among the largest land predators of the Early Jurassic, with two distinctive head crests.',
     factSource: 'Natural History Museum, London',
@@ -660,7 +657,7 @@ const raw: CreatureInput[] = [
     diet: 'carnivore',
     lengthMeters: 6.5,
     shortDescription:
-      'A crested predatory dinosaur of the Early Jurassic, and the first dinosaur ever formally named from Antarctica — a reminder that the polar regions were once far warmer.',
+      'Cryolophosaurus was a crested theropod from Early Jurassic Antarctica. At the time, Antarctica was warmer and supported forests and river valleys. Its distinctive sideways-curving crest may have been used for display, although its exact function is unknown.',
     keyFact:
       'Cryolophosaurus was the first dinosaur to be scientifically named from Antarctica, with an unusual crest across the top of its head.',
     factSource: 'Smithsonian National Museum of Natural History',
@@ -695,15 +692,15 @@ const raw: CreatureInput[] = [
     scientificName: 'Pistosaurus',
     scientificStatus: 'nonDinosaur',
     creatureGroup: 'marineReptile',
-    period: 'Early Jurassic',
-    approximateTimeStartMya: 208,
-    approximateTimeEndMya: 190,
+    period: 'Triassic',
+    approximateTimeStartMya: 247,
+    approximateTimeEndMya: 237,
     continent: 'Europe',
     habitat: 'Shallow seas',
     diet: 'piscivore',
     lengthMeters: 3,
     shortDescription:
-      'A sea-going reptile — NOT a dinosaur — from the pistosauroid lineage, close relatives and forerunners of the long-necked plesiosaurs. Best known from the Triassic, this group carried on into the earliest Jurassic seas.',
+      'Pistosaurus was a roughly three-metre-long marine sauropterygian from the Middle Triassic, not a dinosaur. Its anatomy combined primitive marine-reptile features with characteristics later seen in plesiosaurs. It was closely related to plesiosaurs but should not be described as their confirmed direct ancestor.',
     keyFact:
       'Pistosauroids were early relatives of the plesiosaurs, already adapted to hunting in open water.',
     factSource: 'Natural History Museum, London',
@@ -729,12 +726,12 @@ const raw: CreatureInput[] = [
     sceneType: 'underwater',
     underwaterBackgroundId: 'early-jurassic-ocean',
     waterTransition: true,
-    accentTheme: 'jurassic',
+    accentTheme: 'triassic',
     heroModel: false,
     enabled: true,
     hideInScientificMode: false,
     notes:
-      'Marine reptile, not a dinosaur. Placed in the Early Jurassic per the collection; the lineage is best known from the Triassic. Native swim clip.',
+      'Marine reptile, not a dinosaur. Placed in the Middle Triassic (its actual age); shown on the generic shallow-sea backdrop as there is no dedicated Triassic ocean image. Native swim clip.',
   },
   {
     id: 'megalosaurus',
@@ -751,7 +748,7 @@ const raw: CreatureInput[] = [
     diet: 'carnivore',
     lengthMeters: 9,
     shortDescription:
-      'A large Middle Jurassic predator from England, and a landmark in the history of science — the very first dinosaur to be scientifically named.',
+      'Megalosaurus was a large Middle Jurassic theropod from England. In 1824, it became the first non-avian dinosaur to receive a formal scientific name—almost two decades before the term “Dinosauria” was introduced.',
     keyFact:
       'Megalosaurus was the first dinosaur ever given a scientific name, in 1824, long before the word "dinosaur" existed.',
     factSource: 'Natural History Museum, London',
@@ -794,7 +791,7 @@ const raw: CreatureInput[] = [
     diet: 'herbivore',
     lengthMeters: 16,
     shortDescription:
-      'A large four-legged, long-necked sauropod from the Middle Jurassic of England — one of the first sauropods known to science, its name meaning "whale lizard".',
+      'Cetiosaurus was a large plant-eating sauropod from the Middle Jurassic of England. Reaching roughly 16–18 metres in length, it was among the first sauropods described by scientists. Its name, “whale lizard”, reflects early confusion about its enormous fossil bones.',
     keyFact:
       'Cetiosaurus ("whale lizard") was one of the earliest sauropods to be described, before their true nature as giant land animals was understood.',
     factSource: 'Natural History Museum, London',
@@ -837,7 +834,7 @@ const raw: CreatureInput[] = [
     diet: 'herbivore',
     lengthMeters: 4.5,
     shortDescription:
-      'An early, small plated dinosaur from the Middle Jurassic of China — one of the oldest and most primitive stegosaurs, with paired plates and spikes along its back.',
+      'Huayangosaurus was an early stegosaur from the Middle Jurassic of China. At around four to five metres long, it was smaller and more primitive than Stegosaurus. Plates, spikes and prominent shoulder spines helped distinguish this heavily built herbivore.',
     keyFact:
       'Huayangosaurus is one of the earliest known stegosaurs, more primitive than its famous later relative Stegosaurus.',
     factSource: 'Natural History Museum, London',
@@ -880,7 +877,7 @@ const raw: CreatureInput[] = [
     diet: 'carnivore',
     lengthMeters: 9,
     shortDescription:
-      'The dominant large predator of the Late Jurassic of North America, and by far the most common big carnivore of the fossil-rich Morrison Formation.',
+      'Allosaurus was one of the most common large predators in the Late Jurassic Morrison Formation of North America. It possessed serrated teeth, three-fingered hands and small crests above its eyes. Evidence of cooperative pack hunting remains uncertain.',
     keyFact:
       'Allosaurus is the most abundant large predatory dinosaur found in the Late Jurassic Morrison Formation.',
     factSource: 'Natural History Museum, London',
@@ -923,7 +920,7 @@ const raw: CreatureInput[] = [
     diet: 'herbivore',
     lengthMeters: 9,
     shortDescription:
-      'An iconic plated plant-eater with a double row of tall bony plates along its back and four spikes on its tail, used for defence and display.',
+      'Stegosaurus was a large Late Jurassic herbivore recognised by its alternating back plates and four-spiked tail. The tail was an effective defensive weapon, while the exact purpose of the plates—possibly display, recognition or temperature control—remains debated.',
     keyFact:
       'Stegosaurus had a brain small for its body size and bore four tail spikes nicknamed the "thagomizer".',
     factSource: 'Natural History Museum, London',
@@ -967,7 +964,7 @@ const raw: CreatureInput[] = [
     diet: 'herbivore',
     lengthMeters: 26,
     shortDescription:
-      'An enormously long sauropod of the Late Jurassic, with a whip-like tail and a very long neck held roughly horizontal — among the longest dinosaurs known from fairly complete remains.',
+      'Diplodocus was an extremely long Late Jurassic sauropod with an elongated neck and a whip-like tail. Some individuals may have reached approximately 25 metres. Its narrow, peg-like teeth were concentrated near the front of the mouth and were suited to removing vegetation.',
     keyFact:
       'Diplodocus is one of the longest dinosaurs known, thanks to its extraordinarily long neck and whip-like tail.',
     factSource: 'Natural History Museum, London',
@@ -1010,7 +1007,7 @@ const raw: CreatureInput[] = [
     diet: 'piscivore',
     lengthMeters: 10,
     shortDescription:
-      'A fish-eating predator of the Early Cretaceous with long, crocodile-like jaws and a large hooked claw on each hand — an early relative of Spinosaurus.',
+      'Baryonyx was a spinosaurid theropod from Early Cretaceous England. Its long, narrow jaws resembled those of a crocodile, while each hand carried a large hooked claw. Fish remains found with its skeleton provide direct evidence that fish formed part of its diet.',
     keyFact:
       'Fish scales and bones found in a Baryonyx skeleton confirm it ate fish, caught with its crocodile-like jaws and hook-shaped thumb claws.',
     factSource: 'Natural History Museum, London',
@@ -1053,7 +1050,7 @@ const raw: CreatureInput[] = [
     diet: 'herbivore',
     lengthMeters: 10,
     shortDescription:
-      'A large plant-eating ornithopod of the Early Cretaceous, able to walk on two legs or four, with a distinctive conical spike on each thumb.',
+      'Iguanodon was a large plant-eating ornithopod from Early Cretaceous Europe. It could move on either two or four legs and carried a conical spike on each thumb. Its fossils played an important role in the early scientific study of dinosaurs.',
     keyFact:
       'Iguanodon was one of the first dinosaurs ever named, and had a conical spike on each thumb whose purpose is still debated.',
     factSource: 'Natural History Museum, London',
@@ -1097,7 +1094,7 @@ const raw: CreatureInput[] = [
     diet: 'herbivore',
     lengthMeters: 35,
     shortDescription:
-      'A titanosaur sauropod of colossal size from the Late Cretaceous of Argentina — among the largest land animals ever to have lived.',
+      'Argentinosaurus was a giant titanosaur from Late Cretaceous Argentina and one of the largest known land animals. Because it is known only from incomplete remains, estimates of its exact length and mass vary considerably and should be presented cautiously.',
     keyFact:
       'Argentinosaurus is one of the heaviest known land animals of all time, estimated at over 30 metres long.',
     factSource: 'Natural History Museum, London',
@@ -1140,7 +1137,7 @@ const raw: CreatureInput[] = [
     diet: 'herbivore',
     lengthMeters: 8,
     shortDescription:
-      'A heavily armoured plant-eater of the latest Cretaceous, its body covered in bony plates and its tail ending in a massive club of fused bone.',
+      'Ankylosaurus was a heavily armoured herbivore from the final part of the Late Cretaceous in North America. Bony plates protected its body, while fused bones formed a large tail club that could deliver powerful defensive strikes.',
     keyFact:
       'Ankylosaurus swung a heavy bony tail club that could deliver powerful defensive blows against predators such as T. rex.',
     factSource: 'Natural History Museum, London',

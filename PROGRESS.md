@@ -1,5 +1,84 @@
 # Current Project State
 
+Last updated: 2026-07-15 (Claude session 2 — content pass: SEO, era/creature texts, Spinosaurus, heading colours)
+
+# Session 2026-07-15 #2 (Claude) — content + polish pass
+
+Verified: typecheck 0, tests 22/22, lint 0 errors, build 0. Browser: SEO title/description live, 37
+chapter sections in corrected order, spinosaurus.glb fetched 200 via the real loader, no loader
+errors. (Live 3D/fade visuals aren't observable in the in-app pane — it freezes rAF, stalling Lenis
+so the active chapter can't advance; validated via asset fetch, DOM/computed-style, and build.)
+
+- **Spinosaurus now uses the static `spinosaurus.glb`** (1 mesh, 0 skins) in
+  [creatures.ts](src/data/creatures.ts) instead of `spinosaurus-animated.glb`, whose rig collapsed
+  in bind/native pose and left the section empty. Author/licence for the static mesh are unverified
+  (TODO_VERIFY) — the animated file with verified seirogan/CC-BY credit stays in public/models,
+  unused, if we want to restore it later.
+- **Removed the scientific-status badge** ("Verified" / "Marine reptile" …) from the timeline
+  heading ([ChapterSection.tsx](src/components/experience/ChapterSection.tsx)) and the info card
+  ([CreatureInfoPanel.tsx](src/components/creature/CreatureInfoPanel.tsx)). The badge component and
+  its use on the Creatures/Methodology pages are unchanged.
+- **Heading colour/contrast**: new `.heading-hero` class in
+  [globals.css](src/styles/globals.css) (warm sand `#f7e2b0` + layered dark text-shadow) applied to
+  every on-scene h1/h2 in ChapterSection, so headings stay on-palette and separate cleanly from the
+  photographic backdrops on both mobile and desktop.
+- **SEO** in [index.html](index.html): title "Mesozoica – Interactive 3D Dinosaur Timeline", new
+  meta description, and Open Graph tags.
+- **Copy**: rewrote the prologue intro, all four era intros + epochs, the Middle/Late Jurassic
+  time-slice blurbs, the Impact/Finale paragraphs, and every creature `shortDescription`
+  ([eras.ts](src/data/eras.ts), [creatures.ts](src/data/creatures.ts), ChapterSection). The Jurassic
+  and Cretaceous era-intro labels are now "The Early Jurassic" / "The Early Cretaceous".
+- **Timeline structure**: added a **"The Late Cretaceous"** time-slice before Spinosaurus, and
+  **moved Pistosaurus into the Middle Triassic** (between Lystrosaurus and Herrerasaurus; period enum
+  has no "Middle Triassic" so it uses `Triassic` with the age in the text). 37 sections total.
+
+
+
+# Session 2026-07-15 (Claude) — 6-point pass
+
+Backup: git tag `backup/pre-claude-2026-07-15` (restore with `git reset --hard` or per-file
+`git checkout backup/pre-claude-2026-07-15 -- <path>`). Verified: typecheck 0, tests 22/22, lint 0
+errors (1 pre-existing warning), build 0, dev server no console errors.
+
+1. **Model disappearing / wrong-while-rotating — fixed** in [src/utils/model.ts](src/utils/model.ts)
+   `prepareForScene`. Root cause: GLB accessors ship stale/missing `boundingSphere`s, so static
+   (non-skinned) meshes could frustum-cull themselves once rotation moved their wrong sphere
+   off-frustum; single-sided Sketchfab faces (fins/membranes/shells) also dropped out as they
+   turned away from camera. Fix: recompute `computeBoundingBox()`+`computeBoundingSphere()` per
+   mesh so culling is accurate again, and set `material.side = DoubleSide` so back faces stay solid.
+   Kept the targeted `frustumCulled = !isSkinnedMesh` rule (posed skins can't be cheaply bounded).
+   Camera `near` inspected and left at 0.1 — models sit ~7–12 units from camera, never near the
+   clip plane, so reducing it would risk depth precision for no gain. Pivot system (wrapper Group +
+   `normaliseModel` centring X/Z, feet at Y=0, rotation on the outer group) already existed and is
+   correct — unchanged.
+2. **Timeline scrollbar colours** in [src/components/timeline/GeologicalTimeline.tsx](src/components/timeline/GeologicalTimeline.tsx):
+   `chapterDotColor` rewritten to fan each point deterministically across its geological period's
+   colour family by its order within that family (no more index*13 collisions) — unique per point,
+   still reads by era, early→late lightness ramp.
+3. **Desktop layout** — info panel nudged from `left-20rem` to `left-17rem` (2xl 21→18rem) in
+   [src/pages/HomePage.tsx](src/pages/HomePage.tsx), closer to the timeline (clears the longest
+   label by ~27px). Model + info window now share ONE scroll-driven opacity envelope
+   `creatureFade(local)` (added to [src/utils/timeline.ts](src/utils/timeline.ts), unit-tested): both
+   fade in mid-section and fully out by ~92% of the chapter, so they vanish together before the next
+   heading enters. Panel opacity is now rAF-driven from that curve (removed framer-motion
+   AnimatePresence in HomePage + CreatureInfoPanel).
+4. **Mobile/tablet order** (heading → model → info) already implemented via the fixed-canvas
+   bottom-inset + fixed bottom card; verified layout bands at 375px (canvas 0–487, card 491–800).
+   No change needed.
+5. **GLB optimization** via [scripts/optimize-glb.mjs](scripts/optimize-glb.mjs) (glTF-Transform,
+   WebP texture recompression only — geometry/skins/materials untouched, so NO runtime Draco/Meshopt
+   decoder added; `EXT_texture_webp` is decoded natively by three-stdlib's GLTFLoader). **555 MB →
+   111 MB (−80%)**: carnotaurus 103→16, tyrannosaurus 53→3.9, stegosaurus 57→3.1, mosasaurus 52→7,
+   triceratops 47→1.7, allosaurus 38→2.8, dilophosaurus 21→2.5 MB, etc. Verified in-browser: the app
+   fetched carnotaurus.glb (200) via the real loader with zero console errors, and the browser
+   decoded an embedded 2048² WebP via createImageBitmap. Originals are recoverable from git.
+6. **3D rotation on every device**: unified pointer events + pointer capture already handle
+   mouse/touch/pen; added explicit `canvas { touch-action: pan-y }` in
+   [src/styles/globals.css](src/styles/globals.css) so horizontal drag rotates and vertical scrolls
+   the page on every touch browser (R3F only sets touch-action on the canvas *container*). Verified
+   the canvas element now computes `pan-y`.
+
+# Prior state
 Last updated: 2026-07-14 (Claude session — mobile order + per-model tuning pass)
 
 # Mobile framing overhaul (2026-07-14, Claude)

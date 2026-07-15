@@ -7,7 +7,7 @@ import type { Creature } from '@/data/types';
 import { normaliseModel, prepareForScene, pickClip } from '@/utils/model';
 import { withBase } from '@/utils/asset';
 import { scrollRef } from '@/store/scrollRef';
-import { resolveChapter } from '@/utils/timeline';
+import { resolveChapter, creatureFade } from '@/utils/timeline';
 import { NON_GLTF_LOADER, normaliseLoaded, isGltf } from './modelLoaders';
 
 interface Props {
@@ -196,9 +196,9 @@ function ModelPresenter({
 
   useFrame((_, delta) => {
     const { local } = resolveChapter(scrollRef.progress);
-    // Fade the model in only once the chapter's text is on screen (text reveals ~mid-section).
-    const delayedOpacity = THREE.MathUtils.smoothstep(local, 0.46, 0.64);
-    const target = active ? delayedOpacity : 0;
+    // Shared envelope: fade in once the chapter text is on screen, then out before the next
+    // heading — the info window uses the exact same curve so both vanish together.
+    const target = active ? creatureFade(local) : 0;
     fade.current += (target - fade.current) * Math.min(1, delta * 3.5);
     for (const { material, opacity, transparent } of materials) {
       material.opacity = transparent ? opacity * fade.current : opacity;

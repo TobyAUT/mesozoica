@@ -2,7 +2,6 @@ import { motion } from 'motion/react';
 import type { Chapter } from '@/data/eras';
 import { eraById } from '@/data/eras';
 import { CREATURE_BY_ID } from '@/data/creatures';
-import { ScientificStatusBadge } from '@/components/creature/ScientificStatusBadge';
 import { ScrollHint } from './ScrollHint';
 import { cn } from '@/utils/cn';
 
@@ -44,11 +43,12 @@ export function ChapterSection({ chapter }: { chapter: Chapter }) {
           <div className="relative flex min-h-[90svh] flex-col items-center justify-center text-center">
             <motion.div {...reveal}>
               <div className="type-eyebrow mb-5 text-cretaceous">{chapter.subtitle}</div>
-              <h1 className="type-display mb-6 text-bone">Mesozoica</h1>
+              <h1 className="type-display mb-6 heading-hero">Mesozoica</h1>
               <p className="mx-auto max-w-xl text-base leading-relaxed text-bone/70">
-                For 186 million years, dinosaurs ruled the Earth. Scroll through deep time from
-                the recovery after the greatest extinction, to the asteroid that ended an era, to
-                the birds that carried the lineage into today.
+                Travel through more than 300 million years of prehistoric life, from the armoured
+                fishes of the Devonian to the last non-avian dinosaurs of the Cretaceous. Explore
+                scientifically informed 3D reconstructions and discover how ancient animals,
+                ecosystems and continents changed through deep time.
               </p>
             </motion.div>
             <ScrollHint />
@@ -58,7 +58,7 @@ export function ChapterSection({ chapter }: { chapter: Chapter }) {
         {chapter.kind === 'era-intro' && era && (
           <motion.div {...reveal} className="max-w-2xl">
             <div className={cn('type-eyebrow mb-4', ACCENT_TEXT[chapter.accent])}>{era.epoch}</div>
-            <h2 className="type-display mb-6 text-bone">The {era.label}</h2>
+            <h2 className="type-display mb-6 heading-hero">The {era.label}</h2>
             <p className="text-lg leading-relaxed text-bone/75">{era.intro}</p>
           </motion.div>
         )}
@@ -68,7 +68,7 @@ export function ChapterSection({ chapter }: { chapter: Chapter }) {
             <div className={cn('type-eyebrow mb-4', ACCENT_TEXT[chapter.accent])}>
               {chapter.subtitle}
             </div>
-            <h2 className="type-display mb-6 text-bone">{chapter.title}</h2>
+            <h2 className="type-display mb-6 heading-hero">{chapter.title}</h2>
             <p className="text-lg leading-relaxed text-bone/75">
               {chapter.blurb ??
                 'Warm, humid river deltas spread between muddy banks and dense fern growth.'}
@@ -92,10 +92,9 @@ export function ChapterSection({ chapter }: { chapter: Chapter }) {
               className="max-w-xl sm:max-w-md lg:max-w-[17rem] xl:max-w-[19rem] 2xl:max-w-sm"
             >
               <div className="mb-3 flex items-center gap-3">
-                <ScientificStatusBadge creature={creature} />
                 <span className="type-eyebrow text-[0.6rem] text-muted">{chapter.title}</span>
               </div>
-              <h2 className="type-title mb-3 text-bone">{creature.displayName}</h2>
+              <h2 className="type-title mb-3 heading-hero">{creature.displayName}</h2>
               <p className="max-w-lg text-base leading-relaxed text-bone/70">
                 {creature.shortDescription}
               </p>
@@ -106,11 +105,12 @@ export function ChapterSection({ chapter }: { chapter: Chapter }) {
         {chapter.kind === 'extinction' && (
           <motion.div {...reveal} className="mx-auto max-w-2xl text-center">
             <div className="type-eyebrow mb-4 text-extinction">{chapter.subtitle}</div>
-            <h2 className="type-display mb-6 text-bone">Impact</h2>
+            <h2 className="type-display mb-6 heading-hero">Impact</h2>
             <p className="text-lg leading-relaxed text-bone/75">
-              A city-sized asteroid struck what is now the Yucatan Peninsula. Firestorms, tsunamis,
-              and a global winter followed. Around three-quarters of all species, including every
-              non-avian dinosaur, vanished.
+              About 66 million years ago, a large asteroid struck near today’s Yucatán Peninsula.
+              Dust, aerosols and wildfire products disrupted sunlight, climate and food webs around
+              the world. All non-avian dinosaurs became extinct, while birds—the only surviving
+              dinosaur lineage—continued into the modern world.
             </p>
           </motion.div>
         )}
@@ -118,10 +118,12 @@ export function ChapterSection({ chapter }: { chapter: Chapter }) {
         {chapter.kind === 'finale' && (
           <motion.div {...reveal} className="mx-auto max-w-2xl text-center">
             <div className="type-eyebrow mb-4 text-cretaceous">{chapter.subtitle}</div>
-            <h2 className="type-display mb-6 text-bone">The dinosaurs never left</h2>
+            <h2 className="type-display mb-6 heading-hero">The dinosaurs never left</h2>
             <p className="mb-8 text-lg leading-relaxed text-bone/75">
-              One lineage survived: the birds. Every sparrow, hawk, and heron alive today is a
-              living dinosaur, the last chapter of a story 250 million years in the making.
+              Dinosaurs did not disappear completely. Modern birds evolved within the theropod
+              dinosaur lineage and are therefore living dinosaurs. From hummingbirds to eagles, more
+              than 10,000 bird species continue a history that began among small feathered dinosaurs
+              during the Mesozoic Era.
             </p>
             <a
               href={`${import.meta.env.BASE_URL}creatures`}

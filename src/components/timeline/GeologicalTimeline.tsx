@@ -7,14 +7,28 @@ import { useExperience } from '@/store/experienceStore';
 import { scrollToChapter } from '@/hooks/useScrollController';
 import { cn } from '@/utils/cn';
 
-// Base hue/saturation per era; each point then varies within its family so every marker on the
-// strip has its own distinct accent colour (index-driven, stays on-theme).
-const ACCENT_HUE: Record<string, number> = { triassic: 20, jurassic: 48, cretaceous: 176, extinction: 24 };
-const ACCENT_SAT: Record<string, number> = { triassic: 62, jurassic: 54, cretaceous: 46, extinction: 74 };
-function chapterDotColor(accent: string, index: number): string {
-  const h = (ACCENT_HUE[accent] ?? 176) + ((index * 13) % 44) - 22;
-  const l = 46 + ((index * 9) % 26);
-  return `hsl(${h}deg, ${ACCENT_SAT[accent] ?? 46}%, ${l}%)`;
+// Every timeline point gets its own colour, anchored on the chapter's geological period so the
+// strip still reads by era (Triassic rust, Jurassic gold, Cretaceous teal, extinction red). Within
+// each period family the points fan across a small hue + lightness range by their order, so no two
+// collide and the gradient flows from early (deep) to late (bright).
+const ACCENT_BASE: Record<string, { h: number; s: number }> = {
+  triassic: { h: 20, s: 62 },
+  jurassic: { h: 44, s: 58 },
+  cretaceous: { h: 176, s: 46 },
+  extinction: { h: 8, s: 78 },
+};
+// Order of chapter ids within each accent family, so each point knows its position in the ramp.
+const ACCENT_ORDER = CHAPTER_RANGES.reduce<Record<string, string[]>>((acc, { chapter }) => {
+  (acc[chapter.accent] ??= []).push(chapter.id);
+  return acc;
+}, {});
+function chapterDotColor(accent: string, id: string): string {
+  const base = ACCENT_BASE[accent] ?? ACCENT_BASE.cretaceous;
+  const family = ACCENT_ORDER[accent] ?? [id];
+  const t = family.length > 1 ? family.indexOf(id) / (family.length - 1) : 0.5;
+  const h = base.h + (t - 0.5) * 40; // ±20° fan within the family
+  const l = 44 + t * 22; // 44%–66% lightness, early → late
+  return `hsl(${h}deg ${base.s}% ${l}%)`;
 }
 
 /**
@@ -49,14 +63,14 @@ export function GeologicalTimeline() {
           style={{ height: '0%' }}
         />
         <ul className="relative flex h-full flex-col justify-between">
-          {CHAPTER_RANGES.map(({ chapter }, index) => {
+          {CHAPTER_RANGES.map(({ chapter }) => {
             const creature = chapter.creatureId ? CREATURE_BY_ID[chapter.creatureId] : null;
             const label =
               creature?.displayName ??
               chapter.title ??
               chapter.id;
             const isActive = chapter.id === activeId;
-            const dotColor = chapterDotColor(chapter.accent, index);
+            const dotColor = chapterDotColor(chapter.accent, chapter.id);
             return (
               <li key={chapter.id} className="group flex items-center">
                 <button

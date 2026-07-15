@@ -65,11 +65,25 @@ export function prepareForScene(root: THREE.Object3D): void {
           standard.emissiveMap = standard.map;
           standard.emissiveIntensity = 0.08;
         }
+        // Many Sketchfab meshes are modelled single-sided (fins, wing membranes, hollow shells).
+        // Their back faces cull away as the model turns, so polygons "disappear" mid-rotation.
+        // Rendering both sides keeps the silhouette solid from every angle.
+        material.side = THREE.DoubleSide;
       }
       mesh.castShadow = false;
       mesh.receiveShadow = false;
-      // Animated Sketchfab skins often keep bind-pose bounds that no longer contain the posed
-      // body. Culling those bounds hides the body while separate eyes/teeth remain visible.
+
+      // Frustum culling test uses geometry.boundingSphere. GLB accessors often ship with a stale
+      // or missing sphere, so a static mesh could cull itself out of view once rotation moved its
+      // (wrong) sphere off-frustum — the disappearing bug. Recompute accurate bounds so culling is
+      // trustworthy again.
+      if (mesh.geometry) {
+        mesh.geometry.computeBoundingBox();
+        mesh.geometry.computeBoundingSphere();
+      }
+      // Skinned meshes are the one case we can't cheaply bound: once posed/animated the body no
+      // longer fits its bind-pose sphere, so keep culling off for them (accurate bounds fix the
+      // rest). This is the targeted rule, not a blanket disable.
       mesh.frustumCulled = !(mesh as THREE.SkinnedMesh).isSkinnedMesh;
     }
   });

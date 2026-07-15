@@ -2,6 +2,13 @@
 
 Last updated: 2026-07-14 00:07 +02:00
 
+> UPDATE 2026-07-15 (Claude): every runtime GLB was recompressed to WebP textures via
+> [scripts/optimize-glb.mjs](../scripts/optimize-glb.mjs) — **total public/models ~555 MB → ~111 MB
+> (−80%)** with no geometry/animation change (e.g. carnotaurus 98.59→15.9, tyrannosaurus 50.95→3.9,
+> stegosaurus→3.1, mosasaurus 50.43→7.0, triceratops 45.02→1.7 MB). The "File size" column below is
+> the pre-optimization value; re-run `node scripts/optimize-glb.mjs` after adding new models. WebP is
+> decoded natively (`EXT_texture_webp`), so no runtime decoder was added.
+
 > UPDATE 2026-07-14 (Claude): 17 more runtime GLBs were added under [public/models](../public/models) (Lystrosaurus, Herrerasaurus, Plateosaurus, Dilophosaurus, Cryolophosaurus, Pistosaur, Cetiosaurus, Megalosaurus, Huayangosaurus, Allosaurus, Stegosaurus, Diplodocus, Baryonyx, Iguanodon, Argentinosaurus, Ankylosaurus, plus `spinosaurus-animated.glb`). Each has full verified credits (author + `license` + new `licenseUrl` + `sourceUrl`, rendered clickable on the Credits page). The table below predates them; see [PROGRESS.md](../PROGRESS.md) "Latest Session" and [src/data/creatures.ts](../src/data/creatures.ts).
 
 Runtime models live in [public/models](../public/models). Raw/downloaded or duplicate source assets live in [Models](../Models). The active manifest now contains only model-backed creature entries.

@@ -27,6 +27,22 @@ export const CHAPTER_RANGES: ChapterRange[] = (() => {
 /** Clamp a number to [min, max]. */
 export const clamp = (v: number, min = 0, max = 1) => Math.min(max, Math.max(min, v));
 
+/** GLSL-style smoothstep: Hermite 0→1 ramp as x crosses [edge0, edge1]. */
+export function smoothstep(edge0: number, edge1: number, x: number): number {
+  const t = clamp((x - edge0) / (edge1 - edge0 || 1));
+  return t * t * (3 - 2 * t);
+}
+
+/**
+ * Shared opacity envelope for a creature within its chapter (local progress 0–1). The 3D model and
+ * its info window both read this, so they fade in and out in perfect lockstep: up once the chapter
+ * text is on screen (~mid-section), then back down and fully gone by ~92%, before the next heading
+ * enters the viewport.
+ */
+export function creatureFade(local: number): number {
+  return smoothstep(0.46, 0.62, local) * (1 - smoothstep(0.78, 0.92, local));
+}
+
 /**
  * Map global scroll progress (0–1) to the active chapter plus the local progress within it.
  * Robust at the exact boundaries and beyond [0,1].

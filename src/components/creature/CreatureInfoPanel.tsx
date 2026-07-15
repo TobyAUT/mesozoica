@@ -1,10 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import { motion } from 'motion/react';
 import { MapPin, Ruler, Utensils, Clock, ExternalLink, Box, Info, Volume2 } from 'lucide-react';
-import { ScientificStatusBadge } from './ScientificStatusBadge';
 import { useExperience } from '@/store/experienceStore';
 import type { Creature } from '@/data/types';
-import { formatMya } from '@/utils/timeline';
+import { formatMya, resolveChapter, creatureFade } from '@/utils/timeline';
+import { scrollRef } from '@/store/scrollRef';
 
 const DIET_LABEL: Record<string, string> = {
   carnivore: 'Carnivore',
@@ -33,7 +32,27 @@ function Row({ icon, label, value }: { icon: React.ReactNode; label: string; val
 export function CreatureInfoPanel({ creature }: { creature: Creature }) {
   const setExplore = useExperience((s) => s.setExploreMode);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const rootRef = useRef<HTMLElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+
+  // Drive the panel's opacity from the same scroll envelope as the 3D model (creatureFade), so the
+  // window and its model fade in and out together — and the window is gone before the next heading
+  // scrolls in. Per-frame via rAF, kept out of React state to avoid re-render churn.
+  useEffect(() => {
+    let frame = 0;
+    const tick = () => {
+      const el = rootRef.current;
+      if (el) {
+        const { local } = resolveChapter(scrollRef.progress);
+        const f = creatureFade(local);
+        el.style.opacity = String(f);
+        el.style.transform = `translateY(${(1 - f) * 10}px)`;
+      }
+      frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, []);
   const timeRange =
     creature.approximateTimeStartMya != null && creature.approximateTimeEndMya != null
       ? `${formatMya(creature.approximateTimeStartMya)}–${formatMya(creature.approximateTimeEndMya)} Mya`
@@ -60,11 +79,9 @@ export function CreatureInfoPanel({ creature }: { creature: Creature }) {
   };
 
   return (
-    <motion.aside
-      initial={{ opacity: 0, y: 24, filter: 'blur(6px)' }}
-      animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-      exit={{ opacity: 0, y: 16, filter: 'blur(6px)' }}
-      transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+    <aside
+      ref={rootRef}
+      style={{ opacity: 0 }}
       data-creature-panel
       className="pointer-events-auto max-h-[38svh] w-[min(94vw,26rem)] overflow-y-auto overscroll-contain rounded-2xl border border-white/10 bg-ink-900/78 p-5 shadow-2xl backdrop-blur-md sm:p-6 lg:max-h-[calc(100svh-8.5rem)] lg:w-[22rem] lg:overflow-y-auto lg:overscroll-contain lg:p-6 xl:w-[24rem] 2xl:w-[26rem]"
     >
@@ -77,8 +94,7 @@ export function CreatureInfoPanel({ creature }: { creature: Creature }) {
           onError={() => setIsPlaying(false)}
         />
       )}
-      <div className="mb-3 flex items-center justify-between gap-3">
-        <ScientificStatusBadge creature={creature} />
+      <div className="mb-3 flex items-center gap-3">
         <span className="type-eyebrow text-[0.6rem] text-muted lg:text-[0.72rem]">
           {creature.period}
         </span>
@@ -159,6 +175,6 @@ export function CreatureInfoPanel({ creature }: { creature: Creature }) {
           </a>
         )}
       </div>
-    </motion.aside>
+    </aside>
   );
 }
