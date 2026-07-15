@@ -47,6 +47,23 @@ Schema-supported formats in [src/data/types.ts](../src/data/types.ts): GLB, glTF
 | late-cretaceous-ocean | [public/Images/late-cretaceous-ocean.webp](../public/Images/late-cretaceous-ocean.webp) | 2560x1440 | WebP | Late Cretaceous ocean | `tylosaurus` | underwater |
 | late-cretaceous-ocean-mosasaurus | [public/Images/late-cretaceous-ocean-mosasaurus.webp](../public/Images/late-cretaceous-ocean-mosasaurus.webp) | 2560x1440 | WebP | Late Cretaceous ocean | `marine` / `mosasaurus` | underwater |
 
+# Chapter Videos
+
+Scroll-scrubbed chapter videos live in [public/videos](../public/videos). The runtime uses the
+`-scrub.mp4` variants; the three original MP4s remain alongside them as reversible source/fallback
+files and are not referenced by the app.
+
+| Chapter | Runtime file | Size | Format | Scrub structure | Original fallback |
+|---|---|---:|---|---|---|
+| Extinction desktop/tablet | `meteor-impact-scrub.mp4` | 5.82 MB | H.264 High 3.1, yuv420p, 1280x720, 24 fps | fast-start, 16 keyframes, 0.5 s GOP, no B-frames/audio | `meteor-impact.mp4` |
+| Extinction phone | `meteor-impact-portrait-scrub.mp4` | 6.00 MB | H.264 High 3.1, yuv420p, 720x1280, 24 fps | fast-start, 16 keyframes, 0.5 s GOP, no B-frames/audio | `meteor-impact-portrait.mp4` |
+| Finale | `birds-scrub.mp4` | 4.32 MB | H.264 High 3.1, yuv420p, 720x1280, 24 fps | fast-start, 16 keyframes, 0.5 s GOP, no B-frames/audio | `birds.mp4` |
+
+The originals each contain only one keyframe and place `moov` after `mdat`, which makes frequent
+paused random seeks expensive on mobile decoders. Runtime selection is in
+[src/pages/HomePage.tsx](../src/pages/HomePage.tsx); decoder priming and queued seeking are in
+[src/components/experience/ChapterVideo.tsx](../src/components/experience/ChapterVideo.tsx).
+
 # Audio Assets
 
 [public/audio/tyrannosaurus-rex-studiomod.mp3](../public/audio/tyrannosaurus-rex-studiomod.mp3) is a one-shot T. rex sound exposed by the facts panel. Creator credit: StudioMod. Looping era ambience files expected by [src/components/controls/AudioManager.tsx](../src/components/controls/AudioManager.tsx) are still absent.

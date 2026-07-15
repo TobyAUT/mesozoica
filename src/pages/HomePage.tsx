@@ -52,10 +52,10 @@ export default function HomePage() {
       {/* Scroll-scrubbed chapter videos: meteor strike over Impact, birds over the finale. */}
       <ChapterVideo
         chapterId="extinction"
-        src="/videos/meteor-impact.mp4"
-        phoneSrc="/videos/meteor-impact-portrait.mp4"
+        src="/videos/meteor-impact-scrub.mp4"
+        phoneSrc="/videos/meteor-impact-portrait-scrub.mp4"
       />
-      <ChapterVideo chapterId="finale" src="/videos/birds.mp4" holdLastFrame />
+      <ChapterVideo chapterId="finale" src="/videos/birds-scrub.mp4" holdLastFrame />
       <ExperienceCanvas reducedMotion={reducedMotion} />
       <WaterlineTransition quality={quality} reducedMotion={reducedMotion} />
 
@@ -101,9 +101,9 @@ export default function HomePage() {
         ))}
 
         {/* Page end: full-width legal footer — the LAST element, over the held final video frame. */}
-        <footer className="pointer-events-auto relative z-20 w-full border-t border-white/10 bg-ink-900/85 text-center text-[0.72rem] text-bone/60 backdrop-blur-md">
+        <footer className="pointer-events-auto relative z-20 w-full border-t border-white/10 bg-ink-900/85 text-center text-bone/60 backdrop-blur-md">
           <div className="mx-auto flex max-w-5xl flex-col items-center gap-2 px-6 pb-16 pt-6 lg:pb-6">
-            <nav className="flex items-center gap-5">
+            <nav className="flex items-center gap-5 text-[0.72rem]">
               <Link to="/legal#impressum" className="transition hover:text-bone">
                 Impressum
               </Link>
@@ -114,7 +114,7 @@ export default function HomePage() {
                 Credits
               </Link>
             </nav>
-            <p>
+            <p className="text-[0.58rem]">
               © {new Date().getFullYear()} Mesozoica · KI-generierte Bilder &amp; Videos ·
               AI-generated media
             </p>

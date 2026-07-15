@@ -1,5 +1,31 @@
 # Current Project State
 
+# Session 2026-07-15 #5 (Codex) - mobile video scrub hardening + footer copy size
+
+- Diagnosed all three original chapter MP4s as poor random-access assets: each 8-second/24 fps
+  file had only one keyframe, and its `moov` metadata atom followed the media payload. Desktop
+  decoders hid the cost; paused seeking on real mobile hardware could stall or remain blank.
+- Added scrub-optimized H.264 variants under `public/videos`: `birds-scrub.mp4`,
+  `meteor-impact-scrub.mp4`, and `meteor-impact-portrait-scrub.mp4`. They use fast-start metadata,
+  16 evenly spaced keyframes (0.5-second GOP), no B-frames, yuv420p, and no audio. The original
+  MP4s remain untouched beside them for immediate rollback.
+- `ChapterVideo.tsx` now primes a visible mobile/desktop media decoder by briefly starting one
+  muted inline frame, pausing immediately, then applying the newest queued scroll seek. It handles
+  the `play()` promise, retains direct seeking as the fallback, and has a 250 ms safety cutoff for
+  power-constrained browsers. The logic is platform-neutral and covers iOS Safari and Android
+  Chrome behaviour.
+- `HomePage.tsx` points at the new scrub variants. Rollback is intentionally small: point the three
+  paths back to `birds.mp4`, `meteor-impact.mp4`, and `meteor-impact-portrait.mp4`; the priming code
+  can be reverted independently if needed.
+- The footer copyright/media-disclosure line is about 20% smaller (0.72 rem -> 0.58 rem) while the
+  legal navigation links retain their previous size.
+
+Verified: typecheck 0, tests 28/28, lint 0 errors (1 pre-existing warning), production build 0.
+Browser at 390x844 (iPhone-sized) and 412x915 (Android-sized): correct portrait assets selected,
+muted inline priming returns to paused state, forward/reverse scrubbing resolves, full 8-second
+files buffer, and no new console errors appear. Real-device Safari/Android verification remains the
+final hardware check.
+
 # Session 2026-07-15 #4 (Claude) — full-width footer, reliable frame scrub, sticky video copy
 
 - **Footer** is now a full-width bar (border-top, ink scrim, centred content) as the true LAST

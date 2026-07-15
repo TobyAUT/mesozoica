@@ -39,6 +39,16 @@ export function ChapterVideo({ chapterId, src, phoneSrc, holdLastFrame = false }
     const video = videoRef.current;
     if (!range || !video) return;
 
+    // Mobile Safari may ignore preload="auto" for a paused video, while Android browsers can
+    // likewise defer the decoder until playback starts. Once the video becomes visible, briefly
+    // play one muted inline frame and pause again before the first scroll-driven seek. This warms
+    // the native decoder without changing the visitor-controlled scrub behaviour.
+    let primed = false;
+    let priming = false;
+    let primeFrame: number | null = null;
+    let primeTimer: number | null = null;
+    let latestTarget = 0;
+
     // Frame-accurate scrubbing needs ONE in-flight seek at a time: firing currentTime on every
     // scroll event cancels the previous seek before the decoder ever presents a frame ("you see
     // nothing and then it's over"). Queue only the newest target and apply it on `seeked`.
@@ -57,6 +67,47 @@ export function ChapterVideo({ chapterId, src, phoneSrc, holdLastFrame = false }
       seekTo(t);
     };
 
+    const finishPriming = () => {
+      if (!priming) return;
+      priming = false;
+      primed = true;
+      if (primeTimer !== null) {
+        window.clearTimeout(primeTimer);
+        primeTimer = null;
+      }
+      if (primeFrame !== null && video.cancelVideoFrameCallback) {
+        video.cancelVideoFrameCallback(primeFrame);
+        primeFrame = null;
+      }
+      video.pause();
+      if (video.duration) seekTo(latestTarget);
+    };
+
+    const primeDecoder = () => {
+      if (primed || priming || failed.current) return;
+      priming = true;
+      video.muted = true;
+      if (video.networkState === HTMLMediaElement.NETWORK_EMPTY) video.load();
+
+      void video
+        .play()
+        .then(() => {
+          if (video.requestVideoFrameCallback) {
+            primeFrame = video.requestVideoFrameCallback(() => {
+              primeFrame = null;
+              finishPriming();
+            });
+          }
+          // Safety net for browsers that expose the frame callback but do not fire it reliably
+          // while the page is scrolling or power-constrained.
+          primeTimer = window.setTimeout(finishPriming, 250);
+        })
+        .catch(() => {
+          // Seeking remains a functional fallback if a browser rejects even muted inline play.
+          finishPriming();
+        });
+    };
+
     const update = () => {
       const span = range.end - range.start || 1;
       const local = clamp((scrollRef.progress - range.start) / span);
@@ -69,14 +120,16 @@ export function ChapterVideo({ chapterId, src, phoneSrc, holdLastFrame = false }
       video.style.opacity = String(fade);
       video.style.visibility = fade > 0.001 ? 'visible' : 'hidden';
 
-      if (fade > 0.001 && video.duration && !failed.current) {
-        // Stop just short of duration so the decoder reliably presents the LAST frame.
-        seekTo(
-          Math.min(
+      if (fade > 0.001 && !failed.current) {
+        if (video.duration) {
+          // Stop just short of duration so the decoder reliably presents the LAST frame.
+          latestTarget = Math.min(
             clamp((local - READ[0]) / (READ[1] - READ[0])) * video.duration,
             video.duration - 0.05,
-          ),
-        );
+          );
+        }
+        if (!primed) primeDecoder();
+        else if (video.duration) seekTo(latestTarget);
       }
     };
 
@@ -97,6 +150,11 @@ export function ChapterVideo({ chapterId, src, phoneSrc, holdLastFrame = false }
       video.removeEventListener('error', onError);
       video.removeEventListener('loadedmetadata', update);
       video.removeEventListener('seeked', onSeeked);
+      if (primeTimer !== null) window.clearTimeout(primeTimer);
+      if (primeFrame !== null && video.cancelVideoFrameCallback) {
+        video.cancelVideoFrameCallback(primeFrame);
+      }
+      video.pause();
     };
   }, [chapterId, holdLastFrame, source]);
 
