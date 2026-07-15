@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import { TimelineScene } from './TimelineScene';
 import { useDeviceQuality } from '@/hooks/useDeviceQuality';
 import { ErrorBoundary } from '@/components/system/ErrorBoundary';
+import { notifyUser } from '@/utils/notify';
 
 interface Props {
   reducedMotion: boolean;
@@ -70,6 +71,11 @@ export function ExperienceCanvas({ reducedMotion }: Props) {
         <ErrorBoundary
           label="WebGL canvas"
           fallback={<div className="absolute inset-0 bg-gradient-to-b from-ink-800 to-ink-900" />}
+          onError={() =>
+            notifyUser(
+              'The 3D view could not be started on this device, so the models are hidden. All text and facts still work.',
+            )
+          }
         >
           <Canvas
             shadows={false}

@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { ExperienceCanvas } from '@/experience/ExperienceCanvas';
 import { BackgroundTransition } from '@/components/experience/BackgroundTransition';
+import { ChapterVideo } from '@/components/experience/ChapterVideo';
 import { WaterlineTransition } from '@/components/experience/WaterlineTransition';
 import { ChapterSection } from '@/components/experience/ChapterSection';
 import { MainNavigation } from '@/components/navigation/MainNavigation';
@@ -48,6 +49,13 @@ export default function HomePage() {
 
       {/* Fixed visual layers */}
       <BackgroundTransition quality={quality} reducedMotion={reducedMotion} />
+      {/* Scroll-scrubbed chapter videos: meteor strike over Impact, birds over the finale. */}
+      <ChapterVideo
+        chapterId="extinction"
+        src="/videos/meteor-impact.mp4"
+        phoneSrc="/videos/meteor-impact-portrait.mp4"
+      />
+      <ChapterVideo chapterId="finale" src="/videos/birds.mp4" />
       <ExperienceCanvas reducedMotion={reducedMotion} />
       <WaterlineTransition quality={quality} reducedMotion={reducedMotion} />
 

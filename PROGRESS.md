@@ -1,5 +1,42 @@
 # Current Project State
 
+# Session 2026-07-15 #2 (Claude) — centred mobile headings, chapter videos, timeline gradient, error notices
+
+Verified locally: typecheck 0, tests 28/28, lint 0 errors (1 pre-existing warning), build 0, no
+console errors. Browser at 375x812: hero dead-centre on load (406/812), creature heading fills the
+first section viewport centred, portrait meteor video selected, water overlay absent; extinction
+video scrubs with scroll (t=2.14s @ 30% local, 6.05s @ 70%, fades at edges), finale video scrubs,
+finale background is the new imageless gradient. At 1280x800: hero centred, era-gradient scroll
+bar + 37 dots intact, notice banner renders. NOTE: the in-app pane fires neither `resize` nor
+matchMedia `change` on emulated resizes, so live phone↔desktop switching was validated by loading
+at each size instead (real browsers fire both). Autoscroll uses rAF (frozen in the pane) — logic
+untestable here, verify on a real device.
+
+- **Non-desktop headings centred**: creature heading block now fills the first 100svh of its
+  section, dead-centre + text-centred, then scrolls out before the model phase; the
+  right-of-panel arrangement exists only on lg+ ([ChapterSection.tsx](src/components/experience/ChapterSection.tsx)).
+- **Hero centred on load in every view**: prologue section is `items-start`, its inner block
+  centres in 100svh.
+- **Desktop scroll bar gradient**: one smooth Triassic-rust → Jurassic-gold → Cretaceous-teal →
+  extinction-red top-to-bottom gradient (`ERA_GRADIENT`), faint as the track, full-strength as the
+  progress fill (fixed-height inner layer clipped by a growing wrapper so colours stay in place);
+  per-chapter dots unchanged ([GeologicalTimeline.tsx](src/components/timeline/GeologicalTimeline.tsx)).
+- **Water effect removed on phones** (<768px only; tablet + desktop keep it) via new
+  [useMediaQuery](src/hooks/useMediaQuery.ts) gate in [WaterlineTransition.tsx](src/components/experience/WaterlineTransition.tsx).
+- **Scroll-scrubbed chapter videos**: new [ChapterVideo.tsx](src/components/experience/ChapterVideo.tsx)
+  maps chapter-local scroll linearly onto video time (reversible), with a slow AUTO-SCROLL that
+  advances the page at the video's natural pace while the visitor rests in the chapter — any
+  wheel/touch/pointer/key input cancels it until the chapter is re-entered. Impact uses
+  `public/videos/meteor-impact.mp4` (portrait `meteor-impact-portrait.mp4` on phones); the finale
+  uses `birds.mp4` and its background image was removed (new imageless `finale` backdrop in
+  [backgrounds.ts](src/data/backgrounds.ts), wired in [eras.ts](src/data/eras.ts)). Video sources
+  are user-supplied; licence/AI-origin not verified (if AI-generated, extend the AiImageMarker).
+- **Failure notices**: new [ErrorNotice.tsx](src/components/system/ErrorNotice.tsx) (mounted in
+  [App.tsx](src/app/App.tsx)) shows ONE dismissible banner for: missing WebGL, uncaught
+  errors/rejections, WebGL-canvas crash (ErrorBoundary `onError` → [notify.ts](src/utils/notify.ts)
+  `notifyUser`), failed chapter video (falls back to the still backdrop). index.html got a styled
+  bilingual `<noscript>` screen.
+
 # Session 2026-07-15 (Claude) — sequential mobile scroll + per-device model tuning
 
 Verified locally: typecheck 0, tests 28/28, lint 0 errors (1 pre-existing warning), production

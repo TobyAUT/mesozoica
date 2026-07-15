@@ -124,6 +124,18 @@ export const BACKGROUNDS: readonly BackgroundDef[] = [
     gradientOpacity: 0.2,
   },
 
+  {
+    // Finale ("The dinosaurs never left"): intentionally image-free — the birds video plays over
+    // this soft dawn-sky gradient, which also serves as the fallback if the video fails.
+    id: 'finale',
+    label: 'A soft dawn sky, brightening after the impact winter',
+    sky: '#2b3a44',
+    horizon: '#8fa8a0',
+    ground: '#141c1c',
+    fog: '#7b948d',
+    gradientOpacity: 0.2,
+  },
+
   // ── Underwater backdrops (AI-generated ocean images, light gaussian blur baked in) ──
   {
     id: 'devonian-ocean',

@@ -22,6 +22,11 @@ const ACCENT_ORDER = CHAPTER_RANGES.reduce<Record<string, string[]>>((acc, { cha
   (acc[chapter.accent] ??= []).push(chapter.id);
   return acc;
 }, {});
+// One smooth top→bottom gradient through the era palette (Triassic rust → Jurassic gold →
+// Cretaceous teal → extinction red) shared by the faint track and the vivid progress fill.
+const ERA_GRADIENT =
+  'linear-gradient(to bottom, #d4794a 0%, #cbab55 34%, #74c0ba 68%, #d97b48 100%)';
+
 function chapterDotColor(accent: string, id: string): string {
   const base = ACCENT_BASE[accent] ?? ACCENT_BASE.cretaceous;
   const family = ACCENT_ORDER[accent] ?? [id];
@@ -68,12 +73,20 @@ export function GeologicalTimeline() {
       className="pointer-events-auto fixed left-6 top-1/2 z-30 hidden -translate-y-1/2 lg:block"
     >
       <div className="relative flex flex-col gap-1" style={{ height: '66vh' }}>
-        <div className="absolute left-[7px] top-0 h-full w-[3px] rounded-full bg-white/25" />
+        {/* Faint full-height era gradient as the track… */}
+        <div
+          className="absolute left-[7px] top-0 h-full w-[3px] rounded-full opacity-30"
+          style={{ background: ERA_GRADIENT }}
+        />
+        {/* …and the same gradient at full strength revealed by scroll progress. The inner layer
+            is fixed at track height so the colours stay in place while the clip grows. */}
         <div
           ref={fillRef}
-          className="absolute left-[7px] top-0 w-[3px] rounded-full bg-gradient-to-b from-cretaceous via-jurassic to-extinction shadow-[0_0_12px_rgba(90,154,151,0.65)]"
+          className="absolute left-[7px] top-0 w-[3px] overflow-hidden rounded-full shadow-[0_0_12px_rgba(90,154,151,0.65)]"
           style={{ height: '0%' }}
-        />
+        >
+          <div className="w-full" style={{ height: '66vh', background: ERA_GRADIENT }} />
+        </div>
         <ul className="relative flex h-full flex-col justify-between">
           {CHAPTER_RANGES.map(({ chapter }) => {
             const creature = chapter.creatureId ? CREATURE_BY_ID[chapter.creatureId] : null;

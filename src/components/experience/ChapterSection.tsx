@@ -33,13 +33,20 @@ export function ChapterSection({ chapter }: { chapter: Chapter }) {
       // scroll room — uniform scaling keeps the weight-based chapter ranges accurate.
       className={cn(
         'relative flex w-full min-h-[calc(var(--section-h)*1.7)] lg:min-h-[var(--section-h)]',
-        isCreature ? 'items-start lg:items-center' : 'items-center',
+        // Prologue: content anchors to the FIRST viewport (inner block centres itself in 100svh)
+        // so the Mesozoica hero is dead-centre on load in every view, not mid-way down the
+        // taller mobile section.
+        chapter.kind === 'prologue'
+          ? 'items-start'
+          : isCreature
+            ? 'items-start lg:items-center'
+            : 'items-center',
       )}
       style={{ '--section-h': minH } as CSSProperties}
     >
       <div className="mx-auto w-full max-w-[1600px] px-6 lg:px-16">
         {chapter.kind === 'prologue' && (
-          <div className="relative flex min-h-[90svh] flex-col items-center justify-center text-center">
+          <div className="relative flex min-h-[100svh] flex-col items-center justify-center text-center">
             <motion.div {...reveal}>
               <div className="type-eyebrow mb-5 text-cretaceous">{chapter.subtitle}</div>
               <h1 className="type-display mb-6 heading-hero">Mesozoica</h1>
@@ -78,18 +85,20 @@ export function ChapterSection({ chapter }: { chapter: Chapter }) {
           // (a small, constant gap), so it never overlaps the panel or drifts on wide screens.
           <div
             className={cn(
-              'lg:absolute lg:left-[43rem] lg:top-1/2 lg:-translate-y-1/2 xl:left-[45rem] 2xl:left-[48rem]',
-              // Phone/tablet sequence: this heading block sits at the TOP of the (taller) section
-              // and scrolls out of the page first; the fullscreen model, then the centred info
-              // card, take over as later scroll phases (MOBILE_PHASES in utils/timeline).
-              creature.enabled && creature.modelPath && 'mt-24 lg:mt-0',
+              // Phone/tablet sequence: the heading block fills the FIRST viewport of the (taller)
+              // section, dead-centre on screen, then scrolls out of the page before the
+              // fullscreen model and the info card take over as later scroll phases
+              // (MOBILE_PHASES in utils/timeline). It is never composed beside the info panel —
+              // that arrangement exists only on lg+ (absolute, right of the facts panel).
+              'flex min-h-[100svh] w-full flex-col items-center justify-center text-center',
+              'lg:absolute lg:left-[43rem] lg:top-1/2 lg:block lg:min-h-0 lg:w-auto lg:-translate-y-1/2 lg:text-left xl:left-[45rem] 2xl:left-[48rem]',
             )}
           >
             <motion.div
               {...reveal}
               className="max-w-xl sm:max-w-md lg:max-w-[17rem] xl:max-w-[19rem] 2xl:max-w-sm"
             >
-              <div className="mb-3 flex items-center gap-3">
+              <div className="mb-3 flex items-center justify-center gap-3 lg:justify-start">
                 <span className="type-eyebrow text-[0.68rem] text-cretaceous">{chapter.title}</span>
               </div>
               <h2 className="type-title mb-3 heading-hero">{creature.displayName}</h2>

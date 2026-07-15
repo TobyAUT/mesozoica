@@ -6,6 +6,8 @@ interface Props {
   fallback?: ReactNode;
   /** Dev label for the console warning. */
   label?: string;
+  /** Called once when the boundary trips — e.g. to surface a user-facing notice. */
+  onError?: () => void;
 }
 interface State {
   hasError: boolean;
@@ -27,6 +29,7 @@ export class ErrorBoundary extends Component<Props, State> {
       // eslint-disable-next-line no-console
       console.warn(`[Mesozoica] ${this.props.label ?? 'component'} failed:`, error);
     }
+    this.props.onError?.();
   }
 
   render() {

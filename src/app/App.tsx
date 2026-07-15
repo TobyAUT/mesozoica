@@ -1,6 +1,7 @@
 import { Suspense, lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { RouteFallback } from '@/components/system/RouteFallback';
+import { ErrorNotice } from '@/components/system/ErrorNotice';
 
 // Code-split secondary pages; the immersive home experience is the primary bundle.
 const HomePage = lazy(() => import('@/pages/HomePage'));
@@ -13,6 +14,7 @@ const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'));
 export default function App() {
   return (
     <Suspense fallback={<RouteFallback />}>
+      <ErrorNotice />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/timeline" element={<HomePage />} />

@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { SCROLL_PROGRESS_EVENT, scrollRef } from '@/store/scrollRef';
 import { submersionAt, HAS_AQUATIC } from '@/utils/water';
 import type { ResolvedQuality } from '@/hooks/useDeviceQuality';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 /**
  * WATER TRANSITION — a self-contained fullscreen GLSL overlay in its own tiny Three.js renderer,
@@ -115,9 +116,12 @@ interface Props {
 
 export function WaterlineTransition({ quality, reducedMotion }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  // Phones (<768px) skip the water effect entirely — no overlay, no CSS grade, no extra renderer.
+  // Tablet and desktop keep it.
+  const isPhone = useMediaQuery('(max-width: 767px)');
 
   useEffect(() => {
-    if (!HAS_AQUATIC) return; // nothing aquatic in the timeline → don't spin up a renderer
+    if (!HAS_AQUATIC || isPhone) return; // nothing aquatic / phone view → don't spin up a renderer
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -214,9 +218,9 @@ export function WaterlineTransition({ quality, reducedMotion }: Props) {
       material.dispose();
       renderer.dispose();
     };
-  }, [quality.tier, reducedMotion]);
+  }, [quality.tier, reducedMotion, isPhone]);
 
-  if (!HAS_AQUATIC) return null;
+  if (!HAS_AQUATIC || isPhone) return null;
   return (
     <canvas
       ref={canvasRef}

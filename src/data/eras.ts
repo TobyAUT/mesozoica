@@ -476,7 +476,7 @@ export const CHAPTERS: readonly Chapter[] = [
     subtitle: 'Birds are living dinosaurs',
     mya: 66,
     accent: 'cretaceous',
-    backgroundId: 'prologue',
+    backgroundId: 'finale',
     weight: 1.1,
   },
 ];
