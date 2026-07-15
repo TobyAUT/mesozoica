@@ -1,9 +1,9 @@
 # Project Map
 
-Last updated: 2026-07-14 00:07 +02:00  
+Last updated: 2026-07-15
 Current branch: `main`
 
-Mesozoica is a Vite + React + TypeScript interactive prehistoric timeline. It combines DOM scroll chapters, GSAP/Lenis scroll orchestration, Zustand state, React Three Fiber, local GLB models, and WebP backgrounds to move from Devonian pre-dinosaur seas through the end-Cretaceous extinction.
+Mesozoica is a Vite + React + TypeScript interactive prehistoric timeline. It combines DOM scroll chapters, Lenis/native scroll orchestration, Zustand state, React Three Fiber, local GLB models, and WebP backgrounds to move from Devonian pre-dinosaur seas through the end-Cretaceous extinction.
 
 Current implementation status: The main timeline route is implemented at `/` and `/timeline`, with secondary pages for creatures, about, methodology, and credits. Chapter order is data-driven from [src/data/eras.ts](../src/data/eras.ts), creature/model behavior from [src/data/creatures.ts](../src/data/creatures.ts), and backgrounds from [src/data/backgrounds.ts](../src/data/backgrounds.ts). The active creature manifest contains only model-backed GLB entries in [public/models](../public/models). The last recorded verification in [PROGRESS.md](../PROGRESS.md) shows lint, typecheck, tests, and production build status.
 
@@ -150,7 +150,7 @@ Treat these manifests as the source of truth for timeline, model, background, an
 | System | Files |
 |---|---|
 | Scroll driver | [src/hooks/useScrollController.ts](../src/hooks/useScrollController.ts), [src/utils/timeline.ts](../src/utils/timeline.ts) |
-| Lenis + GSAP ScrollTrigger | [src/hooks/useScrollController.ts](../src/hooks/useScrollController.ts), [src/styles/globals.css](../src/styles/globals.css) |
+| Lenis + native low-power scrolling | [src/hooks/useScrollController.ts](../src/hooks/useScrollController.ts), [src/styles/globals.css](../src/styles/globals.css) |
 | Timeline UI | [src/components/timeline/GeologicalTimeline.tsx](../src/components/timeline/GeologicalTimeline.tsx), [src/components/timeline/YearCounter.tsx](../src/components/timeline/YearCounter.tsx) |
 | Chapter DOM sections | [src/components/experience/ChapterSection.tsx](../src/components/experience/ChapterSection.tsx), [src/components/experience/ScrollHint.tsx](../src/components/experience/ScrollHint.tsx) |
 | Background transitions | [src/components/experience/BackgroundTransition.tsx](../src/components/experience/BackgroundTransition.tsx), [src/data/backgrounds.ts](../src/data/backgrounds.ts) |
@@ -223,7 +223,7 @@ Configuration files:
 - Creature ID: `tyrannosaurus-rex`, `plesiosaurus`, `quetzalcoatlus`, `mosasaurus`.
 - Background ID: `latest-cretaceous`, `devonian-ocean`, `late-cretaceous-ocean`.
 - Timeline/chapter math: `CHAPTERS`, `CHAPTER_RANGES`, `progressForChapterId`, `myaAtProgress`.
-- Scroll system: `ScrollTrigger`, `Lenis`, `scrollRef`, `setActive`.
+- Scroll system: `Lenis`, `SCROLL_PROGRESS_EVENT`, `scrollRef`, `setActive`.
 - Model system: `assetFormat`, `animationMode`, `useGLTF`, `NON_GLTF_LOADER`, `normaliseModel`.
 - Water system: `submersionAt`, `HAS_AQUATIC`, `WaterlineTransition`.
 - Scientific mode: `scientificStatus`, `hideInScientificMode`, `ScientificModeToggle`.

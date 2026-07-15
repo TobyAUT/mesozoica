@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
-import { scrollRef } from '@/store/scrollRef';
+import { SCROLL_PROGRESS_EVENT, scrollRef } from '@/store/scrollRef';
 import { submersionAt, HAS_AQUATIC } from '@/utils/water';
 import type { ResolvedQuality } from '@/hooks/useDeviceQuality';
 
@@ -121,14 +121,36 @@ export function WaterlineTransition({ quality, reducedMotion }: Props) {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    // Low tier: preserve the rising-water transition with a CSS grade, but avoid a second WebGL
+    // context, fullscreen shader, high-frequency bubble noise and another permanent render loop.
+    if (quality.tier === 'low') {
+      canvas.style.background =
+        'linear-gradient(to bottom, rgba(45,132,139,0.5), rgba(8,55,66,0.92))';
+      canvas.style.transition = reducedMotion
+        ? 'none'
+        : 'opacity 180ms ease-out, clip-path 180ms linear';
+      const update = () => {
+        const progress = submersionAt(scrollRef.progress);
+        canvas.style.opacity = progress > 0.002 ? '1' : '0';
+        canvas.style.clipPath = `inset(${Math.max(0, (1 - progress) * 100)}% 0 0 0)`;
+      };
+      update();
+      window.addEventListener(SCROLL_PROGRESS_EVENT, update);
+      return () => window.removeEventListener(SCROLL_PROGRESS_EVENT, update);
+    }
+
+    // Clear inline fallback styles when switching from Low back to Balanced/High.
+    canvas.style.background = 'none';
+    canvas.style.clipPath = 'none';
+    canvas.style.transition = '';
+
     let renderer: THREE.WebGLRenderer;
     try {
       renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false });
     } catch {
       return; // no WebGL → the site still works, just without the water overlay
     }
-    const maxDpr = quality.tier === 'low' ? 1 : 1.5;
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, maxDpr));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
 
     const scene = new THREE.Scene();
     const camera = new THREE.Camera();
@@ -165,6 +187,7 @@ export function WaterlineTransition({ quality, reducedMotion }: Props) {
     let visibleProgress = 0;
     const start = performance.now();
     const loop = () => {
+      raf = 0;
       const target = submersionAt(scrollRef.progress);
       // Damp toward target so the surface eases rather than snaps.
       visibleProgress += (target - visibleProgress) * (reducedMotion ? 1 : 0.12);
@@ -173,12 +196,19 @@ export function WaterlineTransition({ quality, reducedMotion }: Props) {
       // Skip the draw entirely when dry — no cost outside aquatic chapters.
       canvas.style.opacity = visibleProgress > 0.002 ? '1' : '0';
       if (visibleProgress > 0.002) renderer.render(scene, camera);
-      raf = requestAnimationFrame(loop);
+      // Stay animated while water is visible. When dry, sleep completely until the next scroll
+      // event wakes the effect instead of polling for the entire terrestrial timeline.
+      if (target > 0.002 || visibleProgress > 0.002) raf = requestAnimationFrame(loop);
     };
-    raf = requestAnimationFrame(loop);
+    const ensureLoop = () => {
+      if (!raf) raf = requestAnimationFrame(loop);
+    };
+    ensureLoop();
+    window.addEventListener(SCROLL_PROGRESS_EVENT, ensureLoop);
 
     return () => {
       cancelAnimationFrame(raf);
+      window.removeEventListener(SCROLL_PROGRESS_EVENT, ensureLoop);
       window.removeEventListener('resize', resize);
       quad.geometry.dispose();
       material.dispose();

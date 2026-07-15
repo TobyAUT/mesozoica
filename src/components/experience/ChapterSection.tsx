@@ -12,13 +12,6 @@ const reveal = {
   transition: { duration: 0.9, ease: [0.16, 1, 0.3, 1] as const },
 };
 
-const ACCENT_TEXT: Record<string, string> = {
-  triassic: 'text-triassic',
-  jurassic: 'text-jurassic',
-  cretaceous: 'text-cretaceous',
-  extinction: 'text-extinction',
-};
-
 /**
  * One DOM section per narrative chapter. These create the scroll length; the fixed canvas and
  * info-panel overlay react to the active chapter. Text stays in the DOM for accessibility.
@@ -56,18 +49,16 @@ export function ChapterSection({ chapter }: { chapter: Chapter }) {
         )}
 
         {chapter.kind === 'era-intro' && era && (
-          <motion.div {...reveal} className="max-w-2xl">
-            <div className={cn('type-eyebrow mb-4', ACCENT_TEXT[chapter.accent])}>{era.epoch}</div>
+          <motion.div {...reveal} className="mx-auto max-w-2xl text-center">
+            <div className="type-eyebrow mb-4 text-cretaceous">{era.epoch}</div>
             <h2 className="type-display mb-6 heading-hero">The {era.label}</h2>
             <p className="text-lg leading-relaxed text-bone/75">{era.intro}</p>
           </motion.div>
         )}
 
         {chapter.kind === 'time-slice' && (
-          <motion.div {...reveal} className="max-w-2xl">
-            <div className={cn('type-eyebrow mb-4', ACCENT_TEXT[chapter.accent])}>
-              {chapter.subtitle}
-            </div>
+          <motion.div {...reveal} className="mx-auto max-w-2xl text-center">
+            <div className="type-eyebrow mb-4 text-cretaceous">{chapter.subtitle}</div>
             <h2 className="type-display mb-6 heading-hero">{chapter.title}</h2>
             <p className="text-lg leading-relaxed text-bone/75">
               {chapter.blurb ??
@@ -92,7 +83,7 @@ export function ChapterSection({ chapter }: { chapter: Chapter }) {
               className="max-w-xl sm:max-w-md lg:max-w-[17rem] xl:max-w-[19rem] 2xl:max-w-sm"
             >
               <div className="mb-3 flex items-center gap-3">
-                <span className="type-eyebrow text-[0.68rem] text-muted">{chapter.title}</span>
+                <span className="type-eyebrow text-[0.68rem] text-cretaceous">{chapter.title}</span>
               </div>
               <h2 className="type-title mb-3 heading-hero">{creature.displayName}</h2>
               <p className="max-w-lg text-[1.05rem] leading-relaxed text-bone/80">

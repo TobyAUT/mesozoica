@@ -17,7 +17,20 @@ function detectTier(): 'high' | 'balanced' | 'low' {
   const mobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
   const cores = navigator.hardwareConcurrency ?? 4;
   const mem = (navigator as unknown as { deviceMemory?: number }).deviceMemory ?? 4;
-  if (mobile || cores <= 4 || mem <= 4) return mobile && (cores <= 4 || mem <= 3) ? 'low' : 'balanced';
+  const connection = (
+    navigator as unknown as {
+      connection?: { saveData?: boolean; effectiveType?: string };
+    }
+  ).connection;
+  const constrainedNetwork =
+    connection?.saveData === true ||
+    connection?.effectiveType === 'slow-2g' ||
+    connection?.effectiveType === '2g';
+
+  if (constrainedNetwork || cores <= 2 || mem <= 2) return 'low';
+  if (mobile && (cores <= 4 || mem <= 4)) return 'low';
+  if (!mobile && cores <= 4 && mem <= 4) return 'low';
+  if (mobile || cores < 8 || mem < 8) return 'balanced';
   if (cores >= 8 && mem >= 8) return 'high';
   return 'balanced';
 }
@@ -27,9 +40,15 @@ function isMobileDevice(): boolean {
 }
 
 const PRESETS: Record<'high' | 'balanced' | 'low', Omit<ResolvedQuality, 'isMobile'>> = {
-  high: { tier: 'high', dpr: [1, 2], shadows: true, postprocessing: true, particles: 380 },
-  balanced: { tier: 'balanced', dpr: [1, 1.5], shadows: true, postprocessing: true, particles: 210 },
-  low: { tier: 'low', dpr: [0.75, 1], shadows: false, postprocessing: false, particles: 80 },
+  high: { tier: 'high', dpr: [1, 1.75], shadows: true, postprocessing: true, particles: 280 },
+  balanced: {
+    tier: 'balanced',
+    dpr: [0.85, 1.25],
+    shadows: false,
+    postprocessing: false,
+    particles: 100,
+  },
+  low: { tier: 'low', dpr: [0.65, 0.9], shadows: false, postprocessing: false, particles: 0 },
 };
 
 /** Resolves the user's quality choice ('auto' → detected tier) into concrete render settings. */

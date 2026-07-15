@@ -25,7 +25,8 @@ import { CHAPTERS } from '@/data/eras';
 export default function HomePage() {
   const reducedMotion = useReducedMotionSync();
   const quality = useDeviceQuality();
-  useScrollController(reducedMotion);
+  const lowPower = quality.tier === 'low';
+  useScrollController(reducedMotion, lowPower);
   const location = useLocation();
   const creature = useActiveCreature();
   const exploreMode = useExperience((s) => s.exploreMode);
@@ -41,12 +42,12 @@ export default function HomePage() {
   const showPanel = !!creature && creature.enabled && !!creature.modelPath && !exploreMode;
 
   return (
-    <div className="grain vignette relative">
+    <div className={`grain vignette relative ${lowPower ? 'performance-low' : ''}`}>
       <Preloader />
-      <CustomCursor />
+      {!lowPower && <CustomCursor />}
 
       {/* Fixed visual layers */}
-      <BackgroundTransition />
+      <BackgroundTransition quality={quality} reducedMotion={reducedMotion} />
       <ExperienceCanvas reducedMotion={reducedMotion} />
       <WaterlineTransition quality={quality} reducedMotion={reducedMotion} />
 

@@ -27,6 +27,9 @@ export function TimelineScene({ quality, reducedMotion }: Props) {
 
   // Preload the next enabled creature's model so it's ready before its section arrives.
   useEffect(() => {
+    // Low-power/save-data devices load only the active model, preventing large GLBs from consuming
+    // bandwidth and memory before the visitor actually reaches them.
+    if (quality.tier === 'low') return;
     const idx = CHAPTERS.findIndex((c) => c.id === chapter.id);
     for (let i = idx + 1; i < CHAPTERS.length; i++) {
       const next = CHAPTERS[i];
@@ -37,7 +40,7 @@ export function TimelineScene({ quality, reducedMotion }: Props) {
         break;
       }
     }
-  }, [chapter.id]);
+  }, [chapter.id, quality.tier]);
 
   const showModel = creature?.enabled && !!creature.modelPath;
   const particleColor = useMemo(() => backgroundOrFallback(backgroundId).horizon, [backgroundId]);

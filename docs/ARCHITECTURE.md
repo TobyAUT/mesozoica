@@ -1,6 +1,6 @@
 # High-Level Architecture
 
-Last updated: 2026-07-14 00:07 +02:00
+Last updated: 2026-07-15
 
 ```mermaid
 flowchart TD
@@ -8,7 +8,7 @@ flowchart TD
   Router["React Router"]
   TimelinePage["HomePage timeline"]
   DOMSections["DOM scroll sections"]
-  ScrollController["useScrollController: Lenis + GSAP ScrollTrigger"]
+  ScrollController["useScrollController: Lenis / native low-power path"]
   Store["Zustand experienceStore"]
   ScrollRef["scrollRef"]
   Canvas["ExperienceCanvas / R3F Canvas"]
@@ -55,9 +55,17 @@ flowchart TD
 
 # Scroll Architecture
 
-[src/hooks/useScrollController.ts](../src/hooks/useScrollController.ts) owns Lenis and GSAP ScrollTrigger registration. Lenis provides smooth scrolling unless reduced motion is enabled. ScrollTrigger is synchronized on Lenis scroll events. Continuous progress is kept out of React state by writing to `scrollRef`; only discrete chapter/creature changes enter Zustand through `setActive`.
+[src/hooks/useScrollController.ts](../src/hooks/useScrollController.ts) owns scrolling. Capable devices use Lenis with one shared animation frame for smoothing and camera damping. Low-power and reduced-motion modes use passive native scroll events without a permanent smoothing loop. Continuous progress stays outside React state in `scrollRef`; DOM counters/panels subscribe to a lightweight progress event, while only discrete chapter/creature changes enter Zustand through `setActive`.
 
 Programmatic jumps use `scrollToChapter`, which maps a chapter ID to global progress through [src/utils/timeline.ts](../src/utils/timeline.ts), then scrolls with Lenis when available.
+
+# Low-Power Strategy
+
+- Auto quality also considers CPU cores, device memory, Save-Data and slow network hints.
+- Balanced disables postprocessing and reduces DPR/particles; Low disables particles, grain,
+  backdrop filtering, continuous background motion and the custom cursor.
+- Low uses a CSS water grade instead of a second WebGL renderer and does not preload the next GLB.
+- A runtime performance decline permanently lowers DPR, particles and postprocessing for the visit.
 
 # Three.js Architecture
 

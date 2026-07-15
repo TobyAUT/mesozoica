@@ -3,7 +3,7 @@ import { MapPin, Ruler, Utensils, Clock, ExternalLink, Box, Info, Volume2 } from
 import { useExperience } from '@/store/experienceStore';
 import type { Creature } from '@/data/types';
 import { formatMya, resolveChapter, creatureFade } from '@/utils/timeline';
-import { scrollRef } from '@/store/scrollRef';
+import { SCROLL_PROGRESS_EVENT, scrollRef } from '@/store/scrollRef';
 
 const DIET_LABEL: Record<string, string> = {
   carnivore: 'Carnivore',
@@ -18,7 +18,7 @@ function Row({ icon, label, value }: { icon: React.ReactNode; label: string; val
     <div className="flex items-start gap-2.5">
       <span className="mt-0.5 text-cretaceous/80">{icon}</span>
       <div>
-        <div className="type-eyebrow text-[0.66rem] text-muted lg:text-[0.8rem]">{label}</div>
+        <div className="type-eyebrow text-[0.66rem] text-cretaceous lg:text-[0.8rem]">{label}</div>
         <div className="text-[0.95rem] text-bone/90 lg:text-lg">{value}</div>
       </div>
     </div>
@@ -39,8 +39,7 @@ export function CreatureInfoPanel({ creature }: { creature: Creature }) {
   // window and its model fade in and out together — and the window is gone before the next heading
   // scrolls in. Per-frame via rAF, kept out of React state to avoid re-render churn.
   useEffect(() => {
-    let frame = 0;
-    const tick = () => {
+    const update = () => {
       const el = rootRef.current;
       if (el) {
         const { local } = resolveChapter(scrollRef.progress);
@@ -48,10 +47,10 @@ export function CreatureInfoPanel({ creature }: { creature: Creature }) {
         el.style.opacity = String(f);
         el.style.transform = `translateY(${(1 - f) * 10}px)`;
       }
-      frame = requestAnimationFrame(tick);
     };
-    frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
+    update();
+    window.addEventListener(SCROLL_PROGRESS_EVENT, update);
+    return () => window.removeEventListener(SCROLL_PROGRESS_EVENT, update);
   }, []);
   const timeRange =
     creature.approximateTimeStartMya != null && creature.approximateTimeEndMya != null
@@ -95,7 +94,7 @@ export function CreatureInfoPanel({ creature }: { creature: Creature }) {
         />
       )}
       <div className="mb-3 flex items-center gap-3">
-        <span className="type-eyebrow text-[0.6rem] text-muted lg:text-[0.72rem]">
+        <span className="type-eyebrow text-[0.6rem] text-cretaceous lg:text-[0.72rem]">
           {creature.period}
         </span>
       </div>
@@ -106,7 +105,7 @@ export function CreatureInfoPanel({ creature }: { creature: Creature }) {
         {creature.displayName}
       </h2>
       {creature.scientificName && (
-        <p className="mb-4 font-serif text-[0.95rem] italic text-muted lg:text-lg">
+        <p className="mb-4 font-grotesk text-[0.95rem] font-medium italic text-cretaceous lg:text-lg">
           {creature.scientificName}
         </p>
       )}

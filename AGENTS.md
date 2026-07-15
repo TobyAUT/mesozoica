@@ -2,7 +2,7 @@
 
 Last updated: 2026-07-13 20:31 +02:00
 
-Mesozoica is an interactive prehistoric timeline website. It uses React, Vite, TypeScript, GSAP/Lenis scrolling, Zustand state, and React Three Fiber to present fixed 3D creature scenes while the user scrolls from pre-dinosaur Devonian seas toward the end-Cretaceous extinction.
+Mesozoica is an interactive prehistoric timeline website. It uses React, Vite, TypeScript, Lenis/native scrolling, Zustand state, and React Three Fiber to present fixed 3D creature scenes while the user scrolls from pre-dinosaur Devonian seas toward the end-Cretaceous extinction.
 
 # Read First
 

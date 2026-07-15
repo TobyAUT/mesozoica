@@ -1,6 +1,46 @@
 # Current Project State
 
-Last updated: 2026-07-15 (Claude session 3 — fonts, legibility, LIVE gh-pages deploy fixed)
+Last updated: 2026-07-15 (Codex — low-end performance, typography, cumulative timeline dots)
+
+# Session 2026-07-15 (Codex) — lower-end device optimization
+
+Verified locally: typecheck 0, tests 22/22, lint 0 errors (1 pre-existing warning), production
+build 0, and browser checks in forced Low and High quality with no console errors. The HomePage
+bundle dropped from 1,241.02 kB / 355.31 kB gzip to 1,126.51 kB / 309.86 kB gzip by removing the
+unused GSAP runtime path and driving Lenis directly.
+
+- Auto detection now accounts for cores, device memory, Save-Data and slow connections.
+- Balanced disables postprocessing and reduces DPR/particles. Low disables particles, grain,
+  backdrop filters, continuous background motion, custom cursor and next-model GLB preloading.
+- Low uses passive native scrolling and a CSS water grade instead of permanent smoothing plus a
+  second fullscreen WebGL renderer. The high-quality shader remains for capable devices and sleeps
+  completely while the page is dry.
+- Timeline dots, year counter, mobile progress and creature-panel opacity now update only on actual
+  scroll changes instead of running four independent permanent animation loops.
+- Runtime performance decline now lowers DPR and particles in addition to disabling postprocessing.
+- Removed the now-unused `gsap` dependency and updated architecture/project documentation.
+
+# Session 2026-07-15 (Codex) — typography + timeline progress
+
+Verified: typecheck 0, tests 22/22, lint 0 errors (1 pre-existing warning), production build 0.
+Desktop browser checks at 1440x900 confirmed 37 unique timeline colours, 26 filled dots at the
+Argentinosaurus chapter, all 37 filled at the finale, centred period content, the expected local
+font, and no console errors.
+
+- **Modern main headings**: all semantic h1/h2 and `.type-display`/`.type-title` headings now use
+  the locally bundled OFL-licensed Space Grotesk variable font with a stronger editorial weight
+  and tighter display spacing ([globals.css](src/styles/globals.css)).
+- **More legible subheadings**: eyebrow labels use a heavier weight and less extreme letter spacing.
+  Period captions and creature chapter captions now use the established Cretaceous teal. In the
+  creature card this also applies to the period, scientific name, and When/Where/Diet/Length labels
+  ([ChapterSection.tsx](src/components/experience/ChapterSection.tsx),
+  [CreatureInfoPanel.tsx](src/components/creature/CreatureInfoPanel.tsx)).
+- **Centred period sections**: era-intro and time-slice headings, captions, and copy are centred as
+  one block on every viewport ([ChapterSection.tsx](src/components/experience/ChapterSection.tsx)).
+- **Cumulative timeline completion**: the current dot remains filled as before; once a chapter is
+  completed, its dot retains its own unique colour. At the end of the page all 37 dots are filled.
+  The existing per-dot colour generation was preserved unchanged
+  ([GeologicalTimeline.tsx](src/components/timeline/GeologicalTimeline.tsx)).
 
 # Session 2026-07-15 #3 (Claude) — typography + deploy
 

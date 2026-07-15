@@ -25,7 +25,7 @@ export default function AboutPage() {
         <div>
           <h2 className="type-title mb-3 text-2xl text-bone">Built with</h2>
           <p className="text-sm">
-            React, Three.js, React Three Fiber &amp; drei, postprocessing, GSAP + Lenis for scroll,
+            React, Three.js, React Three Fiber &amp; drei, postprocessing, Lenis for scroll,
             Motion for interface motion, Zustand, Zod, and Tailwind CSS.
           </p>
         </div>

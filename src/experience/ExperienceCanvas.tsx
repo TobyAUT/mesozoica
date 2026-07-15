@@ -1,6 +1,6 @@
 import { Canvas, useThree } from '@react-three/fiber';
 import { AdaptiveDpr, PerformanceMonitor } from '@react-three/drei';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import * as THREE from 'three';
 import { TimelineScene } from './TimelineScene';
 import { useDeviceQuality } from '@/hooks/useDeviceQuality';
@@ -45,6 +45,18 @@ function ManualResize() {
 export function ExperienceCanvas({ reducedMotion }: Props) {
   const quality = useDeviceQuality();
   const [degraded, setDegraded] = useState(false);
+  const runtimeQuality = useMemo(
+    () =>
+      degraded
+        ? {
+            ...quality,
+            dpr: [Math.min(quality.dpr[0], 0.75), Math.min(quality.dpr[1], 1)] as [number, number],
+            postprocessing: false,
+            particles: Math.min(quality.particles, 60),
+          }
+        : quality,
+    [degraded, quality],
+  );
 
   return (
     // On mobile the canvas is inset above the bottom info card so the model is never hidden
@@ -61,13 +73,13 @@ export function ExperienceCanvas({ reducedMotion }: Props) {
         >
           <Canvas
             shadows={false}
-            dpr={quality.dpr}
+            dpr={runtimeQuality.dpr}
             // Measure via offsetWidth/Height (layout-based) so a position:fixed ancestor can't
             // leave the canvas stuck at its default 300x150 when ResizeObserver doesn't fire.
             resize={{ offsetSize: true }}
             gl={{
-              antialias: quality.tier !== 'low',
-              powerPreference: 'high-performance',
+              antialias: runtimeQuality.tier !== 'low',
+              powerPreference: runtimeQuality.tier === 'low' ? 'low-power' : 'high-performance',
               toneMapping: THREE.NeutralToneMapping,
             }}
             style={{ touchAction: 'pan-y' }}
@@ -78,7 +90,7 @@ export function ExperienceCanvas({ reducedMotion }: Props) {
             <PerformanceMonitor onDecline={() => setDegraded(true)} />
             <AdaptiveDpr pixelated />
             <TimelineScene
-              quality={{ ...quality, postprocessing: quality.postprocessing && !degraded }}
+              quality={runtimeQuality}
               reducedMotion={reducedMotion}
             />
           </Canvas>

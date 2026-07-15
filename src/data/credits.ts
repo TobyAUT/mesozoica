@@ -95,7 +95,7 @@ export const ASSET_CREDITS: AssetCredit[] = [
     category: 'Library',
     name: 'Open-source stack',
     detail:
-      'React, Three.js, @react-three/fiber & drei, @react-three/postprocessing, GSAP (free features only), Lenis, Motion, Zustand, Zod, Tailwind CSS, React Router, Lucide.',
+      'React, Three.js, @react-three/fiber & drei, @react-three/postprocessing, Lenis, Motion, Zustand, Zod, Tailwind CSS, React Router, Lucide.',
     resolved: true,
   },
 ];

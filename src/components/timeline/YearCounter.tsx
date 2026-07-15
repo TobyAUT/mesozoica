@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { scrollRef } from '@/store/scrollRef';
+import { SCROLL_PROGRESS_EVENT, scrollRef } from '@/store/scrollRef';
 import { myaAtProgress, formatMya } from '@/utils/timeline';
 import { cn } from '@/utils/cn';
 
@@ -11,18 +11,17 @@ export function YearCounter({ className, compact = false }: { className?: string
   const numRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    let frame = 0;
     let last = '';
-    const tick = () => {
+    const update = () => {
       const value = formatMya(myaAtProgress(scrollRef.progress));
       if (value !== last && numRef.current) {
         numRef.current.textContent = value;
         last = value;
       }
-      frame = requestAnimationFrame(tick);
     };
-    frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
+    update();
+    window.addEventListener(SCROLL_PROGRESS_EVENT, update);
+    return () => window.removeEventListener(SCROLL_PROGRESS_EVENT, update);
   }, []);
 
   return (

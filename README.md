@@ -4,7 +4,7 @@ A cinematic, scientifically-honest interactive journey through the Mesozoic era 
 WebGL scene that transforms as you scroll through 186 million years of deep time.
 
 Built with React + Vite + TypeScript (strict), Three.js via React Three Fiber & drei,
-@react-three/postprocessing, GSAP + Lenis (scroll), Motion (UI), Zustand, Zod, and Tailwind CSS.
+@react-three/postprocessing, Lenis (scroll), Motion (UI), Zustand, Zod, and Tailwind CSS.
 
 ## Run it
 
@@ -23,9 +23,9 @@ npm run lint       # ESLint
   validated by Zod at load. Add a creature (or enable a pending one) by editing that file — the
   timeline, navigation, panels, credits, and creature explorer all update automatically.
 - **The narrative order** lives in `src/data/eras.ts` (`CHAPTERS`). It composes the scroll.
-- **Scroll**: Lenis smooth-scroll + GSAP ScrollTrigger. Per-frame scroll progress lives in a plain
-  ref (`src/store/scrollRef.ts`), never React state, so the render loop never triggers re-renders.
-  Only discrete chapter changes are pushed into the Zustand store.
+- **Scroll**: Lenis smooth-scroll on capable devices and passive native scrolling in low-power or
+  reduced-motion mode. Progress lives in a plain ref (`src/store/scrollRef.ts`), never React state;
+  DOM read-outs update only on scroll events. Only discrete chapter changes enter the Zustand store.
 - **Backgrounds**: each era is a tuned CSS gradient (`src/data/backgrounds.ts`) that also serves as
   the low-power fallback. The one supplied photo backs the prologue & extinction.
 

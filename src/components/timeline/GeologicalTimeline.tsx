@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { CHAPTERS } from '@/data/eras';
 import { CREATURE_BY_ID } from '@/data/creatures';
 import { CHAPTER_RANGES } from '@/utils/timeline';
-import { scrollRef } from '@/store/scrollRef';
+import { SCROLL_PROGRESS_EVENT, scrollRef } from '@/store/scrollRef';
 import { useExperience } from '@/store/experienceStore';
 import { scrollToChapter } from '@/hooks/useScrollController';
 import { cn } from '@/utils/cn';
@@ -38,16 +38,28 @@ function chapterDotColor(accent: string, id: string): string {
  */
 export function GeologicalTimeline() {
   const fillRef = useRef<HTMLDivElement>(null);
+  const dotRefs = useRef(new Map<string, HTMLSpanElement>());
   const activeId = useExperience((s) => s.activeChapterId);
 
   useEffect(() => {
-    let frame = 0;
-    const tick = () => {
-      if (fillRef.current) fillRef.current.style.height = `${scrollRef.progress * 100}%`;
-      frame = requestAnimationFrame(tick);
+    const update = () => {
+      const progress = scrollRef.progress;
+      if (fillRef.current) fillRef.current.style.height = `${progress * 100}%`;
+
+      // Keep the active point filled as before, then retain that point's own colour once its
+      // chapter has been completed. This turns the dots into a cumulative reading trail.
+      CHAPTER_RANGES.forEach(({ chapter, start, end }) => {
+        const dot = dotRefs.current.get(chapter.id);
+        if (!dot) return;
+        const isCurrent = progress >= start && progress < end;
+        const isComplete = progress >= end;
+        dot.style.backgroundColor =
+          isCurrent || isComplete ? chapterDotColor(chapter.accent, chapter.id) : '#0b0c0e';
+      });
     };
-    frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
+    update();
+    window.addEventListener(SCROLL_PROGRESS_EVENT, update);
+    return () => window.removeEventListener(SCROLL_PROGRESS_EVENT, update);
   }, []);
 
   return (
@@ -79,6 +91,10 @@ export function GeologicalTimeline() {
                   className="flex items-center gap-3 focus-visible:outline-none"
                 >
                   <span
+                    ref={(node) => {
+                      if (node) dotRefs.current.set(chapter.id, node);
+                      else dotRefs.current.delete(chapter.id);
+                    }}
                     className={cn(
                       'relative z-10 block h-4 w-4 rounded-full border-2 transition-all',
                       isActive ? 'scale-[1.65] shadow-[0_0_14px_currentColor]' : 'scale-100 group-hover:scale-125',
@@ -115,19 +131,18 @@ export function MobileTimelineBar() {
   const chapter = CHAPTERS.find((c) => c.id === activeId) ?? CHAPTERS[0];
 
   useEffect(() => {
-    let frame = 0;
-    const tick = () => {
+    const update = () => {
       if (fillRef.current) fillRef.current.style.width = `${scrollRef.progress * 100}%`;
-      frame = requestAnimationFrame(tick);
     };
-    frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
+    update();
+    window.addEventListener(SCROLL_PROGRESS_EVENT, update);
+    return () => window.removeEventListener(SCROLL_PROGRESS_EVENT, update);
   }, []);
 
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-0 z-30 px-4 pb-3 lg:hidden">
       <div className="flex items-center justify-between px-1 pb-1.5 text-[0.62rem]">
-        <span className="type-eyebrow text-muted">{chapter.title}</span>
+        <span className="type-eyebrow text-cretaceous">{chapter.title}</span>
       </div>
       <div className="h-2 w-full overflow-hidden rounded-full bg-white/20">
         <div ref={fillRef} className="h-full bg-gradient-to-r from-jurassic to-cretaceous" style={{ width: '0%' }} />

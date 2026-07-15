@@ -38,25 +38,25 @@ body {
 /* Fluid type scale */
 h1,
 .type-display {
-  font-family: theme('fontFamily.serif');
-  font-weight: 300;
-  letter-spacing: -0.02em;
-  line-height: 0.98;
+  font-family: theme('fontFamily.grotesk');
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  line-height: 0.94;
   font-size: clamp(2.75rem, 8vw, 7rem);
 }
 h2,
 .type-title {
-  font-family: theme('fontFamily.serif');
-  font-weight: 300;
-  letter-spacing: -0.01em;
-  line-height: 1.05;
+  font-family: theme('fontFamily.grotesk');
+  font-weight: 550;
+  letter-spacing: -0.035em;
+  line-height: 1;
   font-size: clamp(1.75rem, 4.5vw, 3.5rem);
 }
 .type-eyebrow {
   font-family: theme('fontFamily.grotesk');
   font-size: 0.82rem;
-  font-weight: 500;
-  letter-spacing: 0.22em;
+  font-weight: 650;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   /* Outline so accent-coloured eyebrows (e.g. the teal Cretaceous ones) stay legible over the
      photographic backdrops. */
@@ -93,6 +93,19 @@ h2,
   opacity: 0.05;
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Low-tier devices skip the fixed blend/noise pass and expensive live backdrop filtering. The
+   panels already have opaque dark fallbacks, so readability remains intact. */
+.performance-low.grain::after {
+  display: none;
+}
+
+.performance-low .backdrop-blur-md,
+.performance-low .backdrop-blur-sm,
+.performance-low .backdrop-blur-xs {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
 }
 
 /* Subtle vignette */
