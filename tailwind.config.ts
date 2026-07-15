@@ -14,14 +14,18 @@ export default {
         bone: '#f4efe6',
         muted: '#a9a29a',
         // Era accents (muted, per the design spec)
-        triassic: '#c1683a',
-        jurassic: '#b79a4a',
-        cretaceous: '#5a9a97',
-        extinction: '#c96a3c',
+        triassic: '#d4794a',
+        jurassic: '#cbab55',
+        // Brightened from #5a9a97 — the muted teal read as a hard-to-see "green" on the
+        // photographic backdrops; this lifts contrast while staying on-theme.
+        cretaceous: '#74c0ba',
+        extinction: '#d97b48',
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        serif: ['"Fraunces"', 'Georgia', 'serif'],
+        sans: ['"Inter Variable"', 'Inter', 'system-ui', 'sans-serif'],
+        serif: ['"Fraunces Variable"', 'Fraunces', 'Georgia', 'serif'],
+        // Distinct geometric sans for eyebrows / UI labels, for typographic variety.
+        grotesk: ['"Space Grotesk Variable"', '"Space Grotesk"', 'system-ui', 'sans-serif'],
       },
       backdropBlur: { xs: '2px' },
       keyframes: {

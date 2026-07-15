@@ -18,8 +18,8 @@ function Row({ icon, label, value }: { icon: React.ReactNode; label: string; val
     <div className="flex items-start gap-2.5">
       <span className="mt-0.5 text-cretaceous/80">{icon}</span>
       <div>
-        <div className="type-eyebrow text-[0.6rem] text-muted lg:text-[0.72rem]">{label}</div>
-        <div className="text-sm text-bone/90 lg:text-lg">{value}</div>
+        <div className="type-eyebrow text-[0.66rem] text-muted lg:text-[0.8rem]">{label}</div>
+        <div className="text-[0.95rem] text-bone/90 lg:text-lg">{value}</div>
       </div>
     </div>
   );
@@ -100,14 +100,18 @@ export function CreatureInfoPanel({ creature }: { creature: Creature }) {
         </span>
       </div>
 
-      <h2 className="type-title mb-1 text-3xl text-bone">{creature.displayName}</h2>
+      {/* Cap the size and allow long single-word names (e.g. "Cryolophosaurus") to wrap/break so
+          the last letters are never clipped by the card edge. */}
+      <h2 className="type-title mb-1 !text-[2.35rem] !leading-[1.08] break-words text-bone">
+        {creature.displayName}
+      </h2>
       {creature.scientificName && (
-        <p className="mb-4 font-serif text-sm italic text-muted lg:text-lg">
+        <p className="mb-4 font-serif text-[0.95rem] italic text-muted lg:text-lg">
           {creature.scientificName}
         </p>
       )}
 
-      <p className="mb-5 text-sm leading-relaxed text-bone/80 lg:text-lg">
+      <p className="mb-5 text-[0.95rem] leading-relaxed text-bone/85 lg:text-lg">
         {creature.shortDescription}
       </p>
 
@@ -132,10 +136,10 @@ export function CreatureInfoPanel({ creature }: { creature: Creature }) {
 
       {creature.keyFact && (
         <div className="mb-5 rounded-xl border border-white/5 bg-white/[0.03] p-3.5">
-          <div className="mb-1 flex items-center gap-1.5 type-eyebrow text-[0.58rem] text-cretaceous">
-            <Info size={12} /> Did you know
+          <div className="mb-1 flex items-center gap-1.5 type-eyebrow text-[0.66rem] text-cretaceous">
+            <Info size={13} /> Did you know
           </div>
-          <p className="text-sm leading-relaxed text-bone/85 lg:text-lg">{creature.keyFact}</p>
+          <p className="text-[0.95rem] leading-relaxed text-bone/85 lg:text-lg">{creature.keyFact}</p>
           {creature.factSource && (
             <p className="mt-1.5 text-[0.68rem] text-muted lg:text-sm">
               Source: {creature.factSource}

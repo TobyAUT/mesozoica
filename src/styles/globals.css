@@ -53,9 +53,16 @@ h2,
   font-size: clamp(1.75rem, 4.5vw, 3.5rem);
 }
 .type-eyebrow {
-  font-size: 0.72rem;
-  letter-spacing: 0.28em;
+  font-family: theme('fontFamily.grotesk');
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
+  /* Outline so accent-coloured eyebrows (e.g. the teal Cretaceous ones) stay legible over the
+     photographic backdrops. */
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.6),
+    0 1px 10px rgba(0, 0, 0, 0.45);
 }
 
 /* Section headings sit over photographic backdrops that range from bright sky to dark ocean.
@@ -143,7 +150,7 @@ html[data-model-hover='true'] .cursor-ring {
   }
 
   .type-eyebrow {
-    font-size: 0.88rem;
+    font-size: 0.96rem;
   }
 
   .main-nav :is(button, a) {

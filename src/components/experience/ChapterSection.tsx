@@ -92,10 +92,10 @@ export function ChapterSection({ chapter }: { chapter: Chapter }) {
               className="max-w-xl sm:max-w-md lg:max-w-[17rem] xl:max-w-[19rem] 2xl:max-w-sm"
             >
               <div className="mb-3 flex items-center gap-3">
-                <span className="type-eyebrow text-[0.6rem] text-muted">{chapter.title}</span>
+                <span className="type-eyebrow text-[0.68rem] text-muted">{chapter.title}</span>
               </div>
               <h2 className="type-title mb-3 heading-hero">{creature.displayName}</h2>
-              <p className="max-w-lg text-base leading-relaxed text-bone/70">
+              <p className="max-w-lg text-[1.05rem] leading-relaxed text-bone/80">
                 {creature.shortDescription}
               </p>
             </motion.div>
