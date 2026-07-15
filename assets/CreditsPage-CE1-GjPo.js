@@ -1,4 +1,4 @@
-import{j as e}from"./index-CtsCj_zz.js";import{P as d}from"./PageShell-smLDQ0Qg.js";import{a as o}from"./creatures-BrNaI2PS.js";import{c as i}from"./navItems-CO5zYdd_.js";import{E as a,V as c}from"./volume-2-Cqoz6T-t.js";/**
+import{j as e}from"./index-B7GzOTAj.js";import{P as d}from"./PageShell-BKT-MYO_.js";import{a as o}from"./creatures-BrNaI2PS.js";import{c as i}from"./navItems-C4aefEcF.js";import{E as a,V as c}from"./volume-2-BLfEPMDv.js";/**
  * @license lucide-react v0.451.0 - ISC
  *
  * This source code is licensed under the ISC license.
