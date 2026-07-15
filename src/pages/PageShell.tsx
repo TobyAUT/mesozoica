@@ -60,8 +60,9 @@ export function PageShell({
           science bodies.
         </p>
         <p>
-          <span className="text-bone/70">KI-Hinweis (EU AI Act, Art. 50):</span> Alle Hintergrundbilder
-          dieser Seite sind KI-generiert. · All background images on this site are AI-generated.
+          <span className="text-bone/70">KI-Hinweis (EU AI Act, Art. 50):</span> Alle
+          Hintergrundbilder und -videos dieser Seite sind KI-generiert. · All background images and
+          videos on this site are AI-generated.
         </p>
         <p>
           Datenschutz: Diese Seite lädt keine externen Dienste, setzt keine Tracking-Cookies und

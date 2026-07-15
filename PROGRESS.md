@@ -1,5 +1,35 @@
 # Current Project State
 
+# Session 2026-07-15 #3 (Claude) — AI video markers, long video scrub, legal footer
+
+Verified locally: typecheck 0, tests 28/28, lint 0 errors (1 pre-existing warning), build 0, no
+console errors. Browser: extinction section now 4.42 viewports / finale 4.08 (long scrub);
+meteor video t=4.19s of 8 at 50% local; at the very page bottom the birds video HOLDS its last
+frame (t=7.95/8, opacity 1) with the new footer on top (Impressum · Datenschutz · Credits); AI
+marker reads "KI-generiertes Video" on video chapters; finale background no longer shows the
+animated stripe shafts; /legal renders.
+
+- **AI markers for videos** (user confirmed all videos are AI-generated): AiImageMarker now also
+  shows "KI-generiertes Video · AI-generated" during the extinction/finale chapters
+  ([AiImageMarker.tsx](src/components/system/AiImageMarker.tsx), `AI_VIDEO_CHAPTER_IDS`); the
+  PageShell footer disclosure now says images AND videos.
+- **Video scrub lengthened + autoscroll removed**: extinction weight 1.3→2.6, finale 1.1→2.4
+  ([eras.ts](src/data/eras.ts)) so both videos play frame by frame over a long deliberate scroll;
+  the auto-scroll feature was deleted entirely from
+  [ChapterVideo.tsx](src/components/experience/ChapterVideo.tsx) (visitor always in control). New
+  `holdLastFrame` prop: the finale video never fades out and clamps to duration−0.05s so the last
+  frame stays.
+- **"Broken bars" fixed**: the animated caustic light-shaft stripes in
+  [BackgroundTransition.tsx](src/components/experience/BackgroundTransition.tsx) now render ONLY
+  for `underwater` backdrops — the imageless finale backdrop is a clean radial gradient.
+- **Legal footer + page**: small dismissable-free footer card at the very end of the timeline
+  (inside `<main>` in [HomePage.tsx](src/pages/HomePage.tsx), over the held last frame) linking
+  Impressum / Datenschutz / Credits + © line with the AI-media note. New
+  [/legal route](src/pages/LegalPage.tsx) (lazy, in [App.tsx](src/app/App.tsx)) with hash-anchor
+  scrolling: factual DSGVO privacy text (static site, no cookies/tracking, local assets, GitHub
+  Pages hosting + GitHub privacy link) and an Impressum whose operator fields are
+  **[PLACEHOLDERS] — the user must fill in real name/address/e-mail**.
+
 # Session 2026-07-15 #2 (Claude) — centred mobile headings, chapter videos, timeline gradient, error notices
 
 Verified locally: typecheck 0, tests 28/28, lint 0 errors (1 pre-existing warning), build 0, no

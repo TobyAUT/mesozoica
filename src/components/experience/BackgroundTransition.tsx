@@ -43,7 +43,7 @@ export function BackgroundTransition({ quality, reducedMotion }: Props) {
               transition={{ duration: animateBackground ? 24 : 0, ease: 'linear' }}
             />
           ) : (
-            /* No supplied photo (underwater scenes): a deep base plus soft caustic light shafts. */
+            /* No supplied photo: a deep gradient base; underwater scenes add caustic shafts. */
             <>
               <div
                 className="absolute inset-0"
@@ -51,20 +51,22 @@ export function BackgroundTransition({ quality, reducedMotion }: Props) {
                   background: `radial-gradient(120% 90% at 50% -10%, ${def.horizon} 0%, ${def.sky} 45%, ${def.ground} 100%)`,
                 }}
               />
-              <motion.div
-                className="absolute inset-0 opacity-40 mix-blend-screen"
-                style={{
-                  backgroundImage: `repeating-linear-gradient(115deg, transparent 0 42px, ${def.horizon}55 42px 60px, transparent 60px 96px)`,
-                }}
-                initial={{ backgroundPosition: '0px 0px' }}
-                animate={{ backgroundPosition: animateBackground ? '220px 120px' : '0px 0px' }}
-                transition={{
-                  duration: animateBackground ? 14 : 0,
-                  ease: 'easeInOut',
-                  repeat: animateBackground ? Infinity : 0,
-                  repeatType: 'mirror',
-                }}
-              />
+              {def.underwater && (
+                <motion.div
+                  className="absolute inset-0 opacity-40 mix-blend-screen"
+                  style={{
+                    backgroundImage: `repeating-linear-gradient(115deg, transparent 0 42px, ${def.horizon}55 42px 60px, transparent 60px 96px)`,
+                  }}
+                  initial={{ backgroundPosition: '0px 0px' }}
+                  animate={{ backgroundPosition: animateBackground ? '220px 120px' : '0px 0px' }}
+                  transition={{
+                    duration: animateBackground ? 14 : 0,
+                    ease: 'easeInOut',
+                    repeat: animateBackground ? Infinity : 0,
+                    repeatType: 'mirror',
+                  }}
+                />
+              )}
             </>
           )}
           <motion.div

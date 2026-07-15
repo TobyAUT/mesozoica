@@ -467,7 +467,8 @@ export const CHAPTERS: readonly Chapter[] = [
     mya: 66,
     accent: 'extinction',
     backgroundId: 'extinction',
-    weight: 1.3,
+    // Extra scroll weight: the meteor video is scrubbed frame by frame across this whole span.
+    weight: 2.6,
   },
   {
     id: 'finale',
@@ -477,7 +478,8 @@ export const CHAPTERS: readonly Chapter[] = [
     mya: 66,
     accent: 'cretaceous',
     backgroundId: 'finale',
-    weight: 1.1,
+    // Extra scroll weight: the birds video is scrubbed frame by frame and holds its last frame.
+    weight: 2.4,
   },
 ];
 

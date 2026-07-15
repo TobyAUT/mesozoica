@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { ExperienceCanvas } from '@/experience/ExperienceCanvas';
 import { BackgroundTransition } from '@/components/experience/BackgroundTransition';
 import { ChapterVideo } from '@/components/experience/ChapterVideo';
@@ -55,7 +55,7 @@ export default function HomePage() {
         src="/videos/meteor-impact.mp4"
         phoneSrc="/videos/meteor-impact-portrait.mp4"
       />
-      <ChapterVideo chapterId="finale" src="/videos/birds.mp4" />
+      <ChapterVideo chapterId="finale" src="/videos/birds.mp4" holdLastFrame />
       <ExperienceCanvas reducedMotion={reducedMotion} />
       <WaterlineTransition quality={quality} reducedMotion={reducedMotion} />
 
@@ -99,6 +99,27 @@ export default function HomePage() {
         {CHAPTERS.map((chapter) => (
           <ChapterSection key={chapter.id} chapter={chapter} />
         ))}
+
+        {/* Page end: the finale video holds its last frame behind this small legal footer. */}
+        <footer className="pointer-events-auto relative z-20 px-6 pb-20 pt-10 text-center text-[0.7rem] text-bone/60 lg:pb-8">
+          <div className="mx-auto max-w-md rounded-2xl border border-white/10 bg-ink-900/70 px-5 py-4 backdrop-blur-md">
+            <nav className="mb-1.5 flex items-center justify-center gap-4">
+              <Link to="/legal#impressum" className="transition hover:text-bone">
+                Impressum
+              </Link>
+              <Link to="/legal#datenschutz" className="transition hover:text-bone">
+                Datenschutz
+              </Link>
+              <Link to="/credits" className="transition hover:text-bone">
+                Credits
+              </Link>
+            </nav>
+            <p>
+              © {new Date().getFullYear()} Mesozoica · KI-generierte Bilder &amp; Videos ·
+              AI-generated media
+            </p>
+          </div>
+        </footer>
       </main>
     </div>
   );

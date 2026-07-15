@@ -6,7 +6,7 @@ import { notifyUser } from '@/utils/notify';
 import { withBase } from '@/utils/asset';
 
 /** Local-progress window in which scroll scrubs the video from start to end. */
-const READ: readonly [number, number] = [0.08, 0.9];
+const READ: readonly [number, number] = [0.06, 0.9];
 
 interface Props {
   /** Chapter whose section drives this video. */
@@ -15,19 +15,19 @@ interface Props {
   src: string;
   /** Optional portrait variant used on phones (<768px). */
   phoneSrc?: string;
-  /** Slowly auto-scroll the page through the chapter so the video plays hands-free. */
-  autoScroll?: boolean;
+  /** Never fade out: the video's final frame stays on screen to the very end of the page. */
+  holdLastFrame?: boolean;
 }
 
 /**
  * Fullscreen scroll-scrubbed video for a single chapter (Impact meteor strike, birds finale).
- * Scroll position maps linearly onto video time, so scrolling back rewinds. While the visitor
- * rests inside the chapter, a slow auto-scroll advances the page at the video's natural pace;
- * any wheel/touch/key input cancels it until the chapter is left and re-entered.
+ * Scroll position maps linearly onto video time — the visitor plays the video frame by frame by
+ * scrolling, and scrolling back rewinds it. The chapters carry extra scroll weight (see eras.ts)
+ * so the scrub is long and deliberate. No auto-scroll: the visitor is always in control.
  * Sits above the background crossfade and below the WebGL canvas/text (these chapters have no
  * 3D model). If the video fails to load, it hides itself and the normal backdrop remains.
  */
-export function ChapterVideo({ chapterId, src, phoneSrc, autoScroll = true }: Props) {
+export function ChapterVideo({ chapterId, src, phoneSrc, holdLastFrame = false }: Props) {
   const isPhone = useMediaQuery('(max-width: 767px)');
   const videoRef = useRef<HTMLVideoElement>(null);
   const failed = useRef(false);
@@ -39,64 +39,26 @@ export function ChapterVideo({ chapterId, src, phoneSrc, autoScroll = true }: Pr
     const video = videoRef.current;
     if (!range || !video) return;
 
-    let autoRaf = 0;
-    let autoCancelled = false;
-    let lastTs = 0;
-
-    const stopAuto = () => {
-      if (autoRaf) cancelAnimationFrame(autoRaf);
-      autoRaf = 0;
-      lastTs = 0;
-    };
-    const cancelAuto = () => {
-      autoCancelled = true;
-      stopAuto();
-    };
-
-    const localAt = (progress: number) => {
-      const span = range.end - range.start || 1;
-      return clamp((progress - range.start) / span);
-    };
-
-    // Advance the page so the READ window elapses in exactly the video's duration — the video
-    // plays at its natural speed while the page drifts. Any user input cancels (see listeners).
-    const autoStep = (ts: number) => {
-      autoRaf = 0;
-      const el = document.documentElement;
-      const max = el.scrollHeight - el.clientHeight;
-      const local = localAt(scrollRef.progress);
-      if (autoCancelled || local >= READ[1] || !video.duration) return;
-      if (lastTs) {
-        const chapterPx = (range.end - range.start) * max;
-        const pxPerSecond = (chapterPx * (READ[1] - READ[0])) / video.duration;
-        el.scrollTop += (pxPerSecond * (ts - lastTs)) / 1000;
-      }
-      lastTs = ts;
-      autoRaf = requestAnimationFrame(autoStep);
-    };
-
     const update = () => {
-      const local = localAt(scrollRef.progress);
-      const active = scrollRef.progress >= range.start && scrollRef.progress < range.end;
+      const span = range.end - range.start || 1;
+      const local = clamp((scrollRef.progress - range.start) / span);
+      const fadeIn = smoothstep(0.02, 0.08, local);
       const fade = failed.current
         ? 0
-        : smoothstep(0.02, 0.1, local) * (1 - smoothstep(0.92, 0.985, local));
+        : holdLastFrame
+          ? fadeIn
+          : fadeIn * (1 - smoothstep(0.93, 0.985, local));
       video.style.opacity = String(fade);
       video.style.visibility = fade > 0.001 ? 'visible' : 'hidden';
 
-      if (!active) {
-        // Leaving the chapter re-arms the auto-scroll for the next visit.
-        autoCancelled = false;
-        stopAuto();
-        return;
-      }
-      if (video.duration && !failed.current) {
-        const t = clamp((local - READ[0]) / (READ[1] - READ[0])) * video.duration;
+      if (fade > 0.001 && video.duration && !failed.current) {
+        // Stop just short of duration so the decoder reliably presents the LAST frame.
+        const t = Math.min(
+          clamp((local - READ[0]) / (READ[1] - READ[0])) * video.duration,
+          video.duration - 0.05,
+        );
         // Seek only on meaningful change; per-pixel seeking would thrash the decoder.
         if (Math.abs(video.currentTime - t) > 1 / 30) video.currentTime = t;
-        if (autoScroll && !autoCancelled && !autoRaf && local >= READ[0] && local < READ[1]) {
-          autoRaf = requestAnimationFrame(autoStep);
-        }
       }
     };
 
@@ -104,7 +66,6 @@ export function ChapterVideo({ chapterId, src, phoneSrc, autoScroll = true }: Pr
       failed.current = true;
       video.style.opacity = '0';
       video.style.visibility = 'hidden';
-      stopAuto();
       notifyUser('A background video could not be loaded, so a still backdrop is shown instead.');
     };
 
@@ -112,16 +73,12 @@ export function ChapterVideo({ chapterId, src, phoneSrc, autoScroll = true }: Pr
     window.addEventListener(SCROLL_PROGRESS_EVENT, update);
     video.addEventListener('error', onError);
     video.addEventListener('loadedmetadata', update);
-    const cancelEvents = ['wheel', 'touchstart', 'pointerdown', 'keydown'] as const;
-    cancelEvents.forEach((e) => window.addEventListener(e, cancelAuto, { passive: true }));
     return () => {
-      stopAuto();
       window.removeEventListener(SCROLL_PROGRESS_EVENT, update);
       video.removeEventListener('error', onError);
       video.removeEventListener('loadedmetadata', update);
-      cancelEvents.forEach((e) => window.removeEventListener(e, cancelAuto));
     };
-  }, [chapterId, autoScroll, source]);
+  }, [chapterId, holdLastFrame, source]);
 
   return (
     <video

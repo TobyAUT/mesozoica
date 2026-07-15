@@ -2,16 +2,21 @@ import { Sparkles } from 'lucide-react';
 import { useActiveChapter } from '@/hooks/useActiveCreature';
 import { backgroundOrFallback } from '@/data/backgrounds';
 
+// Chapters whose fullscreen ChapterVideo (see HomePage) is AI-generated.
+const AI_VIDEO_CHAPTER_IDS = new Set(['extinction', 'finale']);
+
 /**
- * EU AI Act (Art. 50) transparency marker. Every backdrop in this project is AI-generated, so a
- * small persistent label discloses it while a backdrop image is on screen. A fuller disclosure
- * lives in the Credits footer. Unobtrusive, pointer-events-none, never covers content.
+ * EU AI Act (Art. 50) transparency marker. Every backdrop image and the chapter videos in this
+ * project are AI-generated, so a small persistent label discloses it while one is on screen. A
+ * fuller disclosure lives in the Credits footer. Unobtrusive, pointer-events-none, never covers
+ * content.
  */
 export function AiImageMarker() {
   const chapter = useActiveChapter();
   const def = backgroundOrFallback(chapter.backgroundId);
-  const isAi = !!def.image && (def.aiGenerated ?? true);
-  if (!isAi) return null;
+  const isAiVideo = AI_VIDEO_CHAPTER_IDS.has(chapter.id);
+  const isAiImage = !!def.image && (def.aiGenerated ?? true);
+  if (!isAiVideo && !isAiImage) return null;
 
   return (
     <div
@@ -19,7 +24,7 @@ export function AiImageMarker() {
       aria-hidden="true"
     >
       <Sparkles size={9} />
-      KI-generiertes Bild · AI-generated
+      {isAiVideo ? 'KI-generiertes Video · AI-generated' : 'KI-generiertes Bild · AI-generated'}
     </div>
   );
 }

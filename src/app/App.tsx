@@ -9,6 +9,7 @@ const CreaturesPage = lazy(() => import('@/pages/CreaturesPage'));
 const AboutPage = lazy(() => import('@/pages/AboutPage'));
 const CreditsPage = lazy(() => import('@/pages/CreditsPage'));
 const MethodologyPage = lazy(() => import('@/pages/MethodologyPage'));
+const LegalPage = lazy(() => import('@/pages/LegalPage'));
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'));
 
 export default function App() {
@@ -22,6 +23,7 @@ export default function App() {
         <Route path="/about" element={<AboutPage />} />
         <Route path="/methodology" element={<MethodologyPage />} />
         <Route path="/credits" element={<CreditsPage />} />
+        <Route path="/legal" element={<LegalPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Suspense>
