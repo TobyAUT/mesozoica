@@ -35,6 +35,14 @@ body {
   overflow-x: hidden;
 }
 
+/* Explore mode owns wheel and touch gestures for the 3D controls. Lock both
+   scrolling roots so the active chapter cannot drift behind the model. */
+html.explore-scroll-locked,
+html.explore-scroll-locked body {
+  overflow: hidden !important;
+  overscroll-behavior: none;
+}
+
 /* Fluid type scale */
 h1,
 .type-display {

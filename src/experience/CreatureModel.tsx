@@ -7,7 +7,8 @@ import type { Creature } from '@/data/types';
 import { normaliseModel, prepareForScene, pickClip } from '@/utils/model';
 import { withBase } from '@/utils/asset';
 import { scrollRef } from '@/store/scrollRef';
-import { resolveChapter, creatureFade } from '@/utils/timeline';
+import { useExperience } from '@/store/experienceStore';
+import { resolveChapter, creatureFade, mobileModelFade } from '@/utils/timeline';
 import { NON_GLTF_LOADER, normaliseLoaded, isGltf } from './modelLoaders';
 
 interface Props {
@@ -74,12 +75,18 @@ function ModelPresenter({
   targetHeight = 3.2,
 }: PresenterProps) {
   const viewportWidth = useThree((state) => state.size.width);
-  const isDesktop = viewportWidth >= 1024;
+  // Three views: phone <768, tablet 768–1023, desktop ≥1024 (matches Tailwind md/lg).
+  const device = viewportWidth >= 1024 ? 'desktop' : viewportWidth >= 768 ? 'tablet' : 'phone';
+  const isDesktop = device === 'desktop';
+  // Manual per-view tuning: `deviceOverrides.<view>` in creatures.ts beats the base transform.
+  const override = creature.deviceOverrides[device];
+  const position = override?.position ?? creature.position;
+  const scale = override?.scale ?? creature.scale;
+  const rotation = override?.rotation ?? creature.rotation;
   // Desktop layout reads left-to-right: timeline, facts, copy, then the model (staged right of
-  // the side panel). Mobile has no side panel, so centre the model horizontally — the authored
-  // x-offset only exists to compose around the desktop text and would push it off the narrow frame.
-  const stageOffsetX = isDesktop ? 3.8 : 0;
-  const modelX = isDesktop ? creature.position[0] + stageOffsetX : 0;
+  // the side panel). Phone/tablet have no side panel, so centre the model horizontally unless an
+  // override explicitly positions it — the base x-offset only composes around the desktop text.
+  const modelX = isDesktop ? position[0] + 3.8 : override?.position ? position[0] : 0;
 
   // Independent instance; wrapped so a Z-up source can be corrected without fighting normalisation.
   const model = useMemo(() => {
@@ -96,6 +103,19 @@ function ModelPresenter({
   const userRotation = useRef(0);
   const drag = useRef({ active: false, lastX: 0 });
   const { actions, mixer, names } = useAnimations(animations, group);
+  const exploreMode = useExperience((state) => state.exploreMode);
+  const exploreAnimationPlayRequest = useExperience(
+    (state) => state.exploreAnimationPlayRequest,
+  );
+  const setExploreAnimationAvailable = useExperience(
+    (state) => state.setExploreAnimationAvailable,
+  );
+  const finishExploreAnimation = useExperience((state) => state.finishExploreAnimation);
+  const lastExplorePlayRequest = useRef(exploreAnimationPlayRequest);
+  const selectedClip = useMemo(
+    () => pickClip(animations, creature.preferredAnimation),
+    [animations, creature.preferredAnimation],
+  );
 
   const startDrag = (event: ThreeEvent<PointerEvent>) => {
     event.stopPropagation();
@@ -137,13 +157,33 @@ function ModelPresenter({
 
   // Play a clip only when the manifest asks for native animation — never fake a rig otherwise.
   useEffect(() => {
+    const available =
+      creature.animationMode === 'native' &&
+      selectedClip !== null &&
+      actions[selectedClip.name] !== undefined;
+    setExploreAnimationAvailable(available);
+    return () => setExploreAnimationAvailable(false);
+  }, [actions, creature.animationMode, selectedClip, setExploreAnimationAvailable]);
+
+  // Normal timeline playback is unchanged. Explore mode pauses the current clip immediately and
+  // does not start the normal repeat/pause cycle again until the viewer closes Explore mode.
+  useEffect(() => {
     if (creature.animationMode !== 'native') return;
-    const clip = pickClip(animations, creature.preferredAnimation);
-    if (!clip || !actions[clip.name]) return;
-    const action = actions[clip.name]!;
+    if (!selectedClip || !actions[selectedClip.name]) return;
+    const action = actions[selectedClip.name]!;
+
+    if (exploreMode) {
+      action.paused = true;
+      return () => {
+        action.paused = false;
+      };
+    }
+
     let timeout: number | null = null;
     const pauseMs = (creature.animationPauseSeconds ?? 0) * 1000;
     const playOnce = () => {
+      action.paused = false;
+      action.setEffectiveTimeScale(creature.animationSpeed);
       action.reset().fadeIn(0.6).play();
     };
 
@@ -163,17 +203,69 @@ function ModelPresenter({
       };
     }
 
+    action.setLoop(THREE.LoopRepeat, Infinity);
+    action.clampWhenFinished = false;
     playOnce();
     return () => {
       action.fadeOut(0.4);
     };
   }, [
     actions,
-    animations,
-    creature.preferredAnimation,
     creature.animationMode,
     creature.animationPauseSeconds,
+    creature.animationSpeed,
+    exploreMode,
     mixer,
+    selectedClip,
+  ]);
+
+  // A request from the Explore UI restarts the selected native clip and runs it exactly once.
+  // Its final frame stays clamped; Close restores the normal timeline animation branch above.
+  useEffect(() => {
+    if (!exploreMode) {
+      lastExplorePlayRequest.current = exploreAnimationPlayRequest;
+      return;
+    }
+    if (exploreAnimationPlayRequest === lastExplorePlayRequest.current) return;
+    lastExplorePlayRequest.current = exploreAnimationPlayRequest;
+
+    if (
+      creature.animationMode !== 'native' ||
+      !selectedClip ||
+      !actions[selectedClip.name]
+    ) {
+      finishExploreAnimation();
+      return;
+    }
+
+    const action = actions[selectedClip.name]!;
+    const onFinished = (event: { action: THREE.AnimationAction }) => {
+      if (event.action !== action) return;
+      action.paused = true;
+      finishExploreAnimation();
+    };
+
+    mixer.addEventListener('finished', onFinished);
+    action.reset();
+    action.enabled = true;
+    action.paused = false;
+    action.clampWhenFinished = true;
+    action.setLoop(THREE.LoopOnce, 1);
+    action.setEffectiveTimeScale(creature.animationSpeed);
+    action.fadeIn(0.2).play();
+
+    return () => {
+      mixer.removeEventListener('finished', onFinished);
+    };
+  }, [
+    actions,
+    creature.animationMode,
+    creature.animationSpeed,
+    exploreAnimationPlayRequest,
+    exploreMode,
+    finishExploreAnimation,
+    mixer,
+    selectedClip,
   ]);
 
   // Fade opacity in/out, preserving each material's authored alphaMode.
@@ -192,42 +284,43 @@ function ModelPresenter({
     return list;
   }, [model]);
 
-  const baseY = creature.position[1];
+  const baseY = position[1];
 
   useFrame((_, delta) => {
     const { local } = resolveChapter(scrollRef.progress);
-    // Shared envelope: fade in once the chapter text is on screen, then out before the next
-    // heading — the info window uses the exact same curve so both vanish together.
-    const target = active ? creatureFade(local) : 0;
+    // Shared envelope: desktop fades model + info window together (creatureFade); phone/tablet
+    // play the sequential mobile phases, where the model owns the middle of the chapter.
+    const target = active ? (isDesktop ? creatureFade(local) : mobileModelFade(local)) : 0;
     fade.current += (target - fade.current) * Math.min(1, delta * 3.5);
     for (const { material, opacity, transparent } of materials) {
       material.opacity = transparent ? opacity * fade.current : opacity;
     }
 
-    if (!group.current) return;
+    // Explore freezes procedural drift and idle sway too; native one-shot playback is handled by
+    // the AnimationMixer above and can still be explicitly requested from the overlay.
+    if (!group.current || exploreMode) return;
     const t = performance.now() * 0.001;
     const mode = creature.animationMode;
     // Whole-object motion only — the mesh is never deformed procedurally.
     if (mode === 'proceduralWholeObject') {
       // Gentle swim/glide for aquatic and flying models. Damped, non-repetitive-looking.
-      group.current.rotation.x = creature.rotation[0];
-      group.current.rotation.y =
-        creature.rotation[1] + userRotation.current + Math.sin(t * 0.24) * 0.12;
-      group.current.rotation.z = creature.rotation[2] + Math.sin(t * 0.4) * 0.03;
+      group.current.rotation.x = rotation[0];
+      group.current.rotation.y = rotation[1] + userRotation.current + Math.sin(t * 0.24) * 0.12;
+      group.current.rotation.z = rotation[2] + Math.sin(t * 0.4) * 0.03;
       group.current.position.y = baseY + Math.sin(t * 0.5) * 0.08;
     } else {
       // Native models with no clip get a barely-there breathing sway; static/disabled stay put.
       const idleSway = mode === 'native' && names.length === 0 ? Math.sin(t * 0.3) * 0.04 : 0;
-      group.current.rotation.y = creature.rotation[1] + userRotation.current + idleSway;
+      group.current.rotation.y = rotation[1] + userRotation.current + idleSway;
     }
   });
 
   return (
     <group
       ref={group}
-      position={[modelX, creature.position[1], creature.position[2]]}
-      rotation={creature.rotation}
-      scale={creature.scale}
+      position={[modelX, position[1], position[2]]}
+      rotation={rotation}
+      scale={scale}
       onPointerDown={startDrag}
       onPointerMove={moveDrag}
       onPointerUp={stopDrag}

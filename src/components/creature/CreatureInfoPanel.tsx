@@ -2,8 +2,15 @@ import { useEffect, useRef, useState } from 'react';
 import { MapPin, Ruler, Utensils, Clock, ExternalLink, Box, Info, Volume2 } from 'lucide-react';
 import { useExperience } from '@/store/experienceStore';
 import type { Creature } from '@/data/types';
-import { formatMya, resolveChapter, creatureFade } from '@/utils/timeline';
+import {
+  formatMya,
+  resolveChapter,
+  creatureFade,
+  mobilePanelFade,
+  mobilePanelRead,
+} from '@/utils/timeline';
 import { SCROLL_PROGRESS_EVENT, scrollRef } from '@/store/scrollRef';
+import { cn } from '@/utils/cn';
 
 const DIET_LABEL: Record<string, string> = {
   carnivore: 'Carnivore',
@@ -29,7 +36,14 @@ function Row({ icon, label, value }: { icon: React.ReactNode; label: string; val
  * Editorial creature panel. Readable over any background (gradient scrim), collapses on mobile,
  * and never covers the creature's head — it's anchored to the lower-left / bottom.
  */
-export function CreatureInfoPanel({ creature }: { creature: Creature }) {
+export function CreatureInfoPanel({
+  creature,
+  mobile = false,
+}: {
+  creature: Creature;
+  /** Phone/tablet variant: sequential fade envelope + page scroll drives the card's reading. */
+  mobile?: boolean;
+}) {
   const setExplore = useExperience((s) => s.setExploreMode);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const rootRef = useRef<HTMLElement | null>(null);
@@ -43,15 +57,19 @@ export function CreatureInfoPanel({ creature }: { creature: Creature }) {
       const el = rootRef.current;
       if (el) {
         const { local } = resolveChapter(scrollRef.progress);
-        const f = creatureFade(local);
+        const f = mobile ? mobilePanelFade(local) : creatureFade(local);
         el.style.opacity = String(f);
         el.style.transform = `translateY(${(1 - f) * 10}px)`;
+        if (mobile) {
+          // Page scroll "reads" the card: content scrolls to the end before the card fades out.
+          el.scrollTop = mobilePanelRead(local) * (el.scrollHeight - el.clientHeight);
+        }
       }
     };
     update();
     window.addEventListener(SCROLL_PROGRESS_EVENT, update);
     return () => window.removeEventListener(SCROLL_PROGRESS_EVENT, update);
-  }, []);
+  }, [mobile]);
   const timeRange =
     creature.approximateTimeStartMya != null && creature.approximateTimeEndMya != null
       ? `${formatMya(creature.approximateTimeStartMya)}–${formatMya(creature.approximateTimeEndMya)} Mya`
@@ -82,7 +100,14 @@ export function CreatureInfoPanel({ creature }: { creature: Creature }) {
       ref={rootRef}
       style={{ opacity: 0 }}
       data-creature-panel
-      className="pointer-events-auto max-h-[38svh] w-[min(94vw,26rem)] overflow-y-auto overscroll-contain rounded-2xl border border-white/10 bg-ink-900/78 p-5 shadow-2xl backdrop-blur-md sm:p-6 lg:max-h-[calc(100svh-8.5rem)] lg:w-[22rem] lg:overflow-y-auto lg:overscroll-contain lg:p-6 xl:w-[24rem] 2xl:w-[26rem]"
+      className={cn(
+        'pointer-events-auto w-[min(94vw,26rem)] rounded-2xl border border-white/10 bg-ink-900/78 shadow-2xl backdrop-blur-md',
+        mobile
+          ? // overflow-hidden (not auto): touch drags keep scrolling the PAGE, and the page scroll
+            // drives this card's scrollTop programmatically until it is read to the end.
+            'max-h-[68svh] overflow-hidden p-5 sm:p-6'
+          : 'max-h-[calc(100svh-8.5rem)] overflow-y-auto overscroll-contain p-6 lg:w-[22rem] xl:w-[24rem] 2xl:w-[26rem]',
+      )}
     >
       {creature.audioPath && (
         <audio

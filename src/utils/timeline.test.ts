@@ -8,6 +8,10 @@ import {
   clamp,
   smoothstep,
   creatureFade,
+  MOBILE_PHASES,
+  mobileModelFade,
+  mobilePanelFade,
+  mobilePanelRead,
 } from './timeline';
 import { CHAPTERS, TIME_START_MYA, TIME_END_MYA } from '@/data/eras';
 
@@ -98,5 +102,23 @@ describe('creatureFade', () => {
     expect(creatureFade(0.7)).toBeCloseTo(1, 5); // fully visible mid-section
     expect(creatureFade(0.95)).toBe(0); // faded out before the next heading
     expect(creatureFade(1)).toBe(0);
+  });
+});
+
+describe('mobile sequential phases', () => {
+  it('plays model, then panel, without overlap', () => {
+    expect(mobileModelFade(0.1)).toBe(0); // heading phase — no model yet
+    expect(mobileModelFade(0.42)).toBeCloseTo(1, 5); // model fully visible mid-phase
+    expect(mobileModelFade(MOBILE_PHASES.panel.in[0])).toBe(0); // model gone before the panel
+    expect(mobilePanelFade(0.42)).toBe(0); // no panel during the model phase
+    expect(mobilePanelFade(0.75)).toBeCloseTo(1, 5); // panel fully visible while reading
+    expect(mobilePanelFade(1)).toBe(0); // gone before the next section
+  });
+
+  it('reads the panel to the end only while it is fully visible', () => {
+    expect(mobilePanelRead(MOBILE_PHASES.panel.in[1])).toBe(0); // reading starts after fade-in
+    expect(mobilePanelRead(MOBILE_PHASES.panel.read[1])).toBe(1); // read to the end
+    expect(mobilePanelRead(MOBILE_PHASES.panel.read[1])).toBeLessThanOrEqual(1);
+    expect(MOBILE_PHASES.panel.read[1]).toBeLessThanOrEqual(MOBILE_PHASES.panel.out[0]); // before fade-out
   });
 });

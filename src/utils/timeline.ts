@@ -44,6 +44,35 @@ export function creatureFade(local: number): number {
 }
 
 /**
+ * Phone/tablet chapters play as a SEQUENCE while scrolling: the heading (in normal flow) scrolls
+ * out of the page first, then the 3D model appears fullscreen and leaves, then the info panel
+ * fades in and its content is "read" to the end by further page scroll before it fades out.
+ * All phase boundaries (fractions of the chapter's local progress 0–1) are tuned HERE.
+ */
+export const MOBILE_PHASES = {
+  model: { in: [0.2, 0.32], out: [0.52, 0.62] },
+  panel: { in: [0.62, 0.7], read: [0.72, 0.9], out: [0.92, 0.98] },
+} as const;
+
+/** Mobile/tablet opacity envelope for the 3D model (phase 2 of the sequence). */
+export function mobileModelFade(local: number): number {
+  const m = MOBILE_PHASES.model;
+  return smoothstep(m.in[0], m.in[1], local) * (1 - smoothstep(m.out[0], m.out[1], local));
+}
+
+/** Mobile/tablet opacity envelope for the info panel (phase 3 of the sequence). */
+export function mobilePanelFade(local: number): number {
+  const p = MOBILE_PHASES.panel;
+  return smoothstep(p.in[0], p.in[1], local) * (1 - smoothstep(p.out[0], p.out[1], local));
+}
+
+/** 0–1 reading progress that page scroll converts into the panel's internal scrollTop. */
+export function mobilePanelRead(local: number): number {
+  const p = MOBILE_PHASES.panel;
+  return smoothstep(p.read[0], p.read[1], local);
+}
+
+/**
  * Map global scroll progress (0–1) to the active chapter plus the local progress within it.
  * Robust at the exact boundaries and beyond [0,1].
  */

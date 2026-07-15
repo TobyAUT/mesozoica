@@ -24,6 +24,12 @@ interface ExperienceState {
 
   exploreMode: boolean;
   setExploreMode: (v: boolean) => void;
+  exploreAnimationAvailable: boolean;
+  setExploreAnimationAvailable: (v: boolean) => void;
+  exploreAnimationPlaying: boolean;
+  exploreAnimationPlayRequest: number;
+  playExploreAnimation: () => void;
+  finishExploreAnimation: () => void;
   menuOpen: boolean;
   setMenuOpen: (v: boolean) => void;
   commandOpen: boolean;
@@ -102,7 +108,25 @@ export const useExperience = create<ExperienceState>((set, get) => ({
   setReducedMotion: (reducedMotion) => set({ reducedMotion }),
 
   exploreMode: false,
-  setExploreMode: (exploreMode) => set({ exploreMode }),
+  setExploreMode: (exploreMode) => set({ exploreMode, exploreAnimationPlaying: false }),
+  exploreAnimationAvailable: false,
+  setExploreAnimationAvailable: (exploreAnimationAvailable) =>
+    set(
+      exploreAnimationAvailable
+        ? { exploreAnimationAvailable }
+        : { exploreAnimationAvailable, exploreAnimationPlaying: false },
+    ),
+  exploreAnimationPlaying: false,
+  exploreAnimationPlayRequest: 0,
+  playExploreAnimation: () => {
+    if (!get().exploreMode || !get().exploreAnimationAvailable || get().exploreAnimationPlaying)
+      return;
+    set((state) => ({
+      exploreAnimationPlaying: true,
+      exploreAnimationPlayRequest: state.exploreAnimationPlayRequest + 1,
+    }));
+  },
+  finishExploreAnimation: () => set({ exploreAnimationPlaying: false }),
   menuOpen: false,
   setMenuOpen: (menuOpen) => set({ menuOpen }),
   commandOpen: false,

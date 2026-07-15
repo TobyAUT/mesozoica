@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import { motion } from 'motion/react';
 import type { Chapter } from '@/data/eras';
 import { eraById } from '@/data/eras';
@@ -26,10 +27,15 @@ export function ChapterSection({ chapter }: { chapter: Chapter }) {
     <section
       id={chapter.id}
       aria-label={chapter.title}
-      // Creature chapters: on mobile the heading sits at the TOP of the section (model fills
-      // the screen, facts panel is fixed at the bottom); on lg+ everything re-centres.
-      className={cn('relative flex w-full', isCreature ? 'items-start lg:items-center' : 'items-center')}
-      style={{ minHeight: minH }}
+      // Creature chapters: on phone/tablet the heading sits at the TOP of the section and scrolls
+      // out first; the model, then the info card, follow as scroll phases. On lg+ everything
+      // re-centres. Below lg EVERY section is uniformly 1.7× taller to give the three phases
+      // scroll room — uniform scaling keeps the weight-based chapter ranges accurate.
+      className={cn(
+        'relative flex w-full min-h-[calc(var(--section-h)*1.7)] lg:min-h-[var(--section-h)]',
+        isCreature ? 'items-start lg:items-center' : 'items-center',
+      )}
+      style={{ '--section-h': minH } as CSSProperties}
     >
       <div className="mx-auto w-full max-w-[1600px] px-6 lg:px-16">
         {chapter.kind === 'prologue' && (
@@ -73,8 +79,9 @@ export function ChapterSection({ chapter }: { chapter: Chapter }) {
           <div
             className={cn(
               'lg:absolute lg:left-[43rem] lg:top-1/2 lg:-translate-y-1/2 xl:left-[45rem] 2xl:left-[48rem]',
-              // Mobile order: heading pinned to the TOP of the section, model fills the screen
-              // behind it, facts panel sits fixed at the bottom -> heading, model, info panel.
+              // Phone/tablet sequence: this heading block sits at the TOP of the (taller) section
+              // and scrolls out of the page first; the fullscreen model, then the centred info
+              // card, take over as later scroll phases (MOBILE_PHASES in utils/timeline).
               creature.enabled && creature.modelPath && 'mt-24 lg:mt-0',
             )}
           >

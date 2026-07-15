@@ -52,27 +52,42 @@ export default function HomePage() {
       <WaterlineTransition quality={quality} reducedMotion={reducedMotion} />
 
       {/* Fixed UI overlays */}
-      <MainNavigation />
-      <MobileNavigation />
-      <CommandPalette />
-      <GeologicalTimeline />
-      <MobileTimelineBar />
-      <ModelLoadingIndicator />
-      <AiImageMarker />
+      <div
+        aria-hidden={exploreMode}
+        className={`transition-opacity duration-200 ${
+          exploreMode ? 'pointer-events-none opacity-0' : 'opacity-100'
+        }`}
+      >
+        <MainNavigation />
+        <MobileNavigation />
+        <CommandPalette />
+        <GeologicalTimeline />
+        <MobileTimelineBar />
+        <ModelLoadingIndicator />
+        <AiImageMarker />
+        <AudioManager />
+      </div>
       <CreatureExplorer />
-      <AudioManager />
 
       {/* Active creature info panel — nudged closer to the geological timeline on the left. */}
       <div className="pointer-events-none fixed left-[17rem] top-1/2 z-30 hidden -translate-y-1/2 lg:block 2xl:left-[18rem]">
         {showPanel && creature && <CreatureInfoPanel key={creature.id} creature={creature} />}
       </div>
-      {/* Mobile/tablet: panel sits in the reserved bottom band, below the model. */}
-      <div className="pointer-events-none fixed inset-x-3 bottom-3 z-30 lg:hidden">
-        {showPanel && creature && <CreatureInfoPanel key={`m-${creature.id}`} creature={creature} />}
+      {/* Mobile/tablet: sequential flow — the panel appears centred AFTER the model has faded
+          out, and page scroll reads its content to the end (see MOBILE_PHASES in utils/timeline). */}
+      <div className="pointer-events-none fixed inset-x-0 top-1/2 z-30 flex -translate-y-1/2 justify-center px-3 lg:hidden">
+        {showPanel && creature && (
+          <CreatureInfoPanel key={`m-${creature.id}`} creature={creature} mobile />
+        )}
       </div>
 
       {/* Scroll length: one section per chapter */}
-      <main className="pointer-events-none relative z-20">
+      <main
+        aria-hidden={exploreMode}
+        className={`pointer-events-none relative z-20 transition-opacity duration-200 ${
+          exploreMode ? 'opacity-0' : 'opacity-100'
+        }`}
+      >
         {CHAPTERS.map((chapter) => (
           <ChapterSection key={chapter.id} chapter={chapter} />
         ))}

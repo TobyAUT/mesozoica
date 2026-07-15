@@ -124,3 +124,10 @@ export function scrollToTop(): void {
   if (lenisInstance) lenisInstance.scrollTo(0, { immediate: false });
   else window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
+/** Pause/resume Lenis while a fullscreen interaction owns the wheel/touch gestures. */
+export function setScrollLocked(locked: boolean): void {
+  if (!lenisInstance) return;
+  if (locked) lenisInstance.stop();
+  else lenisInstance.start();
+}

@@ -1,5 +1,64 @@
 # Current Project State
 
+# Session 2026-07-15 (Claude) — sequential mobile scroll + per-device model tuning
+
+Verified locally: typecheck 0, tests 28/28, lint 0 errors (1 pre-existing warning), production
+build 0. Browser (dev server, 375x812): 37 sections, sections 1.7x taller below lg, canvas
+fullscreen, panel opacity 0 during heading/model phases, fades in at local ~0.65, content
+scroll-driven to the end (148/148px) by local 0.95, then fades out; desktop at 1280x800 unchanged
+(880px sections, panel at left 272px, creatureFade envelope). No console errors.
+
+- **Mobile/tablet chapters now play as a scroll SEQUENCE**: heading scrolls out of the page →
+  fullscreen 3D model fades in/out → centred info card fades in and page scroll "reads" its
+  content to the end (programmatic scrollTop; card is overflow-hidden so touch keeps scrolling
+  the page) → card fades out → next section. Phase boundaries are tunable in ONE place:
+  `MOBILE_PHASES` in [timeline.ts](src/utils/timeline.ts) (with `mobileModelFade`,
+  `mobilePanelFade`, `mobilePanelRead`; unit-tested).
+- **Three views**: phone <768px, tablet 768–1023px (both use the sequential flow), desktop ≥1024px
+  (unchanged side-panel layout). Below lg every section is uniformly 1.7x taller
+  ([ChapterSection.tsx](src/components/experience/ChapterSection.tsx) `--section-h` var) —
+  uniform scaling keeps the weight-based chapter ranges accurate.
+- **Manual per-device 3D tuning**: new `deviceOverrides: { phone?, tablet?, desktop? }` field on
+  every creature (each with optional `position`/`scale`/`rotation`) in
+  [types.ts](src/data/types.ts); resolved in [CreatureModel.tsx](src/experience/CreatureModel.tsx).
+  Example: `deviceOverrides: { phone: { scale: 1.4, position: [0, -1, 0] } }` in
+  [creatures.ts](src/data/creatures.ts). On phone/tablet the model stays horizontally centred
+  unless an override sets a position.
+- Canvas is fullscreen on all views again ([ExperienceCanvas.tsx](src/experience/ExperienceCanvas.tsx));
+  the mobile bottom band is gone. Mobile panel container is centred
+  ([HomePage.tsx](src/pages/HomePage.tsx)); [CreatureInfoPanel.tsx](src/components/creature/CreatureInfoPanel.tsx)
+  gained a `mobile` prop (max-h 68svh, overflow-hidden, scroll-driven reading).
+- NOT visually confirmed on a real phone (in-app pane freezes rAF; model fade envelope is
+  unit-tested + panel behaviour verified via DOM). Next step if tuning needed: adjust
+  `MOBILE_PHASES` and per-creature `deviceOverrides`.
+
+# Session 2026-07-15 (Codex) - Explore animation playback
+
+Verified locally: typecheck 0, tests 26/26, lint 0 errors (1 pre-existing warning), production
+build 0, and an in-browser Quetzalcoatlus Explore flow.
+
+- Entering Explore now pauses native clips, procedural whole-object motion, and idle sway without
+  changing their normal timeline behaviour.
+- A runtime-aware Play Animation control runs an embedded native clip exactly once, disables while
+  playing, and returns to its ready state after the clip finishes. Models without a clip show a
+  disabled availability message.
+- Closing Explore restores the existing normal animation cycle. Playback requests are rejected
+  outside Explore mode.
+- Native animation speed is now data-driven; Quetzalcoatlus uses `animationSpeed: 0.5` while all
+  other creatures retain the default authored speed of `1`.
+
+# Session 2026-07-15 (Codex) - focused creature exploration
+
+Verified locally: typecheck 0, tests 22/22, lint 0 errors (1 pre-existing warning), and production
+build 0.
+
+- Explore mode now hides the timeline, navigation, chapter copy, creature information card, and
+  other page overlays so the 3D model has an unobstructed fullscreen stage.
+- Document scrolling and Lenis are paused until Close or Escape exits Explore mode. Wheel and pinch
+  gestures remain available to zoom the model through OrbitControls.
+- Close is larger, high-contrast, keyboard-focused on entry, and exposed as an accessible modal
+  control. Page content is marked hidden from assistive technology while the modal is active.
+
 Last updated: 2026-07-15 (Codex — low-end performance, typography, cumulative timeline dots)
 
 # Session 2026-07-15 (Codex) — lower-end device optimization

@@ -94,7 +94,7 @@ Programmatic jumps use `scrollToChapter`, which maps a chapter ID to global prog
 - Reduced motion is synced in [src/hooks/useReducedMotion.ts](../src/hooks/useReducedMotion.ts) and affects Lenis smoothing, camera drift, particles, postprocessing, cursor behavior, and water animation.
 - Keyboard/navigation support includes route links and command palette behavior in [src/components/navigation/CommandPalette.tsx](../src/components/navigation/CommandPalette.tsx).
 - Fallback behavior includes DOM text sections, CSS backgrounds, and route fallback UI.
-- Desktop creature chapters are arranged left-to-right as geological timeline, facts panel, chapter copy, and right-side 3D model. Tablet/mobile keep the compact bottom panel layout.
+- Desktop creature chapters are arranged left-to-right as geological timeline, facts panel, chapter copy, and right-side 3D model. Phone (<768px) and tablet (768–1023px) play each creature chapter as a scroll SEQUENCE instead: the heading scrolls out of the page, then the fullscreen 3D model fades in and out, then the centred info card fades in and page scroll drives its content to the end before it fades out. Phase boundaries live in `MOBILE_PHASES` in [src/utils/timeline.ts](../src/utils/timeline.ts); below `lg` every section is uniformly 1.7x taller to give the phases scroll room. Per-view model transforms can be tuned manually via `deviceOverrides.phone/tablet/desktop` in [src/data/creatures.ts](../src/data/creatures.ts) (schema in [src/data/types.ts](../src/data/types.ts)).
 
 # Architectural Decisions
 

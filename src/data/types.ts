@@ -72,6 +72,27 @@ export type AnimationMode = z.infer<typeof animationModeSchema>;
 
 const vec3 = z.tuple([z.number(), z.number(), z.number()]);
 
+/**
+ * MANUAL PER-DEVICE 3D TUNING. The base `position`/`scale`/`rotation` on a creature apply to every
+ * view; set `deviceOverrides.phone/tablet/desktop` in creatures.ts to reposition/rescale/rotate a
+ * model for ONE view only. Views: phone <768px, tablet 768–1023px, desktop ≥1024px.
+ * Example: `deviceOverrides: { phone: { scale: 1.4, position: [0, -1, 0] } }`.
+ * Note: on phone/tablet the model is horizontally centred unless the override sets a position.
+ */
+const deviceTransformSchema = z.object({
+  position: vec3.optional(),
+  scale: z.number().positive().optional(),
+  rotation: vec3.optional(),
+});
+export const deviceOverridesSchema = z
+  .object({
+    phone: deviceTransformSchema.optional(),
+    tablet: deviceTransformSchema.optional(),
+    desktop: deviceTransformSchema.optional(),
+  })
+  .default({});
+export type DeviceOverrides = z.infer<typeof deviceOverridesSchema>;
+
 export const cameraPresetSchema = z.object({
   /** Camera world position. */
   position: vec3,
@@ -126,11 +147,15 @@ export const creatureSchema = z.object({
   scale: z.number().positive().default(1),
   position: vec3.default([0, 0, 0]),
   rotation: vec3.default([0, 0, 0]),
+  /** Per-view manual transform overrides — see deviceOverridesSchema above. */
+  deviceOverrides: deviceOverridesSchema,
   cameraPreset: cameraPresetSchema,
   /** Detected at runtime; null preferredAnimation lets the loader auto-pick an idle-like clip. */
   availableAnimations: z.array(z.string()).default([]),
   preferredAnimation: z.string().nullable(),
   animationMode: animationModeSchema.default('native'),
+  /** Playback multiplier for native clips. 1 = authored speed, 0.5 = half speed. */
+  animationSpeed: z.number().positive().default(1),
   /** Optional pause after each native clip loop, in seconds. */
   animationPauseSeconds: z.number().min(0).default(0),
   backgroundId: z.string(),

@@ -59,10 +59,10 @@ export function ExperienceCanvas({ reducedMotion }: Props) {
   );
 
   return (
-    // On mobile the canvas is inset above the bottom info card so the model is never hidden
-    // behind it (order: heading, model, card). Full-screen again from lg where the panel is on
-    // the left.
-    <div className="fixed inset-x-0 top-0 bottom-[40svh] z-10 lg:bottom-0" aria-hidden="true">
+    // Fullscreen on every view. On phone/tablet the chapter plays as a scroll SEQUENCE (heading →
+    // model → info card), so the model owns the whole screen while it is visible and the card
+    // only appears after the model has faded out — no reserved bottom band needed anymore.
+    <div className="fixed inset-0 z-10" aria-hidden="true">
       {/* `relative` wrapper gives the canvas a non-null offsetParent so R3F's react-use-measure
           can size it. Without it, a position:fixed ancestor makes offsetParent null and the
           canvas stays stuck at the default 300x150. */}
