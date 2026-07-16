@@ -28,15 +28,17 @@ export function submersionAt(progress: number): number {
 
   if (here) {
     let s = 1;
-    // Rise across the first third, unless we were already underwater in the previous chapter.
-    if (!prev && local < 0.35) s = local / 0.35;
-    // Fall across the last third, unless the next chapter is also underwater.
-    if (!next && local > 0.7) s = Math.min(s, (1 - local) / 0.3);
+    // Rise late (0.15–0.45), unless we were already underwater in the previous chapter: the
+    // visitor is well inside the chapter before the water climbs.
+    if (!prev && local < 0.45) s = (local - 0.15) / 0.3;
+    // Fall early (0.55–0.85), unless the next chapter is also underwater — the water is fully
+    // gone well before the chapter ends, so the next heading never scrolls in over the overlay.
+    if (!next && local > 0.55) s = Math.min(s, (0.85 - local) / 0.3);
     return clamp(s);
   }
-  // Pre-rise in the tail of a land chapter that leads into water.
-  if (next && local > 0.78) return clamp(((local - 0.78) / 0.22) * 0.85);
-  // Continue draining in the head of a land chapter that follows water.
-  if (prev && local < 0.22) return clamp((1 - local / 0.22) * 0.85);
+  // Land chapters are always dry. There is deliberately no "pre-rise" in the tail of the chapter
+  // BEFORE an aquatic one: it made the water appear a whole chapter early, and because the rise
+  // restarts from 0 at the aquatic chapter's own start it also popped from 0.85 straight back to 0
+  // on the boundary.
   return 0;
 }

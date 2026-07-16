@@ -1,18 +1,21 @@
 import { useState, useRef, useEffect } from 'react';
 import { Gauge, Check } from 'lucide-react';
 import { useExperience, type Quality } from '@/store/experienceStore';
+import { useTr } from '@/i18n';
+import type { StringKey } from '@/i18n/strings';
 import { cn } from '@/utils/cn';
 
-const OPTIONS: { value: Quality; label: string }[] = [
-  { value: 'auto', label: 'Auto' },
-  { value: 'high', label: 'High' },
-  { value: 'balanced', label: 'Balanced' },
-  { value: 'low', label: 'Low' },
+const OPTIONS: { value: Quality; labelKey: StringKey }[] = [
+  { value: 'auto', labelKey: 'qualityAuto' },
+  { value: 'high', labelKey: 'qualityHigh' },
+  { value: 'balanced', labelKey: 'qualityBalanced' },
+  { value: 'low', labelKey: 'qualityLow' },
 ];
 
 export function QualitySelector() {
   const quality = useExperience((s) => s.quality);
   const setQuality = useExperience((s) => s.setQuality);
+  const { t } = useTr();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -30,12 +33,12 @@ export function QualitySelector() {
       <button
         aria-haspopup="listbox"
         aria-expanded={open}
-        aria-label="Graphics quality"
+        aria-label={t('qualityAria')}
         onClick={() => setOpen((v) => !v)}
         className="inline-flex items-center gap-2 rounded-full border border-white/15 px-3 py-1.5 text-xs text-muted transition hover:border-white/30 hover:text-bone"
       >
         <Gauge size={14} />
-        <span className="capitalize">{quality}</span>
+        <span>{t(OPTIONS.find((o) => o.value === quality)!.labelKey)}</span>
       </button>
       {open && (
         <ul
@@ -56,7 +59,7 @@ export function QualitySelector() {
                   quality === o.value ? 'text-bone' : 'text-muted',
                 )}
               >
-                {o.label}
+                {t(o.labelKey)}
                 {quality === o.value && <Check size={14} className="text-cretaceous" />}
               </button>
             </li>

@@ -1,5 +1,157 @@
 # Current Project State
 
+# Session 2026-07-16 #4 (Codex) — finale overflow audit + mobile transform verification
+
+Verified: typecheck 0, tests 40/40, lint 0 errors (1 pre-existing Fast Refresh warning), build 0.
+Browser at 837×831 and 390×844, German finale loaded directly.
+
+- **Finale title stays inside its glass card** ([ChapterSection.tsx](src/components/experience/ChapterSection.tsx)):
+  the finale card is wider (`max-w-4xl`, previously `max-w-2xl`) and the title uses balanced wrapping.
+  At 837px, the card/title both report `scrollWidth === clientWidth`; "Die Dinosaurier" shares the
+  first line (the measured line is "Die Dinosaurier sind"). On phones, only this finale heading uses
+  a slightly smaller 2.35rem minimum so the long German word "verschwunden" also fits without
+  overflow. At 390px the card, heading and page all remain within the viewport.
+- **Per-device model transforms already work as documented — no implementation change needed.**
+  `deviceOverrides.phone/tablet/desktop` is validated in [types.ts](src/data/types.ts) and resolved in
+  [CreatureModel.tsx](src/experience/CreatureModel.tsx). Base transforms remain the fallback;
+  phone/tablet base X is centred to 0, while an explicit override position (including its X value)
+  wins. No creature currently defines an override; add it beside that creature in
+  [creatures.ts](src/data/creatures.ts).
+- **Scientific-mode button audit:** the toggle persists `scientificMode` and the Creature Explorer
+  filters entries whose `hideInScientificMode` is true. All 27 current creatures explicitly set that
+  field to false, and the timeline does not consume `playableCreatures()`, so the button currently has
+  no visible effect. This was reported honestly rather than assigning scientific exclusions without
+  a deliberate content decision.
+- Browser console: no errors; only the two pre-existing React Router v7 future-flag warnings.
+
+# Session 2026-07-16 #3 (Claude) — new Tylosaurus, Lystrosaurus texture bug, animation audit
+
+Verified: typecheck 0, tests 40/40, lint 0 errors (1 pre-existing warning). Models parsed through
+the REAL `GLTFLoader` in the browser to confirm textures/clips (not just JSON inspection).
+
+- **Tylosaurus replaced** with the credited Julian Johnson-Mortimer model
+  ([creatures.ts](src/data/creatures.ts)). Old cartoon GLB (0.24 MB, **0 textures**, unverified
+  licence) → Recycle Bin. New: 37.75 MB → **7.99 MB** via `scripts/optimize-glb.mjs` (WebP), 6
+  textures, **no animation clips** (kept `proceduralWholeObject` for swim drift + drag-rotation).
+  Credits filled: author, `Creative Commons Attribution`, licenceUrl, attributionText,
+  `sourceUrl: https://skfb.ly/6Rsov` → the model is now `resolved` and the unresolved-licence banner
+  drops **10 → 9**.
+  **Scale derived, not guessed:** `normaliseModel()` scales every model to 3.2 units tall and the
+  manifest `scale` multiplies. New mesh is 4.02 × 1.70 × 12.54 world units (ratio 7.37) vs the old
+  2.37 × 2.14 × 12.68 (ratio 5.93). Old on-screen length was 18.99 × 0.44 = 8.36 units, so
+  **scale 0.354** reproduces it; `position.y` 0.55 → **0.69** keeps the body centred at ~1.25, the
+  height the `cameraPreset` target (y=1) was tuned for. Verified in-browser through the real
+  normalise pipeline: on-screen **8.35 × 1.13** units (old: 8.36 × 1.41 — the new mesh is
+  proportionally slimmer/more accurate).
+- **Lystrosaurus "no texture" — ROOT CAUSE FOUND.** Not the loader, not the mesh, not the Blender
+  file. The runtime GLB declared `extensionsRequired: [EXT_texture_webp,
+  KHR_materials_pbrSpecularGlossiness]` and stored its colour maps ONLY in the specGloss extension
+  (`baseColorTexture: NONE` in the standard PBR slot). **three r150+ removed specGloss support and
+  three-stdlib never had it** (grepped both: 0 hits), so the material loaded with `map = null` and
+  rendered untextured — with nothing louder than an "unknown extension" console warning.
+  The old runtime file came from an older Sketchfab download; [Models/lystrosaurus.glb](Models/lystrosaurus.glb)
+  (Blender, standard metallic-roughness) was always correct. Fixed by rebuilding the runtime copy
+  from it + WebP (9.56 → **3.33 MB**); broken file → Recycle Bin. Verified through the real loader:
+  `Lystrosaurus_Diffuse.map` = **2048×2048**, `isSkinnedMesh: true`, clip `Animation` intact, zero
+  extension warnings. `scale`/`position` unchanged — geometry is byte-identical in size
+  (5.10 × 6.53 × 14.14). **The optimize script was NOT at fault** (it only recompresses textures).
+- **Animation-button audit** (all 27 enabled models cross-checked, real GLB clips vs manifest):
+  **13 show "Play Animation", 14 show "No Animation Available" — all correct.** The button logic
+  (`animationMode === 'native' && pickClip(...) !== null`) needed no change. Two deliberate
+  non-bugs confirmed and left alone:
+  - `carnotaurus`, `velociraptor-like`, `triceratops`, `tyrannosaurus-rex` declare `native` with 0
+    clips **on purpose** — that combination is what enables the idle breathing sway in
+    [CreatureModel.tsx](src/experience/CreatureModel.tsx) (`mode === 'native' && names.length === 0`).
+    Switching them to `static` would silently remove the sway. Button already correct.
+  - `pistosaurus` HAS a clip (`SwimmingBiting`) but runs `proceduralWholeObject` — deliberate (the
+    native clip drove the root transform and blocked drag-rotation). It therefore shows
+    "No Animation Available" although the GLB has an animation. Intentional; revisit only if the
+    clip should be re-enabled in Explore.
+
+# Session 2026-07-16 #2 (Claude) — 6 visual fixes (water, footer, finale, extinction, panel, cards)
+
+Verified: typecheck 0, tests 40/40 (2 new water tests), lint 0 errors (1 pre-existing warning),
+build 0. Browser at 1280x800 + 375x812.
+
+- **Water rises later** ([water.ts](src/utils/water.ts)): rise moved 0→0.35 to **0.15→0.45** local.
+  Also **deleted the "pre-rise"** that ran in the tail (0.78→1.0) of the land chapter *before* an
+  aquatic one — it made the water appear a whole chapter early AND popped from 0.85 straight back
+  to 0 at the boundary, because the aquatic chapter's own rise restarts from 0. New unit tests
+  assert the late rise, the dry preceding chapter, and continuity across the boundary (no step > 0.05).
+- **Footer halved**: ~91px → **42px** (measured). Links + © now share ONE row from `sm` up instead
+  of stacking, with pt-3/pb-3. `pb-16` is retained on phones — the fixed MobileTimelineBar sits at
+  the bottom edge and would otherwise cover the © line (verified at 375px: © bottom 748 < bar 766).
+- **Finale copy readable**: the birds video is the brightest backdrop in the experience and the
+  `text-bone/75` body text sat on it unscrimmed. The sticky block now has its own
+  `bg-ink-900/55 backdrop-blur-[3px]` rounded scrim + `text-bone/95` and a text-shadow
+  ([ChapterSection.tsx](src/components/experience/ChapterSection.tsx)).
+- **Stale meteor still removed**: the `extinction` background is now **image-free** like `finale`
+  ([backgrounds.ts](src/data/backgrounds.ts)). The meteor video only fades in at ~6% local, so
+  scrolling out of the Mosasaurus ocean landed on `10-extinction.webp` which then cross-faded into
+  the video. A dust gradient replaces it and doubles as the video's fallback. Verified: no
+  `10-extinction` img at any point of the chapter; video scrubs 0.75s → 6.4s.
+  **`public/Images/10-extinction.webp` is now unused** (kept on disk, see ASSET_MAP).
+- **Info-panel glass is uniform again** ([CreatureInfoPanel.tsx](src/components/creature/CreatureInfoPanel.tsx)):
+  **Root cause — `bg-ink-900/78` was never a real class.** Tailwind only emits opacity steps of 5,
+  so the card has ALWAYS been blur-only (no tint); the `bg-ink-900/95` sticky footer added last
+  session was therefore the only tinted layer and read as a solid black block. The card is now a
+  flex column — scrolling body + fixed action footer, both transparent — so there is exactly ONE
+  glass surface. The dead class is removed and the intent documented.
+  Follow-on bug found and fixed: `.performance-low` disables backdrop filters, which left the card
+  fully transparent (text on the bare photo) in low-power mode — [globals.css](src/styles/globals.css)
+  now gives `[data-creature-panel]` a real `rgba(11,12,14,0.85)` tint in that mode only.
+  If a tinted card is wanted in NORMAL mode too, use `bg-ink-900/80` (valid) — that is a design call.
+- **Creatures cards no longer overflow** ([CreaturesPage.tsx](src/pages/CreaturesPage.tsx)): same
+  `.type-title` cascade bug as the old Cryolophosaurus clipping — `.type-title` carries
+  `clamp(1.75rem, 4.5vw, 3.5rem)` and beat the plain `text-xl`, so names rendered at ~56px and spilled
+  out of the card. Now `!text-xl !leading-snug break-words` + `min-w-0`. Verified: 0/27 cards overflow
+  at 1280px and at 375px, no horizontal page scroll, "Velociraptor-like Dromaeosaur" fits on one line.
+
+NOTE: the water overlay could not be observed in the in-app pane (low-power mode swaps the WebGL
+overlay for a CSS grade, and the shader is rAF-driven, which the pane freezes) — `submersionAt` is
+covered by 8 unit tests instead. Verify the water crossing on a real browser.
+
+# Session 2026-07-16 (Claude) — EN/DE language toggle + 6 UX fixes
+
+Verified: typecheck 0, tests 38/38 (10 new), lint 0 errors (1 pre-existing warning), build 0.
+Browser at 1280x800: EN default, toggle → DE flips nav/timeline/panels/chapters and all sub-pages
+(/about, /methodology, /creatures, /credits) and persists in localStorage; `<html lang>` follows.
+
+- **EN/DE toggle** — new outermost NAV button ([LanguageToggle.tsx](src/components/controls/LanguageToggle.tsx)),
+  also in the mobile drawer and the sub-page header. Shows the ACTIVE language ("EN" by default,
+  "DE" after clicking). New [src/i18n](src/i18n): `strings.ts` (all fixed UI labels, both languages),
+  `content.ts` (German for the manifests, keyed by id: 26 creature descriptions + key facts, all
+  chapter titles/subtitles/blurbs, 4 era intros, period/continent/diet/status maps), `index.ts`
+  (`useTr()` hook). **English stays the source of truth in the manifests** — German is an override
+  layer, so a creature/chapter without a German entry falls back to English instead of breaking.
+  Proper nouns (genus names, institutions, licences) are deliberately untranslated. `lang` lives in
+  [experienceStore](src/store/experienceStore.ts) beside the other persisted prefs.
+  Translations are hand-written and DeepL-checked; the DeepL *site* was not used programmatically
+  (no API key configured — worth revisiting if the copy grows).
+- **Water drains earlier** ([water.ts](src/utils/water.ts)): the fall now runs 0.55→0.85 local
+  (was 0.7→1.0), so an aquatic chapter is fully dry well before its next heading arrives.
+- **T. rex audio is now play/PAUSE + a seekable bar** ([CreatureInfoPanel.tsx](src/components/creature/CreatureInfoPanel.tsx)):
+  second press pauses and keeps the position; a range input scrubs with an mm:ss read-out
+  (verified in-browser: 35.09 s duration, seek to 20 s exact).
+- **"Model source" is reachable again**: the T. rex card is 801px of content in a ~608px box on an
+  800px-tall screen, and `[data-creature-panel]` hides its scrollbar — so the 3rd button was simply
+  unreachable. The actions + audio row is now a **sticky bottom bar** inside the card, so all three
+  controls stay on screen at any height (verified: "Model source" bottom 611px < panel bottom 664px).
+- **Info panel now rises with the dino title** ([timeline.ts](src/utils/timeline.ts) `panelFade`,
+  unit-tested): in at 0.18–0.32 local (was 0.46–0.62 via `creatureFade`), out on the same tail as the
+  model. Verified: panel opacity 1 while the Triceratops heading is on screen.
+- **Active timeline dot shrunk 1.65 → 1.15**. Measured in-browser: 37 dots over a 66vh track leave
+  only ~1.6px between neighbours, so a ~20px dot collides above ~1.15x — 1.3 still overlapped. The
+  active point reads via its fill colour + glow, not size.
+- **Jump-to popup scrolls itself** ([CommandPalette.tsx](src/components/navigation/CommandPalette.tsx)):
+  `data-lenis-prevent` on the result list + `setScrollLocked(open)` (Lenis owns the wheel globally).
+  Verified: list scrollTop 0→200 while the page stayed at 24338.
+
+NOTE for the next session: chapter ranges are weight-based while sections are DOM-sized, so a
+chapter's local progress and its section's scroll position drift apart slightly (the panel can swap
+to the next creature while the previous heading is still on screen near the section end). Pre-existing,
+not introduced here — worth aligning if the fade timing ever needs to be exact.
+
 # Session 2026-07-15 #5 (Codex) - mobile video scrub hardening + footer copy size
 
 - Diagnosed all three original chapter MP4s as poor random-access assets: each 8-second/24 fps

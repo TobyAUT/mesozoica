@@ -1,11 +1,16 @@
 import { create } from 'zustand';
 
 export type Quality = 'auto' | 'high' | 'balanced' | 'low';
+export type Lang = 'en' | 'de';
 
 interface ExperienceState {
   activeChapterId: string;
   activeCreatureId: string | null;
   setActive: (chapterId: string, creatureId: string | null) => void;
+
+  lang: Lang;
+  setLang: (l: Lang) => void;
+  toggleLang: () => void;
 
   scientificMode: boolean;
   toggleScientificMode: () => void;
@@ -43,7 +48,7 @@ const KEY = 'mesozoica.prefs.v1';
 
 type Persisted = Pick<
   ExperienceState,
-  'scientificMode' | 'quality' | 'audioEnabled' | 'ambienceVolume' | 'effectsVolume'
+  'scientificMode' | 'quality' | 'audioEnabled' | 'ambienceVolume' | 'effectsVolume' | 'lang'
 >;
 
 function loadPrefs(): Partial<Persisted> {
@@ -58,6 +63,7 @@ function loadPrefs(): Partial<Persisted> {
 function savePrefs(s: ExperienceState) {
   try {
     const data: Persisted = {
+      lang: s.lang,
       scientificMode: s.scientificMode,
       quality: s.quality,
       audioEnabled: s.audioEnabled,
@@ -72,6 +78,10 @@ function savePrefs(s: ExperienceState) {
 
 const prefs = loadPrefs();
 
+function syncHtmlLang(lang: Lang) {
+  if (typeof document !== 'undefined') document.documentElement.lang = lang;
+}
+
 export const useExperience = create<ExperienceState>((set, get) => ({
   activeChapterId: 'prologue',
   activeCreatureId: null,
@@ -79,6 +89,15 @@ export const useExperience = create<ExperienceState>((set, get) => ({
     if (get().activeChapterId === chapterId && get().activeCreatureId === creatureId) return;
     set({ activeChapterId: chapterId, activeCreatureId: creatureId });
   },
+
+  // English is the default; the nav toggle switches the whole site to German.
+  lang: prefs.lang ?? 'en',
+  setLang: (lang) => {
+    set({ lang });
+    syncHtmlLang(lang);
+    savePrefs(get());
+  },
+  toggleLang: () => get().setLang(get().lang === 'en' ? 'de' : 'en'),
 
   scientificMode: prefs.scientificMode ?? false,
   toggleScientificMode: () => {
@@ -135,3 +154,7 @@ export const useExperience = create<ExperienceState>((set, get) => ({
   ready: false,
   setReady: (ready) => set({ ready }),
 }));
+
+// Keep <html lang> honest for screen readers / translation tooling from the very first paint.
+// Guarded: this module is also imported by node-environment unit tests, where there is no DOM.
+syncHtmlLang(useExperience.getState().lang);

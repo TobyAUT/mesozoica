@@ -1,5 +1,6 @@
 import { cn } from '@/utils/cn';
 import type { Creature } from '@/data/types';
+import { useTr } from '@/i18n';
 
 /** Maps the manifest scientific status + group to an honest, human-readable badge. */
 export function statusLabel(c: Pick<Creature, 'scientificStatus' | 'creatureGroup'>): string {
@@ -39,6 +40,7 @@ export function ScientificStatusBadge({
   creature: Pick<Creature, 'scientificStatus' | 'creatureGroup'>;
   className?: string;
 }) {
+  const tr = useTr();
   return (
     <span
       className={cn(
@@ -48,7 +50,7 @@ export function ScientificStatusBadge({
       )}
     >
       <span className="h-1.5 w-1.5 rounded-full bg-current opacity-80" />
-      {statusLabel(creature)}
+      {tr.status(statusLabel(creature))}
     </span>
   );
 }

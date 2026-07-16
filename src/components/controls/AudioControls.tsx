@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Volume2, VolumeX } from 'lucide-react';
 import { useExperience } from '@/store/experienceStore';
+import { useTr } from '@/i18n';
 import { cn } from '@/utils/cn';
 
 /**
@@ -14,6 +15,7 @@ export function AudioControls() {
   const ambience = useExperience((s) => s.ambienceVolume);
   const effects = useExperience((s) => s.effectsVolume);
   const setVolume = useExperience((s) => s.setVolume);
+  const { t } = useTr();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -29,7 +31,7 @@ export function AudioControls() {
   return (
     <div ref={ref} className="relative">
       <button
-        aria-label={enabled ? 'Mute ambient sound' : 'Enable ambient sound'}
+        aria-label={enabled ? t('audioMute') : t('audioEnable')}
         aria-pressed={enabled}
         onClick={() => {
           setEnabled(!enabled);
@@ -50,13 +52,11 @@ export function AudioControls() {
       </button>
       {open && (
         <div className="absolute right-0 top-full z-50 mt-2 w-56 rounded-xl border border-white/10 bg-ink-800/95 p-4 shadow-2xl backdrop-blur-md">
-          <p className="mb-3 text-[0.68rem] text-muted">
-            Ambient sound is optional. No sudden roars — subtle era beds only.
-          </p>
+          <p className="mb-3 text-[0.68rem] text-muted">{t('audioNote')}</p>
           {(['ambience', 'effects'] as const).map((kind) => (
             <label key={kind} className="mb-3 block">
-              <span className="mb-1 flex justify-between text-xs capitalize text-bone/80">
-                {kind}
+              <span className="mb-1 flex justify-between text-xs text-bone/80">
+                {kind === 'ambience' ? t('audioAmbience') : t('audioEffects')}
                 <span className="text-muted">
                   {Math.round((kind === 'ambience' ? ambience : effects) * 100)}%
                 </span>

@@ -8,6 +8,23 @@ import { creatureSchema, type Creature, type CreatureInput } from './types';
  *  - Facts have a `factSource`. Unverifiable facts are `null`, never invented.
  *  - `availableAnimations` is populated at RUNTIME by inspecting the GLB. We never guess
  *    clip names here — `preferredAnimation: null` tells the loader to auto-pick an idle-like clip.
+ *
+ * SIZING: `scale` is NOT the raw model scale. Every model is first auto-normalised to 3.2 world
+ * units tall (`normaliseModel` in utils/model.ts); `scale` then multiplies that. So `scale: 1`
+ * always means "3.2 units tall", and elongated animals need small values to stay in frame.
+ * Use `node scripts/inspect-glb.mjs <file>` to check a GLB's clips/textures before wiring it.
+ *
+ * PER-DEVICE TUNING (phone/tablet/desktop): `position`/`scale`/`rotation` below apply to EVERY
+ * view. To change a model in ONE view only, add `deviceOverrides` to that creature — no other file
+ * needs touching:
+ *
+ *     deviceOverrides: { phone: { scale: 1.4, position: [0, -1, 0] } },
+ *
+ * Views: phone <768px · tablet 768–1023px · desktop ≥1024px (schema in ./types.ts, resolved in
+ * experience/CreatureModel.tsx). NOTE: on phone/tablet the model is force-centred at x=0 and the
+ * base `position[0]` is ignored (it only composes around the desktop side panel) — so a horizontal
+ * nudge on phones ONLY works via `deviceOverrides.phone.position`.
+ * No creature currently sets deviceOverrides; the base transform suits every view so far.
  */
 
 const raw: CreatureInput[] = [
@@ -381,7 +398,7 @@ const raw: CreatureInput[] = [
   },
   {
     id: 'tylosaurus',
-    sourceTitle: 'Cartoon Tylosaurus free 3D model',
+    sourceTitle: 'Tylosaurus',
     displayName: 'Tylosaurus',
     scientificName: 'Tylosaurus',
     scientificStatus: 'nonDinosaur',
@@ -401,12 +418,19 @@ const raw: CreatureInput[] = [
     modelPath: '/models/tylosaurus.glb',
     assetFormat: 'glb',
     animationMode: 'proceduralWholeObject',
-    sourceUrl: null,
-    author: 'TODO_VERIFY (downloaded GLB — record artist + licence)',
-    license: null,
+    sourceUrl: 'https://skfb.ly/6Rsov',
+    author: 'Julian Johnson-Mortimer',
+    license: 'Creative Commons Attribution',
+    licenseUrl: 'http://creativecommons.org/licenses/by/4.0/',
+    attributionText:
+      '"Tylosaurus" (https://skfb.ly/6Rsov) by Julian Johnson-Mortimer is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).',
     creditRequired: true,
-    scale: 0.44,
-    position: [0, 0.55, 0.35],
+    // normaliseModel() scales every model to 3.2 units tall, then this multiplies. This mesh is
+    // 4.02 x 1.70 x 12.54 in world units (ratio 7.37), so scale 1.0 would render it 23.59 units
+    // long. 0.354 reproduces the previous model's on-screen length of ~8.36 units, and the y-offset
+    // keeps the body centred at ~1.25 — the height the cameraPreset target (y=1) was tuned for.
+    scale: 0.354,
+    position: [0, 0.69, 0.35],
     rotation: [0, -0.22, 0],
     cameraPreset: { position: [1.8, 1.55, 7.4], target: [0, 1, 0], fov: 38, transition: 2.8 },
     availableAnimations: [],
@@ -420,7 +444,7 @@ const raw: CreatureInput[] = [
     enabled: true,
     hideInScientificMode: false,
     notes:
-      'Marine reptile, not a dinosaur. Current runtime GLB reports no embedded image textures; no animation -> procedural drift. Scale/framing tuned for closer full-body view.',
+      'Marine reptile, not a dinosaur. Replaced 2026-07-16 with the fully credited Julian Johnson-Mortimer model (6 embedded textures; the previous cartoon GLB had none and its licence was unverified). The GLB ships NO animation clips, so it keeps procedural whole-object drift and the Explore panel correctly reports "No animation available".',
   },
   {
     id: 'quetzalcoatlus',

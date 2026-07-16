@@ -1,24 +1,26 @@
+import type { StringKey } from '@/i18n/strings';
+
 /** Shared nav definitions used by desktop nav, mobile drawer, and command palette. */
 export interface EraLink {
   type: 'chapter';
-  label: string;
+  labelKey: StringKey;
   chapterId: string;
 }
 export interface RouteLink {
   type: 'route';
-  label: string;
+  labelKey: StringKey;
   to: string;
 }
 
 export const ERA_LINKS: EraLink[] = [
-  { type: 'chapter', label: 'Triassic', chapterId: 'era-triassic' },
-  { type: 'chapter', label: 'Jurassic', chapterId: 'era-jurassic' },
-  { type: 'chapter', label: 'Cretaceous', chapterId: 'era-cretaceous' },
+  { type: 'chapter', labelKey: 'eraTriassic', chapterId: 'era-triassic' },
+  { type: 'chapter', labelKey: 'eraJurassic', chapterId: 'era-jurassic' },
+  { type: 'chapter', labelKey: 'eraCretaceous', chapterId: 'era-cretaceous' },
 ];
 
 export const ROUTE_LINKS: RouteLink[] = [
-  { type: 'route', label: 'Creatures', to: '/creatures' },
-  { type: 'route', label: 'About', to: '/about' },
-  { type: 'route', label: 'Methodology', to: '/methodology' },
-  { type: 'route', label: 'Credits', to: '/credits' },
+  { type: 'route', labelKey: 'navCreatures', to: '/creatures' },
+  { type: 'route', labelKey: 'navAbout', to: '/about' },
+  { type: 'route', labelKey: 'navMethodology', to: '/methodology' },
+  { type: 'route', labelKey: 'navCredits', to: '/credits' },
 ];

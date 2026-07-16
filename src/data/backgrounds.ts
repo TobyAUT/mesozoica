@@ -114,13 +114,16 @@ export const BACKGROUNDS: readonly BackgroundDef[] = [
     gradientOpacity: 0.16,
   },
   {
+    // Impact: intentionally image-free, like the finale below. The meteor video is scroll-scrubbed
+    // over this chapter, but it only fades in at ~6% local progress — with a still backdrop the
+    // visitor scrolled out of the Mosasaurus ocean straight into a stale meteor photo that then
+    // cross-faded into the video. The gradient reads as dust and doubles as the video's fallback.
     id: 'extinction',
-    label: 'A meteor beneath an orange sky over a dusty dark volcanic landscape',
+    label: 'A dark, dust-choked sky glowing orange after the impact',
     sky: '#29130d',
     horizon: '#a34420',
     ground: '#100907',
     fog: '#71331d',
-    image: image('10-extinction.webp'),
     gradientOpacity: 0.2,
   },
 

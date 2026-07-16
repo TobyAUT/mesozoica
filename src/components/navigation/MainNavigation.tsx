@@ -7,11 +7,14 @@ import { YearCounter } from '@/components/timeline/YearCounter';
 import { ScientificModeToggle } from '@/components/controls/ScientificModeToggle';
 import { AudioControls } from '@/components/controls/AudioControls';
 import { QualitySelector } from '@/components/controls/QualitySelector';
+import { LanguageToggle } from '@/components/controls/LanguageToggle';
 import { ERA_LINKS, ROUTE_LINKS } from './navItems';
+import { useTr } from '@/i18n';
 import { cn } from '@/utils/cn';
 
 /** Translucent fixed top navigation with era jumps, route links, live counter, and controls. */
 export function MainNavigation() {
+  const { t } = useTr();
   const location = useLocation();
   const navigate = useNavigate();
   const activeChapterId = useExperience((s) => s.activeChapterId);
@@ -50,7 +53,7 @@ export function MainNavigation() {
             onClick={() => (onHome ? scrollToTop() : navigate('/'))}
             className="rounded-full px-2.5 py-1.5 text-[0.82rem] font-medium text-bone/80 transition hover:bg-white/10 hover:text-white"
           >
-            Timeline
+            {t('navTimeline')}
           </button>
           {ERA_LINKS.map((l) => (
             <button
@@ -61,7 +64,7 @@ export function MainNavigation() {
                 activeChapterId === l.chapterId ? 'text-white' : 'text-bone/75',
               )}
             >
-              {l.label}
+              {t(l.labelKey)}
               {/* Static underline (no shared-layout animation → no scroll jitter). */}
               <span
                 className={cn(
@@ -81,7 +84,7 @@ export function MainNavigation() {
                 location.pathname === l.to ? 'text-white' : 'text-bone/75',
               )}
             >
-              {l.label}
+              {t(l.labelKey)}
             </Link>
           ))}
         </nav>
@@ -94,7 +97,7 @@ export function MainNavigation() {
             aria-label="Open command palette"
             className="hidden items-center gap-1.5 rounded-full border border-white/20 bg-black/10 px-3 py-1.5 text-[0.82rem] text-bone/80 transition hover:border-white/40 hover:text-white sm:inline-flex"
           >
-            <Command size={13} /> <span className="hidden md:inline">Jump to…</span>
+            <Command size={13} /> <span className="hidden md:inline">{t('navJumpTo')}</span>
           </button>
           <div className="hidden sm:block">
             <ScientificModeToggle />
@@ -105,11 +108,13 @@ export function MainNavigation() {
           <AudioControls />
           <button
             onClick={() => setMenuOpen(true)}
-            aria-label="Open menu"
+            aria-label={t('navMenuOpen')}
             className="inline-flex items-center justify-center rounded-full border border-white/15 p-2 text-bone transition hover:border-white/30 lg:hidden"
           >
             <Menu size={16} />
           </button>
+          {/* Outermost control: flips the entire site between English and German. */}
+          <LanguageToggle />
         </div>
       </motion.div>
     </header>

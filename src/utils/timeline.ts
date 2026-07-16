@@ -44,6 +44,15 @@ export function creatureFade(local: number): number {
 }
 
 /**
+ * Desktop info-panel envelope: rises EARLY so the panel is on screen together with the chapter's
+ * creature heading (which reveals as the section scrolls in), and leaves on the same tail as the
+ * model (creatureFade) so everything is gone before the next heading enters.
+ */
+export function panelFade(local: number): number {
+  return smoothstep(0.18, 0.32, local) * (1 - smoothstep(0.78, 0.92, local));
+}
+
+/**
  * Phone/tablet chapters play as a SEQUENCE while scrolling: the heading (in normal flow) scrolls
  * out of the page first, then the 3D model appears fullscreen and leaves, then the info panel
  * fades in and its content is "read" to the end by further page scroll before it fades out.

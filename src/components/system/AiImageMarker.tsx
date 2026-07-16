@@ -1,6 +1,7 @@
 import { Sparkles } from 'lucide-react';
 import { useActiveChapter } from '@/hooks/useActiveCreature';
 import { backgroundOrFallback } from '@/data/backgrounds';
+import { useTr } from '@/i18n';
 
 // Chapters whose fullscreen ChapterVideo (see HomePage) is AI-generated.
 const AI_VIDEO_CHAPTER_IDS = new Set(['extinction', 'finale']);
@@ -12,6 +13,7 @@ const AI_VIDEO_CHAPTER_IDS = new Set(['extinction', 'finale']);
  * content.
  */
 export function AiImageMarker() {
+  const { t } = useTr();
   const chapter = useActiveChapter();
   const def = backgroundOrFallback(chapter.backgroundId);
   const isAiVideo = AI_VIDEO_CHAPTER_IDS.has(chapter.id);
@@ -24,7 +26,7 @@ export function AiImageMarker() {
       aria-hidden="true"
     >
       <Sparkles size={9} />
-      {isAiVideo ? 'KI-generiertes Video · AI-generated' : 'KI-generiertes Bild · AI-generated'}
+      {isAiVideo ? t('aiMarkerVideo') : t('aiMarkerImage')}
     </div>
   );
 }

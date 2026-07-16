@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { SCROLL_PROGRESS_EVENT, scrollRef } from '@/store/scrollRef';
 import { myaAtProgress, formatMya } from '@/utils/timeline';
+import { useTr } from '@/i18n';
 import { cn } from '@/utils/cn';
 
 /**
@@ -9,6 +10,7 @@ import { cn } from '@/utils/cn';
  */
 export function YearCounter({ className, compact = false }: { className?: string; compact?: boolean }) {
   const numRef = useRef<HTMLSpanElement>(null);
+  const { t } = useTr();
 
   useEffect(() => {
     let last = '';
@@ -33,7 +35,7 @@ export function YearCounter({ className, compact = false }: { className?: string
         252
       </span>
       <span className={cn('text-muted', compact ? 'text-[0.6rem]' : 'text-xs')}>
-        million years ago
+        {t('yearsAgo')}
       </span>
     </div>
   );

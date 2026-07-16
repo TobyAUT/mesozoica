@@ -96,6 +96,14 @@ Programmatic jumps use `scrollToChapter`, which maps a chapter ID to global prog
 - Fallback behavior includes DOM text sections, CSS backgrounds, and route fallback UI.
 - Desktop creature chapters are arranged left-to-right as geological timeline, facts panel, chapter copy, and right-side 3D model. Phone (<768px) and tablet (768–1023px) play each creature chapter as a scroll SEQUENCE instead: the heading scrolls out of the page, then the fullscreen 3D model fades in and out, then the centred info card fades in and page scroll drives its content to the end before it fades out. Phase boundaries live in `MOBILE_PHASES` in [src/utils/timeline.ts](../src/utils/timeline.ts); below `lg` every section is uniformly 1.7x taller to give the phases scroll room. Per-view model transforms can be tuned manually via `deviceOverrides.phone/tablet/desktop` in [src/data/creatures.ts](../src/data/creatures.ts) (schema in [src/data/types.ts](../src/data/types.ts)).
 
+# Internationalisation (EN/DE)
+
+- `lang` ('en' default, 'de') lives in [src/store/experienceStore.ts](../src/store/experienceStore.ts) beside the other persisted preferences and also drives `<html lang>`.
+- [src/i18n/strings.ts](../src/i18n/strings.ts) holds every fixed UI label in both languages; [src/i18n/content.ts](../src/i18n/content.ts) holds the German counterpart of the data manifests, keyed by creature/chapter/era id, plus period/continent/status maps.
+- Components call `useTr()` from [src/i18n/index.ts](../src/i18n/index.ts), which returns `t(key)` for labels and `chapterTitle/eraIntro/creatureDescription/period/…` for manifest content.
+- **English remains the source of truth in the manifests.** German is an override layer: a missing German entry falls back to the English text, so adding a creature or chapter can never render a blank or a raw key. [src/i18n/i18n.test.ts](../src/i18n/i18n.test.ts) asserts both dictionaries share keys and that every creature/period/continent has German coverage.
+- Proper nouns (genus/species names, institution names in `factSource`, licences, authors) are intentionally identical in both languages and are never translated.
+
 # Architectural Decisions
 
 - Data manifests drive chapter order, model identity, scientific status, backgrounds, credits, and UI labels.

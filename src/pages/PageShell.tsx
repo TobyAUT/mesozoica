@@ -1,6 +1,8 @@
 import { Link, useLocation } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { ROUTE_LINKS } from '@/components/navigation/navItems';
+import { LanguageToggle } from '@/components/controls/LanguageToggle';
+import { useTr } from '@/i18n';
 import { cn } from '@/utils/cn';
 import type { ReactNode } from 'react';
 
@@ -15,6 +17,7 @@ export function PageShell({
   intro?: string;
 }) {
   const location = useLocation();
+  const { t } = useTr();
   return (
     <div className="min-h-screen bg-ink-900 text-bone">
       <header className="sticky top-0 z-40 border-b border-white/5 bg-ink-900/80 backdrop-blur-md">
@@ -33,16 +36,19 @@ export function PageShell({
                   location.pathname === l.to ? 'text-bone' : 'text-muted',
                 )}
               >
-                {l.label}
+                {t(l.labelKey)}
               </Link>
             ))}
           </nav>
-          <Link
-            to="/"
-            className="inline-flex items-center gap-1.5 rounded-full border border-white/15 px-3 py-1.5 text-xs text-muted transition hover:text-bone"
-          >
-            <ArrowLeft size={13} /> Timeline
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link
+              to="/"
+              className="inline-flex items-center gap-1.5 rounded-full border border-white/15 px-3 py-1.5 text-xs text-muted transition hover:text-bone"
+            >
+              <ArrowLeft size={13} /> {t('navTimeline')}
+            </Link>
+            <LanguageToggle />
+          </div>
         </div>
       </header>
 
@@ -55,19 +61,9 @@ export function PageShell({
       </main>
 
       <footer className="mx-auto max-w-3xl space-y-2 border-t border-white/5 px-6 py-8 text-center text-xs text-muted">
-        <p>
-          Mesozoica · An educational WebGL experience · Facts attributed to reputable museums &amp;
-          science bodies.
-        </p>
-        <p>
-          <span className="text-bone/70">KI-Hinweis (EU AI Act, Art. 50):</span> Alle
-          Hintergrundbilder und -videos dieser Seite sind KI-generiert. · All background images and
-          videos on this site are AI-generated.
-        </p>
-        <p>
-          Datenschutz: Diese Seite lädt keine externen Dienste, setzt keine Tracking-Cookies und
-          sendet keine personenbezogenen Daten. Schriften und Assets werden lokal ausgeliefert.
-        </p>
+        <p>{t('shellFooterEdu')}</p>
+        <p>{t('shellFooterAi')}</p>
+        <p>{t('shellFooterPrivacy')}</p>
       </footer>
     </div>
   );

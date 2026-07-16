@@ -21,9 +21,11 @@ import { useDeviceQuality } from '@/hooks/useDeviceQuality';
 import { useScrollController, scrollToChapter } from '@/hooks/useScrollController';
 import { useActiveCreature } from '@/hooks/useActiveCreature';
 import { useExperience } from '@/store/experienceStore';
+import { useTr } from '@/i18n';
 import { CHAPTERS } from '@/data/eras';
 
 export default function HomePage() {
+  const { t } = useTr();
   const reducedMotion = useReducedMotionSync();
   const quality = useDeviceQuality();
   const lowPower = quality.tier === 'low';
@@ -102,21 +104,23 @@ export default function HomePage() {
 
         {/* Page end: full-width legal footer — the LAST element, over the held final video frame. */}
         <footer className="pointer-events-auto relative z-20 w-full border-t border-white/10 bg-ink-900/85 text-center text-bone/60 backdrop-blur-md">
-          <div className="mx-auto flex max-w-5xl flex-col items-center gap-2 px-6 pb-16 pt-6 lg:pb-6">
+          {/* Half the previous height: the links and the © line share ONE row from sm up instead
+              of stacking, with tighter padding. `pb-16` stays on phones — the fixed
+              MobileTimelineBar sits at the bottom edge and would otherwise cover this. */}
+          <div className="mx-auto flex max-w-5xl flex-col items-center justify-center gap-1 px-6 pb-16 pt-3 sm:flex-row sm:gap-4 sm:pb-16 lg:pb-3">
             <nav className="flex items-center gap-5 text-[0.72rem]">
               <Link to="/legal#impressum" className="transition hover:text-bone">
-                Impressum
+                {t('footerImpressum')}
               </Link>
               <Link to="/legal#datenschutz" className="transition hover:text-bone">
-                Datenschutz
+                {t('footerDatenschutz')}
               </Link>
               <Link to="/credits" className="transition hover:text-bone">
-                Credits
+                {t('footerCredits')}
               </Link>
             </nav>
             <p className="text-[0.58rem]">
-              © {new Date().getFullYear()} Mesozoica · KI-generierte Bilder &amp; Videos ·
-              AI-generated media
+              © {new Date().getFullYear()} {t('footerCopyright')}
             </p>
           </div>
         </footer>

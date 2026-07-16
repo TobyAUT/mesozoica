@@ -5,12 +5,15 @@ import { useExperience } from '@/store/experienceStore';
 import { scrollToChapter, scrollToTop } from '@/hooks/useScrollController';
 import { ScientificModeToggle } from '@/components/controls/ScientificModeToggle';
 import { QualitySelector } from '@/components/controls/QualitySelector';
+import { LanguageToggle } from '@/components/controls/LanguageToggle';
 import { YearCounter } from '@/components/timeline/YearCounter';
 import { ERA_LINKS, ROUTE_LINKS } from './navItems';
+import { useTr } from '@/i18n';
 import { useEffect } from 'react';
 
 /** Accessible animated mobile drawer. Closes on Escape and after navigation. */
 export function MobileNavigation() {
+  const { t } = useTr();
   const open = useExperience((s) => s.menuOpen);
   const setOpen = useExperience((s) => s.setMenuOpen);
   const location = useLocation();
@@ -54,7 +57,7 @@ export function MobileNavigation() {
               <YearCounter compact />
               <button
                 onClick={() => setOpen(false)}
-                aria-label="Close menu"
+                aria-label={t('navMenuClose')}
                 className="rounded-full border border-white/15 p-2 text-bone"
               >
                 <X size={16} />
@@ -69,7 +72,7 @@ export function MobileNavigation() {
               }}
               className="border-b border-white/5 py-3 text-left font-serif text-2xl text-bone"
             >
-              Timeline
+              {t('navTimeline')}
             </button>
             {ERA_LINKS.map((l) => (
               <button
@@ -77,7 +80,7 @@ export function MobileNavigation() {
                 onClick={() => goChapter(l.chapterId)}
                 className="border-b border-white/5 py-3 text-left font-serif text-2xl text-bone/90"
               >
-                {l.label}
+                {t(l.labelKey)}
               </button>
             ))}
             {ROUTE_LINKS.map((l) => (
@@ -87,11 +90,12 @@ export function MobileNavigation() {
                 onClick={() => setOpen(false)}
                 className="border-b border-white/5 py-3 text-left font-serif text-2xl text-bone/90"
               >
-                {l.label}
+                {t(l.labelKey)}
               </Link>
             ))}
 
             <div className="mt-auto flex flex-wrap items-center gap-2 pt-6">
+              <LanguageToggle />
               <ScientificModeToggle />
               <QualitySelector />
             </div>

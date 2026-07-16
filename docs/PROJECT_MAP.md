@@ -69,6 +69,11 @@ Curated tree only; excludes `node_modules`, `dist`, caches, and individual binar
 │   │   ├── credits.ts
 │   │   ├── eras.ts
 │   │   └── types.ts
+│   ├── i18n/
+│   │   ├── index.ts        (useTr hook)
+│   │   ├── strings.ts      (fixed UI labels, en + de)
+│   │   ├── content.ts      (German overrides for the manifests)
+│   │   └── i18n.test.ts
 │   ├── experience/
 │   │   ├── ExperienceCanvas.tsx
 │   │   ├── TimelineScene.tsx
@@ -142,6 +147,7 @@ Navigation items live in [src/components/navigation/navItems.ts](../src/componen
 | [src/data/backgrounds.ts](../src/data/backgrounds.ts) | Background IDs, colors, fog, image paths, underwater flags, AI markers. | [src/components/experience/BackgroundTransition.tsx](../src/components/experience/BackgroundTransition.tsx), [src/experience/EnvironmentController.tsx](../src/experience/EnvironmentController.tsx), [src/components/system/AiImageMarker.tsx](../src/components/system/AiImageMarker.tsx) |
 | [src/data/credits.ts](../src/data/credits.ts) | Model and asset credit derivation. | [src/pages/CreditsPage.tsx](../src/pages/CreditsPage.tsx) |
 | [src/data/types.ts](../src/data/types.ts) | Zod schemas and TypeScript types for manifests. | [src/data/creatures.ts](../src/data/creatures.ts), model and UI systems |
+| [src/i18n/strings.ts](../src/i18n/strings.ts), [src/i18n/content.ts](../src/i18n/content.ts) | EN/DE UI labels and the German override layer for creatures/chapters/eras. English in the manifests stays the source of truth and the fallback. | every component, via `useTr()` in [src/i18n/index.ts](../src/i18n/index.ts) |
 
 Treat these manifests as the source of truth for timeline, model, background, and credits behavior.
 
@@ -196,6 +202,9 @@ Test files:
 - [src/utils/timeline.test.ts](../src/utils/timeline.test.ts)
 - [src/utils/model.test.ts](../src/utils/model.test.ts)
 - [src/utils/water.test.ts](../src/utils/water.test.ts)
+- [src/i18n/i18n.test.ts](../src/i18n/i18n.test.ts)
+- [src/data/creatures.test.ts](../src/data/creatures.test.ts)
+- [src/store/experienceStore.test.ts](../src/store/experienceStore.test.ts)
 
 Configuration files:
 
@@ -227,6 +236,7 @@ Configuration files:
 - Model system: `assetFormat`, `animationMode`, `useGLTF`, `NON_GLTF_LOADER`, `normaliseModel`.
 - Water system: `submersionAt`, `HAS_AQUATIC`, `WaterlineTransition`.
 - Scientific mode: `scientificStatus`, `hideInScientificMode`, `ScientificModeToggle`.
+- Language: `useTr`, `CREATURE_DE`, `CHAPTER_DE`, `ERA_DE`, `LanguageToggle`, `toggleLang`.
 
 ## 11. Generated or Avoided Files
 

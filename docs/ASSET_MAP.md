@@ -1,6 +1,15 @@
 # 3D Models
 
-Last updated: 2026-07-14 00:07 +02:00
+Last updated: 2026-07-16
+
+> ⚠️ **KHR_materials_pbrSpecularGlossiness is NOT supported by three.js (r150+) or three-stdlib.**
+> A GLB that stores its colour maps in that extension loads geometry-only and renders **untextured**
+> — `baseColorTexture` is absent from the standard PBR slot, so `material.map` is null. three logs
+> only a mild "unknown extension" warning, so it fails quietly.
+> This is what made `lystrosaurus.glb` appear texture-less while looking fine in Blender (fixed
+> 2026-07-16 by re-exporting from [Models/lystrosaurus.glb](../Models/lystrosaurus.glb), which uses
+> standard metallic-roughness). **Check `extensionsRequired` before blaming the loader or the mesh:**
+> `node scripts/inspect-glb.mjs <file>`. `EXT_texture_webp` IS supported and is safe to use.
 
 > UPDATE 2026-07-15 (Claude): every runtime GLB was recompressed to WebP textures via
 > [scripts/optimize-glb.mjs](../scripts/optimize-glb.mjs) — **total public/models ~555 MB → ~111 MB
@@ -24,7 +33,7 @@ Runtime models live in [public/models](../public/models). Raw/downloaded or dupl
 | quetzalcoatlus | Quetzalcoatlus (quetzal_animated.glb) | Quetzalcoatlus | [public/models/quetzalcoatlus.glb](../public/models/quetzalcoatlus.glb) | `useGLTF` | 1.53 MB | `Animation` | `Animation` | 0.32 | `[-0.2,0,0]` | `quetzalcoatlus` | TODO_VERIFY | Runtime model replaced from [Models/quetzal_animated.glb](../Models/quetzal_animated.glb); old raw/runtime Quetzal files moved to Recycle Bin. |
 | spinosaurus | Spinosaurus \| Spino Dinosaur | Spinosaurus | [public/models/spinosaurus.glb](../public/models/spinosaurus.glb) | `useGLTF` | 16.81 MB | none | null | 1.25 | `[0,-0.15,0]` | `spinosaurus` | TODO_VERIFY | Static GLB; larger/front-facing framing. |
 | triceratops | Triceratops dinosaur | Triceratops | [public/models/triceratops.glb](../public/models/triceratops.glb) | `useGLTF` | 45.02 MB | none | null | 1.12 | `[0,-0.55,0]` | `triceratops` | TODO_VERIFY | Static GLB despite manifest `native`. |
-| tylosaurus | Cartoon Tylosaurus free 3D model | Tylosaurus | [public/models/tylosaurus.glb](../public/models/tylosaurus.glb) | `useGLTF` | 0.24 MB | none | null | 0.44 | `[0,-0.22,0]` | `tylosaurus` | TODO_VERIFY | Position `[0,1.25,0.35]`; GLB reports no embedded image textures. |
+| tylosaurus | Tylosaurus | Tylosaurus | [public/models/tylosaurus.glb](../public/models/tylosaurus.glb) | `useGLTF` | 7.99 MB (from 37.75) | none | null | 0.354 | `[0,-0.22,0]` | `tylosaurus` | **Julian Johnson-Mortimer, CC BY 4.0** | Replaced 2026-07-16; old cartoon GLB (0.24 MB, untextured, unverified licence) moved to the Recycle Bin. 6 embedded textures. Position `[0,0.69,0.35]`; scale 0.354 reproduces the previous on-screen length (~8.35 units, verified in-browser). No clips → procedural drift. |
 | tyrannosaurus-rex | Tyrannosaurus Rex (Male version) | Tyrannosaurus rex | [public/models/tyrannosaurus-rex-male.glb](../public/models/tyrannosaurus-rex-male.glb) | `useGLTF` | 50.95 MB | none | null | 1.2 | `[0,-0.6,0]` | `tyrannosaurus-rex` | TODO_VERIFY | Facts panel exposes a one-shot StudioMod sound button. |
 
 Schema-supported formats in [src/data/types.ts](../src/data/types.ts): GLB, glTF, FBX, OBJ, MTL-adjacent OBJ metadata, STL, PLY. Current active runtime models are GLB only.
@@ -41,7 +50,7 @@ Schema-supported formats in [src/data/types.ts](../src/data/types.ts): GLB, glTF
 | late-cretaceous-delta | [public/Images/07-early-late-cretaceous.webp](../public/Images/07-early-late-cretaceous.webp) | 1672x941 | WebP | Late Cretaceous delta | `spinosaurus` | terrestrial |
 | late-cretaceous-coast | [public/Images/08-middle-late-cretaceous.webp](../public/Images/08-middle-late-cretaceous.webp) | 1672x941 | WebP | Late Cretaceous coast | `carnotaurus`, `velociraptor-like`, `alexornis` | terrestrial/aerial coast |
 | latest-cretaceous | [public/Images/09-latest-cretaceous.webp](../public/Images/09-latest-cretaceous.webp) | 1672x941 | WebP | Latest Cretaceous | `quetzalcoatlus`, `triceratops`, `tyrannosaurus-rex` | terrestrial/aerial coast |
-| extinction | [public/Images/10-extinction.webp](../public/Images/10-extinction.webp) | 1672x941 | WebP | Extinction | `extinction` | terrestrial |
+| extinction | _(none — gradient only)_ | — | — | Extinction | `extinction` | terrestrial |
 | devonian-ocean | [public/Images/devonian-ocean.webp](../public/Images/devonian-ocean.webp) | 2560x1440 | WebP | Devonian ocean | `before-dinosaurs`, `dunkleosteus` | underwater |
 | early-jurassic-ocean | [public/Images/early-jurassic-ocean.webp](../public/Images/early-jurassic-ocean.webp) | 2560x1440 | WebP | Early Jurassic ocean | `plesiosaurus` | underwater |
 | late-cretaceous-ocean | [public/Images/late-cretaceous-ocean.webp](../public/Images/late-cretaceous-ocean.webp) | 2560x1440 | WebP | Late Cretaceous ocean | `tylosaurus` | underwater |
@@ -81,7 +90,8 @@ Do not permanently delete while documenting. Move to Trash/Recycle Bin only afte
 | unused runtime GLBs | [public/models/generic-pterosaur.glb](../public/models/generic-pterosaur.glb), [public/models/stylized-indoraptor.glb](../public/models/stylized-indoraptor.glb) | No longer referenced by active creature or chapter manifests; retained for manual review. |
 | duplicate raw GLBs | [Models/carnotaurus_dinosaur.glb](../Models/carnotaurus_dinosaur.glb), [Models/dinosaur.glb](../Models/dinosaur.glb), [Models/Plesio.glb](../Models/Plesio.glb), [Models/raptor_dinosaur_indoraptor.glb](../Models/raptor_dinosaur_indoraptor.glb), [Models/Spino.glb](../Models/Spino.glb), [Models/triceratops_dinosaur.glb](../Models/triceratops_dinosaur.glb), [Models/TylosaurusNoAnimation.glb](../Models/TylosaurusNoAnimation.glb), [Models/tyrant_king_-_tyrannosaurus.glb](../Models/tyrant_king_-_tyrannosaurus.glb), [Models/walking_with_dinosaurs_3d_alex.glb](../Models/walking_with_dinosaurs_3d_alex.glb) | Public runtime copies exist under [public/models](../public/models). |
 | runtime source retained | [Models/Moser.glb](../Models/Moser.glb), [Models/dunkleosteus.glb](../Models/dunkleosteus.glb), [Models/quetzal_animated.glb](../Models/quetzal_animated.glb) | Source copies for the current Mosasaurus, Dunkleosteus, and animated Quetzalcoatlus runtime models. |
-| likely unused | [public/backgrounds/wasteland.png](../public/backgrounds/wasteland.png) | Current background manifest points to [public/Images/01-prologue.webp](../public/Images/01-prologue.webp) and [public/Images/10-extinction.webp](../public/Images/10-extinction.webp), not this PNG. |
+| unused (2026-07-16) | [public/Images/10-extinction.webp](../public/Images/10-extinction.webp) | The `extinction` backdrop is now image-free (gradient only) so the scroll-scrubbed meteor video is the sole visual — the still showed as a stale frame between the Mosasaurus ocean and the video. Kept on disk: restore by re-adding `image: image('10-extinction.webp')` to the `extinction` entry in [backgrounds.ts](../src/data/backgrounds.ts). |
+| likely unused | [public/backgrounds/wasteland.png](../public/backgrounds/wasteland.png) | Current background manifest points to [public/Images/01-prologue.webp](../public/Images/01-prologue.webp); the extinction chapter no longer uses an image at all. |
 | needs verification | [Models/uploads_files_3154100_model.obj](../Models/uploads_files_3154100_model.obj), [Models/uploads_files_6902129_obj.rar](../Models/uploads_files_6902129_obj.rar), [Models/uploads_files_7092023_Dino2.stl](../Models/uploads_files_7092023_Dino2.stl), [Models/uploads_files_5717658_Dilophosaurus+rig+.blend](../Models/uploads_files_5717658_Dilophosaurus+rig+.blend) | Raw OBJ/RAR/STL/Blend assets are not wired into the active manifest. |
 | retained source ZIP | [Models/animated-flying-pteradactal-dinosaur-loop.zip](../Models/animated-flying-pteradactal-dinosaur-loop.zip) | Its contents previously matched the now-unused generic pterosaur runtime copy. |
 | moved to Recycle Bin | `Models/Quetzal.glb`, old `public/models/quetzalcoatlus.glb`, `uploads_files_3517731_Renders.zip`, `uploads_files_5129003_Velociraptor_looking_body+_Supported.zip`, `uploads_files_5216512_concavenator-chasing-1-35-scale-pre-supported-dinosaur-free-model.zip` | Replaced by `quetzal_animated.glb`, or not referenced by runtime code/public assets. |

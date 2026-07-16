@@ -3,9 +3,10 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { Search, FlaskConical, Bird, Info, ScrollText, BookOpen } from 'lucide-react';
 import { useExperience } from '@/store/experienceStore';
-import { scrollToChapter } from '@/hooks/useScrollController';
+import { scrollToChapter, setScrollLocked } from '@/hooks/useScrollController';
 import { CHAPTERS } from '@/data/eras';
 import { CREATURE_BY_ID } from '@/data/creatures';
+import { useTr } from '@/i18n';
 
 interface Item {
   id: string;
@@ -17,6 +18,8 @@ interface Item {
 
 /** Cmd/Ctrl+K palette: jump to any era/creature, open pages, toggle scientific mode. */
 export function CommandPalette() {
+  const tr = useTr();
+  const { t } = tr;
   const open = useExperience((s) => s.commandOpen);
   const setOpen = useExperience((s) => s.setCommandOpen);
   const toggleSci = useExperience((s) => s.toggleScientificMode);
@@ -36,8 +39,8 @@ export function CommandPalette() {
       const creature = c.creatureId ? CREATURE_BY_ID[c.creatureId] : null;
       return {
         id: `chapter-${c.id}`,
-        label: creature?.displayName ?? c.title,
-        hint: creature ? creature.period : 'Chapter',
+        label: creature?.displayName ?? tr.chapterTitle(c),
+        hint: creature ? tr.period(creature.period) : t('paletteHintChapter'),
         icon: creature ? <Bird size={15} /> : <ScrollText size={15} />,
         run: () => goChapter(c.id),
       };
@@ -45,8 +48,8 @@ export function CommandPalette() {
     const actions: Item[] = [
       {
         id: 'sci',
-        label: 'Toggle scientific mode',
-        hint: 'Hide stylised & fictional models',
+        label: t('paletteToggleSci'),
+        hint: t('paletteToggleSciHint'),
         icon: <FlaskConical size={15} />,
         run: () => {
           toggleSci();
@@ -55,8 +58,8 @@ export function CommandPalette() {
       },
       {
         id: 'creatures',
-        label: 'Creature explorer',
-        hint: 'Page',
+        label: t('paletteCreatures'),
+        hint: t('paletteHintPage'),
         icon: <Bird size={15} />,
         run: () => {
           navigate('/creatures');
@@ -65,8 +68,8 @@ export function CommandPalette() {
       },
       {
         id: 'methodology',
-        label: 'Scientific methodology',
-        hint: 'Page',
+        label: t('paletteMethodology'),
+        hint: t('paletteHintPage'),
         icon: <BookOpen size={15} />,
         run: () => {
           navigate('/methodology');
@@ -75,8 +78,8 @@ export function CommandPalette() {
       },
       {
         id: 'credits',
-        label: 'Credits & licenses',
-        hint: 'Page',
+        label: t('paletteCredits'),
+        hint: t('paletteHintPage'),
         icon: <Info size={15} />,
         run: () => {
           navigate('/credits');
@@ -85,7 +88,7 @@ export function CommandPalette() {
       },
     ];
     return [...chapterItems, ...actions];
-  }, [location.pathname, navigate, setOpen, toggleSci]);
+  }, [location.pathname, navigate, setOpen, toggleSci, t, tr]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -111,6 +114,10 @@ export function CommandPalette() {
       setQuery('');
       setCursor(0);
     }
+    // While the palette is open the wheel must scroll the RESULT LIST, not the page behind it:
+    // pause Lenis (it owns the wheel globally) and let the list scroll natively.
+    setScrollLocked(open);
+    return () => setScrollLocked(false);
   }, [open]);
 
   useEffect(() => {
@@ -127,7 +134,7 @@ export function CommandPalette() {
           className="fixed inset-0 z-[80] flex items-start justify-center px-4 pt-[15vh]"
           role="dialog"
           aria-modal="true"
-          aria-label="Command palette"
+          aria-label={t('paletteAria')}
         >
           <div className="absolute inset-0 bg-ink-900/70 backdrop-blur-sm" onClick={() => setOpen(false)} />
           <motion.div
@@ -147,13 +154,13 @@ export function CommandPalette() {
                   if (e.key === 'ArrowUp') setCursor((c) => Math.max(0, c - 1));
                   if (e.key === 'Enter') filtered[cursor]?.run();
                 }}
-                placeholder="Jump to an era, creature, or page…"
+                placeholder={t('palettePlaceholder')}
                 className="w-full bg-transparent text-sm text-bone placeholder:text-muted focus:outline-none"
               />
             </div>
-            <ul className="max-h-[50vh] overflow-y-auto py-2">
+            <ul data-lenis-prevent className="max-h-[50vh] overflow-y-auto py-2">
               {filtered.length === 0 && (
-                <li className="px-4 py-6 text-center text-sm text-muted">No matches</li>
+                <li className="px-4 py-6 text-center text-sm text-muted">{t('paletteNoMatches')}</li>
               )}
               {filtered.map((i, idx) => (
                 <li key={i.id}>
