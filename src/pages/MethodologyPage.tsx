@@ -1,5 +1,5 @@
 import { PageShell } from './PageShell';
-import { statusLabel } from '@/components/creature/ScientificStatusBadge';
+import { statusLabel } from '@/utils/scientificStatus';
 import { useTr } from '@/i18n';
 import type { Creature } from '@/data/types';
 
@@ -26,7 +26,7 @@ const STATUSES: {
   {
     status: 'stylized',
     group: 'stylized',
-    desc: 'A fictional or fantasy creature. Not a real animal; hidden when scientific mode is on.',
+    desc: 'A fictional or fantasy creature. Not a real animal; always labelled clearly in the interface.',
   },
   {
     status: 'nonDinosaur',

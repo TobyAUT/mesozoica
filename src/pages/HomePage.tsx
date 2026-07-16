@@ -15,7 +15,6 @@ import { Preloader } from '@/components/system/Preloader';
 import { CustomCursor } from '@/components/system/CustomCursor';
 import { ModelLoadingIndicator } from '@/components/system/ModelLoadingIndicator';
 import { AiImageMarker } from '@/components/system/AiImageMarker';
-import { AudioManager } from '@/components/controls/AudioManager';
 import { useReducedMotionSync } from '@/hooks/useReducedMotion';
 import { useDeviceQuality } from '@/hooks/useDeviceQuality';
 import { useScrollController, scrollToChapter } from '@/hooks/useScrollController';
@@ -75,7 +74,6 @@ export default function HomePage() {
         <MobileTimelineBar />
         <ModelLoadingIndicator />
         <AiImageMarker />
-        <AudioManager />
       </div>
       <CreatureExplorer />
 

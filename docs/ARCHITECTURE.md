@@ -1,6 +1,6 @@
 # High-Level Architecture
 
-Last updated: 2026-07-15
+Last updated: 2026-07-16
 
 ```mermaid
 flowchart TD
@@ -51,7 +51,6 @@ flowchart TD
 - Background: chapter `backgroundId` selects a definition from [src/data/backgrounds.ts](../src/data/backgrounds.ts); [src/components/experience/BackgroundTransition.tsx](../src/components/experience/BackgroundTransition.tsx) crossfades images/gradients.
 - Underwater state: creature `sceneType: 'underwater'` feeds [src/utils/water.ts](../src/utils/water.ts), while `underwaterBackgroundId`/chapter background IDs select underwater images.
 - Quality level: persisted in [src/store/experienceStore.ts](../src/store/experienceStore.ts), resolved by [src/hooks/useDeviceQuality.ts](../src/hooks/useDeviceQuality.ts), and consumed by [src/experience/ExperienceCanvas.tsx](../src/experience/ExperienceCanvas.tsx), [src/experience/TimelineScene.tsx](../src/experience/TimelineScene.tsx), and [src/components/experience/WaterlineTransition.tsx](../src/components/experience/WaterlineTransition.tsx).
-- Scientific mode: persisted in [src/store/experienceStore.ts](../src/store/experienceStore.ts); used by pages and filters to hide stylized entries where configured.
 
 # Scroll Architecture
 
@@ -122,5 +121,5 @@ Programmatic jumps use `scrollToChapter`, which maps a chapter ID to global prog
 - [src/data/eras.ts](../src/data/eras.ts), [src/data/creatures.ts](../src/data/creatures.ts), and [src/data/backgrounds.ts](../src/data/backgrounds.ts) are tightly coupled by string IDs.
 - Visual correctness depends on external model scale/orientation and cannot be fully validated by type tests.
 - Several large or broken assets exist; enabling them without inspection can hurt performance or break rendering.
-- OBJ+MTL and external texture base path support are typed but incomplete.
+- The OBJ loader does not apply companion `.mtl` files; all active runtime assets are GLB.
 - Water and scroll behavior are sensitive to chapter ordering and reduced-motion behavior.

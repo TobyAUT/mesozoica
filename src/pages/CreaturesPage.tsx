@@ -1,26 +1,21 @@
-import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { PageShell } from './PageShell';
 import { CREATURES } from '@/data/creatures';
 import { CHAPTERS } from '@/data/eras';
 import { ScientificStatusBadge } from '@/components/creature/ScientificStatusBadge';
-import { useExperience } from '@/store/experienceStore';
 import { formatMya } from '@/utils/timeline';
 import { useTr } from '@/i18n';
 
 /** Grid explorer of every live model-backed manifest entry. */
 export default function CreaturesPage() {
-  const scientificMode = useExperience((s) => s.scientificMode);
   const tr = useTr();
   const { t } = tr;
 
-  const list = useMemo(() => {
-    return CREATURES.filter((c) => !(scientificMode && c.hideInScientificMode)).map((creature) => ({
-      creature,
-      chapterId: CHAPTERS.find((chapter) => chapter.creatureId === creature.id)?.id ?? creature.id,
-    }));
-  }, [scientificMode]);
+  const list = CREATURES.map((creature) => ({
+    creature,
+    chapterId: CHAPTERS.find((chapter) => chapter.creatureId === creature.id)?.id ?? creature.id,
+  }));
 
   return (
     <PageShell title={t('creaturesTitle')} intro={t('creaturesIntro')}>

@@ -55,7 +55,8 @@ const raw: CreatureInput[] = [
     creditRequired: true,
     scale: 1.12,
     position: [0, -0.5, 0],
-    rotation: [0, -0.6, 0],
+    deviceOverrides: { phone: { scale: 1.2, position: [0, -1, -1] } },
+    rotation: [0, -0.4, 0],
     cameraPreset: { position: [5.5, 2.4, 7], target: [0, 1.7, 0], fov: 40, transition: 2.4 },
     availableAnimations: [],
     preferredAnimation: null,
@@ -63,7 +64,6 @@ const raw: CreatureInput[] = [
     accentTheme: 'cretaceous',
     heroModel: false,
     enabled: true,
-    hideInScientificMode: false,
     notes: 'Species name verified; reconstruction accuracy of this particular mesh not verified.',
   },
   {
@@ -93,6 +93,7 @@ const raw: CreatureInput[] = [
     scale: 1,
     position: [0, -0.5, 0],
     rotation: [0, 2.44, 0], // turned 180° (−0.7 + π)
+    deviceOverrides: { phone: { scale: 1.2, position: [0, -1.5, -2] } },
     cameraPreset: { position: [4, 1.9, 5.2], target: [0, 1.1, 0], fov: 40, transition: 2.2 },
     availableAnimations: [],
     preferredAnimation: null,
@@ -100,7 +101,6 @@ const raw: CreatureInput[] = [
     accentTheme: 'cretaceous',
     heroModel: false,
     enabled: true,
-    hideInScientificMode: false,
     notes: 'Identity intentionally kept uncertain. Model quality separate from species identity.',
   },
   {
@@ -139,7 +139,6 @@ const raw: CreatureInput[] = [
     accentTheme: 'cretaceous',
     heroModel: false,
     enabled: true,
-    hideInScientificMode: false,
     notes:
       'Model identity = the fictional film character; classified honestly as a prehistoric bird.',
   },
@@ -170,6 +169,7 @@ const raw: CreatureInput[] = [
     creditRequired: true,
     scale: 1.15,
     position: [0, 0, 0],
+    deviceOverrides: { phone: { scale: 1, position: [0, -1, -1] } },
     rotation: [0, -0.5, 0],
     cameraPreset: { position: [4.2, 2.6, 7.2], target: [0, 1.95, 0], fov: 38, transition: 2.6 },
     availableAnimations: [],
@@ -178,9 +178,8 @@ const raw: CreatureInput[] = [
     accentTheme: 'cretaceous',
     heroModel: true,
     enabled: true,
-    hideInScientificMode: false,
     notes:
-      'Static non-rigged GLB (spinosaurus.glb) — the reliable, always-visible model. The animated rig (spinosaurus-animated.glb) collapsed in bind/native pose and is kept unused. Author/licence for this static mesh are unverified (TODO_VERIFY).',
+      'Static non-rigged GLB (spinosaurus.glb) — the reliable, always-visible model. The discarded animated rig collapsed in bind/native pose and was archived during cleanup. Author/licence for this static mesh are unverified (TODO_VERIFY).',
   },
   {
     id: 'triceratops',
@@ -210,6 +209,7 @@ const raw: CreatureInput[] = [
     scale: 1.12,
     position: [0, 0, 0],
     rotation: [0, -0.55, 0],
+    deviceOverrides: { phone: { scale: 1.1, position: [0, -1, -1], rotation: [0, -0.1, 0] } },
     cameraPreset: { position: [6, 2.4, 7.5], target: [0, 1.4, 0], fov: 40, transition: 2.4 },
     availableAnimations: [],
     preferredAnimation: null,
@@ -217,7 +217,6 @@ const raw: CreatureInput[] = [
     accentTheme: 'cretaceous',
     heroModel: false,
     enabled: true,
-    hideInScientificMode: false,
     notes: null,
   },
   {
@@ -248,6 +247,7 @@ const raw: CreatureInput[] = [
     creditRequired: true,
     scale: 1.44,
     position: [0.8, 0, 0],
+    deviceOverrides: { phone: { scale: 1.7, position: [0, -1, -3], rotation: [0, -0.1, 0] } },
     rotation: [0, -0.6, 0],
     cameraPreset: { position: [7, 3, 9], target: [0, 2.1, 0], fov: 40, transition: 2.6 },
     availableAnimations: [],
@@ -256,7 +256,6 @@ const raw: CreatureInput[] = [
     accentTheme: 'cretaceous',
     heroModel: true,
     enabled: true,
-    hideInScientificMode: false,
     notes: 'PRIMARY hero T. rex. The alternate model is disabled by default (see below).',
   },
   {
@@ -287,6 +286,7 @@ const raw: CreatureInput[] = [
     creditRequired: true,
     scale: 1.3,
     position: [-1.6, -2.5, 0.35],
+    deviceOverrides: { phone: { scale: 1.3, position: [0, -3, 2] } },
     rotation: [0, -0.18, -0.5],
     cameraPreset: { position: [2.8, 0.6, 6.2], target: [0, -0.15, 0], fov: 38, transition: 3 },
     availableAnimations: [],
@@ -299,7 +299,6 @@ const raw: CreatureInput[] = [
     accentTheme: 'cretaceous',
     heroModel: false,
     enabled: true,
-    hideInScientificMode: false,
     notes:
       'Special UNDERWATER chapter. Explicitly a marine reptile, not a dinosaur. Runtime model copied from Models/Moser.glb.',
   },
@@ -335,6 +334,7 @@ const raw: CreatureInput[] = [
     creditRequired: true,
     scale: 0.9,
     position: [0, -0.2, 0.25],
+    deviceOverrides: { phone: { scale: 1, position: [0, -1, -1] } },
     rotation: [0, -0.35, 0],
     cameraPreset: { position: [4.8, 1.65, 7.2], target: [0, 1.3, 0], fov: 40, transition: 2.8 },
     availableAnimations: [],
@@ -346,8 +346,6 @@ const raw: CreatureInput[] = [
     accentTheme: 'cretaceous',
     heroModel: false,
     enabled: true,
-    hideInScientificMode: false,
-    stage: 'Late Devonian',
     notes:
       'Not a dinosaur; predates the Mesozoic. Supplied GLB has three embedded textures and no animation clips, so it uses procedural whole-object swimming.',
   },
@@ -381,6 +379,7 @@ const raw: CreatureInput[] = [
     creditRequired: true,
     scale: 1,
     position: [-0.6, 0, -3.5],
+    deviceOverrides: { phone: { scale: 0.8, position: [0, -1, -5] } },
     rotation: [0, -0.5127, 0],
     cameraPreset: { position: [0, 1.9, 7.2], target: [0, 1.15, 0.15], fov: 40, transition: 2.8 },
     availableAnimations: [],
@@ -392,7 +391,6 @@ const raw: CreatureInput[] = [
     accentTheme: 'jurassic',
     heroModel: false,
     enabled: true,
-    hideInScientificMode: false,
     notes:
       'Source title wrongly says "dinosaur". Marine reptile. Low-poly FBX + PBR textures; auto-scaled. If it loads sideways set upAxis:"z".',
   },
@@ -431,6 +429,7 @@ const raw: CreatureInput[] = [
     // keeps the body centred at ~1.25 — the height the cameraPreset target (y=1) was tuned for.
     scale: 0.354,
     position: [0, 0.69, 0.35],
+    deviceOverrides: { phone: { scale: 0.4, position: [0, 0, -2] } },
     rotation: [0, -0.22, 0],
     cameraPreset: { position: [1.8, 1.55, 7.4], target: [0, 1, 0], fov: 38, transition: 2.8 },
     availableAnimations: [],
@@ -442,7 +441,6 @@ const raw: CreatureInput[] = [
     accentTheme: 'cretaceous',
     heroModel: false,
     enabled: true,
-    hideInScientificMode: false,
     notes:
       'Marine reptile, not a dinosaur. Replaced 2026-07-16 with the fully credited Julian Johnson-Mortimer model (6 embedded textures; the previous cartoon GLB had none and its licence was unverified). The GLB ships NO animation clips, so it keeps procedural whole-object drift and the Explore panel correctly reports "No animation available".',
   },
@@ -474,6 +472,7 @@ const raw: CreatureInput[] = [
     creditRequired: true,
     scale: 0.13,
     position: [-2, -0.9, -1],
+    deviceOverrides: { phone: { scale: 0.13, position: [0, -1, -4], rotation: [-0.2, -0.2, 0] } },
     rotation: [-0.2, 0, 0],
     cameraPreset: { position: [0, 2, 5.8], target: [0, 1, 0.15], fov: 34, transition: 2.6 },
     availableAnimations: ['Animation'],
@@ -486,7 +485,6 @@ const raw: CreatureInput[] = [
     accentTheme: 'cretaceous',
     heroModel: false,
     enabled: true,
-    hideInScientificMode: false,
     notes:
       'Pterosaur, not a dinosaur. Runtime model replaced with quetzal_animated.glb; native clip "Animation" plays from the GLB.',
   },
@@ -528,6 +526,7 @@ const raw: CreatureInput[] = [
     scale: 1,
     position: [0, -0.2, 0],
     rotation: [0, -0.5, 0],
+    deviceOverrides: { phone: { scale: 1, position: [0, -1, -0.5] } },
     cameraPreset: { position: [5.5, 2.4, 7], target: [0, 1.7, 0], fov: 40, transition: 2.4 },
     availableAnimations: ['Animation'],
     preferredAnimation: 'Animation',
@@ -535,7 +534,6 @@ const raw: CreatureInput[] = [
     accentTheme: 'triassic',
     heroModel: false,
     enabled: true,
-    hideInScientificMode: false,
     notes: 'Synapsid (dicynodont), not a dinosaur. Predates the first dinosaurs.',
   },
   {
@@ -571,6 +569,7 @@ const raw: CreatureInput[] = [
     scale: 2.08,
     position: [0, -3.2, 0],
     rotation: [0, -0.5, 0],
+    deviceOverrides: { phone: { scale: 2.4, position: [0, -5, -1] } },
     cameraPreset: { position: [5.5, 2.4, 7], target: [0, 1.7, 0], fov: 40, transition: 2.4 },
     availableAnimations: ['C4D Animation Take'],
     preferredAnimation: 'C4D Animation Take',
@@ -578,7 +577,6 @@ const raw: CreatureInput[] = [
     accentTheme: 'triassic',
     heroModel: false,
     enabled: true,
-    hideInScientificMode: false,
     notes: null,
   },
   {
@@ -613,6 +611,7 @@ const raw: CreatureInput[] = [
     creditRequired: true,
     scale: 0.03,
     position: [0, 2, 0],
+    deviceOverrides: { phone: { scale: 0.03, position: [0, 0, -1] } },
     rotation: [0, -0.5, 0],
     cameraPreset: { position: [5.8, 2.5, 7.4], target: [0, 1.8, 0], fov: 40, transition: 2.4 },
     availableAnimations: ['Animation'],
@@ -621,7 +620,6 @@ const raw: CreatureInput[] = [
     accentTheme: 'triassic',
     heroModel: false,
     enabled: true,
-    hideInScientificMode: false,
     notes: null,
   },
   {
@@ -664,7 +662,6 @@ const raw: CreatureInput[] = [
     accentTheme: 'jurassic',
     heroModel: false,
     enabled: true,
-    hideInScientificMode: false,
     notes: 'Film "venom/frill" traits are fiction; classified from the real animal.',
   },
   {
@@ -700,6 +697,7 @@ const raw: CreatureInput[] = [
     scale: 1.5,
     position: [0, -6, 0],
     rotation: [0, -0.5, 0],
+    deviceOverrides: { phone: { scale: 0.9, position: [0, -4, 0] } },
     cameraPreset: { position: [5.5, 2.4, 7], target: [0, 1.7, 0], fov: 40, transition: 2.4 },
     availableAnimations: [],
     preferredAnimation: null,
@@ -707,7 +705,6 @@ const raw: CreatureInput[] = [
     accentTheme: 'jurassic',
     heroModel: false,
     enabled: true,
-    hideInScientificMode: false,
     notes: 'GLB reports no animation clips; shown with static/idle-sway presentation.',
   },
   {
@@ -742,6 +739,7 @@ const raw: CreatureInput[] = [
     creditRequired: true,
     scale: 0.35,
     position: [-0.8, 0, 0.35],
+    deviceOverrides: { phone: { scale: 0.3, position: [0, 0, 3.4] } },
     rotation: [0, -0.22, 0],
     cameraPreset: { position: [1.8, 1.55, 7.4], target: [0, 1, 0], fov: 38, transition: 2.8 },
     availableAnimations: ['SwimmingBiting'],
@@ -754,7 +752,6 @@ const raw: CreatureInput[] = [
     accentTheme: 'triassic',
     heroModel: false,
     enabled: true,
-    hideInScientificMode: false,
     notes:
       'Marine reptile, not a dinosaur. Placed in the Middle Triassic (its actual age); shown on the generic shallow-sea backdrop as there is no dedicated Triassic ocean image. Native swim clip.',
   },
@@ -790,6 +787,7 @@ const raw: CreatureInput[] = [
     creditRequired: true,
     scale: 1.15,
     position: [0.8, 0, 0],
+    deviceOverrides: { phone: { scale: 1, position: [0, -1, -1.1] } },
     rotation: [0, -0.5, 0],
     cameraPreset: { position: [6, 2.6, 7.6], target: [0, 1.8, 0], fov: 40, transition: 2.4 },
     availableAnimations: [],
@@ -798,7 +796,6 @@ const raw: CreatureInput[] = [
     accentTheme: 'jurassic',
     heroModel: false,
     enabled: true,
-    hideInScientificMode: false,
     notes: 'GLB reports no animation clips; static/idle-sway presentation.',
   },
   {
@@ -833,6 +830,7 @@ const raw: CreatureInput[] = [
     creditRequired: true,
     scale: 0.02,
     position: [0, -1, -1],
+    deviceOverrides: { phone: { scale: 0.02, position: [0, -2, -4.1] } },
     rotation: [0, -0.5, 0],
     cameraPreset: { position: [7, 3, 9.5], target: [0, 2.1, 0], fov: 42, transition: 2.6 },
     availableAnimations: [],
@@ -841,7 +839,6 @@ const raw: CreatureInput[] = [
     accentTheme: 'jurassic',
     heroModel: false,
     enabled: true,
-    hideInScientificMode: false,
     notes: 'Long-necked sauropod; scaled down so the full body frames on screen.',
   },
   {
@@ -884,7 +881,6 @@ const raw: CreatureInput[] = [
     accentTheme: 'jurassic',
     heroModel: false,
     enabled: true,
-    hideInScientificMode: false,
     notes: 'Game-rigged model with many clips; the idle clip is used.',
   },
   {
@@ -919,6 +915,7 @@ const raw: CreatureInput[] = [
     creditRequired: true,
     scale: 3.5,
     position: [0, -5, 0],
+    deviceOverrides: { phone: { scale: 3, position: [0, -4, -1.1] } },
     rotation: [0, 2.6416, 0],
     cameraPreset: { position: [6, 2.6, 7.6], target: [0, 1.8, 0], fov: 40, transition: 2.4 },
     availableAnimations: ['Game_Rig|G_Iddle'],
@@ -927,7 +924,6 @@ const raw: CreatureInput[] = [
     accentTheme: 'jurassic',
     heroModel: false,
     enabled: true,
-    hideInScientificMode: false,
     notes: 'Game-rigged; idle clip "Game_Rig|G_Iddle" used.',
   },
   {
@@ -962,6 +958,7 @@ const raw: CreatureInput[] = [
     creditRequired: true,
     scale: 0.95,
     position: [0, 0, 0],
+    deviceOverrides: { phone: { scale: 0.95, position: [0, 0, -0.2] } },
     rotation: [0, -0.5, 0],
     cameraPreset: { position: [6.2, 2.6, 7.8], target: [0, 1.7, 0], fov: 40, transition: 2.4 },
     availableAnimations: ['Take 001'],
@@ -971,7 +968,6 @@ const raw: CreatureInput[] = [
     accentTheme: 'jurassic',
     heroModel: false,
     enabled: true,
-    hideInScientificMode: false,
     notes: null,
   },
   {
@@ -1006,7 +1002,8 @@ const raw: CreatureInput[] = [
     creditRequired: true,
     scale: 1.3,
     position: [2.5, 0, 0],
-    rotation: [0, -0.5, 0],
+    deviceOverrides: { phone: { scale: 1.3, position: [0, -1.5, -3] } },
+    rotation: [0, 0, 0],
     cameraPreset: { position: [7.5, 3, 10], target: [0, 2, 0], fov: 44, transition: 2.6 },
     availableAnimations: ['Animation'],
     preferredAnimation: 'Animation',
@@ -1014,7 +1011,6 @@ const raw: CreatureInput[] = [
     accentTheme: 'jurassic',
     heroModel: false,
     enabled: true,
-    hideInScientificMode: false,
     notes: 'Very elongated; scaled down so the full body frames on screen.',
   },
   {
@@ -1049,7 +1045,8 @@ const raw: CreatureInput[] = [
     creditRequired: true,
     scale: 0.99,
     position: [0.5, 0, 0],
-    rotation: [0, -0.5, 0],
+    deviceOverrides: { phone: { scale: 1.4, position: [0, -1, -2.2] } },
+    rotation: [0, 0.0009, 0],
     cameraPreset: { position: [6, 2.6, 7.8], target: [0, 1.8, 0], fov: 40, transition: 2.4 },
     availableAnimations: ['Animation'],
     preferredAnimation: 'Animation',
@@ -1057,7 +1054,6 @@ const raw: CreatureInput[] = [
     accentTheme: 'cretaceous',
     heroModel: false,
     enabled: true,
-    hideInScientificMode: false,
     notes: null,
   },
   {
@@ -1092,6 +1088,7 @@ const raw: CreatureInput[] = [
     creditRequired: true,
     scale: 0.3,
     position: [0, 0, 0],
+    deviceOverrides: { phone: { scale: 0.29, position: [0, -1, -0.5] } },
     rotation: [0, -0.5, 0],
     cameraPreset: { position: [6, 2.5, 7.6], target: [0, 1.8, 0], fov: 40, transition: 2.4 },
     availableAnimations: ['idle'],
@@ -1101,7 +1098,6 @@ const raw: CreatureInput[] = [
     accentTheme: 'cretaceous',
     heroModel: false,
     enabled: true,
-    hideInScientificMode: false,
     notes: 'Game-rigged with many clips; the idle clip is used.',
   },
   {
@@ -1136,6 +1132,7 @@ const raw: CreatureInput[] = [
     creditRequired: true,
     scale: 0.022,
     position: [0, -2, -3],
+    deviceOverrides: { phone: { scale: 0.02, position: [0, -2, -5] } },
     rotation: [0, -0.5, 0],
     cameraPreset: { position: [8, 3.2, 10.5], target: [0, 2.2, 0], fov: 44, transition: 2.8 },
     availableAnimations: [],
@@ -1144,7 +1141,6 @@ const raw: CreatureInput[] = [
     accentTheme: 'cretaceous',
     heroModel: false,
     enabled: true,
-    hideInScientificMode: false,
     notes: 'Gigantic sauropod; GLB has no clips (static). Scaled down to frame the full body.',
   },
   {
@@ -1180,6 +1176,7 @@ const raw: CreatureInput[] = [
     scale: 0.85,
     position: [0, 0, 0],
     rotation: [0, -0.5, 0],
+    deviceOverrides: { phone: { scale: 1, position: [0, -1, -2], rotation: [0, -0.1, 0] } },
     cameraPreset: { position: [6, 2.4, 7.6], target: [0, 1.5, 0], fov: 40, transition: 2.4 },
     availableAnimations: ['Animation'],
     preferredAnimation: 'Animation',
@@ -1187,7 +1184,6 @@ const raw: CreatureInput[] = [
     accentTheme: 'cretaceous',
     heroModel: false,
     enabled: true,
-    hideInScientificMode: false,
     notes: null,
   },
 ];
@@ -1198,10 +1194,3 @@ export const CREATURES: readonly Creature[] = raw.map((c) => creatureSchema.pars
 export const CREATURE_BY_ID: Readonly<Record<string, Creature>> = Object.fromEntries(
   CREATURES.map((c) => [c.id, c]),
 );
-
-/** Creatures we actually have a local model for AND that are turned on. */
-export function playableCreatures(scientificMode: boolean): Creature[] {
-  return CREATURES.filter(
-    (c) => c.enabled && c.modelPath && !(scientificMode && c.hideInScientificMode),
-  );
-}

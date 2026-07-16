@@ -129,10 +129,6 @@ export const creatureSchema = z.object({
   assetFormat: modelAssetFormatSchema.default('glb'),
   /** Source up-axis; 'z' models (e.g. some STL/print models) get a -90° X correction. */
   upAxis: z.enum(['y', 'z']).default('y'),
-  /** Optional .mtl path for OBJ models. */
-  materialPath: z.string().nullable().default(null),
-  /** Optional base folder for external textures (OBJ/glTF). */
-  textureBasePath: z.string().nullable().default(null),
   /** Optional one-shot creature sound exposed from the facts panel. */
   audioPath: z.string().nullable().default(null),
   sourceUrl: z.string().url().nullable(),
@@ -168,12 +164,6 @@ export const creatureSchema = z.object({
   accentTheme: z.enum(['triassic', 'jurassic', 'cretaceous', 'extinction']),
   heroModel: z.boolean().default(false),
   enabled: z.boolean().default(true),
-  /** If true, hidden when scientific mode is active. */
-  hideInScientificMode: z.boolean().default(false),
-  /** Geological stage(s), e.g. "Maastrichtian". Optional. */
-  stage: z.string().nullable().default(null),
-  /** Rock formation the fossils come from, e.g. "Hell Creek". Optional. */
-  formation: z.string().nullable().default(null),
   /** Zero or more reputable sources backing the factual text. */
   factSources: z.array(z.string()).default([]),
   notes: z.string().nullable(),

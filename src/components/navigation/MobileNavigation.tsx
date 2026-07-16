@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'motion/react';
 import { X } from 'lucide-react';
 import { useExperience } from '@/store/experienceStore';
 import { scrollToChapter, scrollToTop } from '@/hooks/useScrollController';
-import { ScientificModeToggle } from '@/components/controls/ScientificModeToggle';
 import { QualitySelector } from '@/components/controls/QualitySelector';
 import { LanguageToggle } from '@/components/controls/LanguageToggle';
 import { YearCounter } from '@/components/timeline/YearCounter';
@@ -45,7 +44,10 @@ export function MobileNavigation() {
           aria-modal="true"
           aria-label="Menu"
         >
-          <div className="absolute inset-0 bg-ink-900/70 backdrop-blur-sm" onClick={() => setOpen(false)} />
+          <div
+            className="absolute inset-0 bg-ink-900/70 backdrop-blur-sm"
+            onClick={() => setOpen(false)}
+          />
           <motion.nav
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
@@ -96,7 +98,6 @@ export function MobileNavigation() {
 
             <div className="mt-auto flex flex-wrap items-center gap-2 pt-6">
               <LanguageToggle />
-              <ScientificModeToggle />
               <QualitySelector />
             </div>
           </motion.nav>

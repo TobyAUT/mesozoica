@@ -1,28 +1,7 @@
 import { cn } from '@/utils/cn';
+import { statusLabel } from '@/utils/scientificStatus';
 import type { Creature } from '@/data/types';
 import { useTr } from '@/i18n';
-
-/** Maps the manifest scientific status + group to an honest, human-readable badge. */
-export function statusLabel(c: Pick<Creature, 'scientificStatus' | 'creatureGroup'>): string {
-  switch (c.scientificStatus) {
-    case 'verified':
-      return 'Verified';
-    case 'generic':
-      return 'Generic model';
-    case 'stylized':
-      return 'Stylised interpretation';
-    case 'uncertain':
-      return 'Identification uncertain';
-    case 'groupScene':
-      return 'Group scene';
-    case 'nonDinosaur':
-      if (c.creatureGroup === 'marineReptile') return 'Marine reptile';
-      if (c.creatureGroup === 'pterosaur') return 'Pterosaur';
-      if (c.creatureGroup === 'avialan') return 'Prehistoric bird';
-      if (c.creatureGroup === 'fish') return 'Prehistoric fish';
-      return 'Not a dinosaur';
-  }
-}
 
 const TONE: Record<string, string> = {
   verified: 'border-emerald-400/40 text-emerald-200 bg-emerald-400/10',

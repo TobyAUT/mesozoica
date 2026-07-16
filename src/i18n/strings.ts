@@ -29,21 +29,11 @@ export const UI = {
     preloaderEyebrow: 'An interactive age of dinosaurs',
 
     // ── Controls ──
-    scientificMode: 'Scientific',
-    scientificModeOn: 'Scientific · on',
-    scientificModeAria: 'Scientific mode',
-    scientificModeTitle: 'Scientific mode hides stylised and fictional models',
     qualityAria: 'Graphics quality',
     qualityAuto: 'Auto',
     qualityHigh: 'High',
     qualityBalanced: 'Balanced',
     qualityLow: 'Low',
-    audioEnable: 'Enable ambient sound',
-    audioMute: 'Mute ambient sound',
-    audioNote: 'Ambient sound is optional. No sudden roars — subtle era beds only.',
-    audioAmbience: 'Ambience',
-    audioEffects: 'Effects',
-
     // ── Creature info panel ──
     panelWhen: 'When',
     panelWhere: 'Where',
@@ -81,8 +71,6 @@ export const UI = {
     paletteNoMatches: 'No matches',
     paletteHintChapter: 'Chapter',
     paletteHintPage: 'Page',
-    paletteToggleSci: 'Toggle scientific mode',
-    paletteToggleSciHint: 'Hide stylised & fictional models',
     paletteCreatures: 'Creature explorer',
     paletteMethodology: 'Scientific methodology',
     paletteCredits: 'Credits & licenses',
@@ -97,8 +85,7 @@ export const UI = {
     finaleBody:
       'Dinosaurs did not disappear completely. Modern birds evolved within the theropod dinosaur lineage and are therefore living dinosaurs. From hummingbirds to eagles, more than 10,000 bird species continue a history that began among small feathered dinosaurs during the Mesozoic Era.',
     finaleCta: 'Explore every creature',
-    timeSliceFallback:
-      'Warm, humid river deltas spread between muddy banks and dense fern growth.',
+    timeSliceFallback: 'Warm, humid river deltas spread between muddy banks and dense fern growth.',
 
     // ── Footers / notices ──
     footerImpressum: 'Impressum',
@@ -195,22 +182,11 @@ export const UI = {
     preloaderEyebrow: 'Ein interaktives Zeitalter der Dinosaurier',
 
     // ── Bedienelemente ──
-    scientificMode: 'Wissenschaft',
-    scientificModeOn: 'Wissenschaft · an',
-    scientificModeAria: 'Wissenschaftsmodus',
-    scientificModeTitle: 'Der Wissenschaftsmodus blendet stilisierte und fiktive Modelle aus',
     qualityAria: 'Grafikqualität',
     qualityAuto: 'Automatisch',
     qualityHigh: 'Hoch',
     qualityBalanced: 'Ausgewogen',
     qualityLow: 'Niedrig',
-    audioEnable: 'Hintergrundton einschalten',
-    audioMute: 'Hintergrundton stummschalten',
-    audioNote:
-      'Der Hintergrundton ist optional. Kein plötzliches Gebrüll – nur dezente Klangteppiche pro Ära.',
-    audioAmbience: 'Atmosphäre',
-    audioEffects: 'Effekte',
-
     // ── Info-Panel ──
     panelWhen: 'Wann',
     panelWhere: 'Wo',
@@ -248,8 +224,6 @@ export const UI = {
     paletteNoMatches: 'Keine Treffer',
     paletteHintChapter: 'Kapitel',
     paletteHintPage: 'Seite',
-    paletteToggleSci: 'Wissenschaftsmodus umschalten',
-    paletteToggleSciHint: 'Stilisierte & fiktive Modelle ausblenden',
     paletteCreatures: 'Kreaturen-Explorer',
     paletteMethodology: 'Wissenschaftliche Methodik',
     paletteCredits: 'Credits & Lizenzen',

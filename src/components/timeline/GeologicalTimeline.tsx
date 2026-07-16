@@ -160,11 +160,17 @@ export function MobileTimelineBar() {
 
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-0 z-30 px-4 pb-3 lg:hidden">
-      <div className="flex items-center justify-between px-1 pb-1.5 text-[0.62rem]">
-        <span className="type-eyebrow text-cretaceous">{tr.chapterTitle(chapter)}</span>
-      </div>
+      {chapter.kind !== 'finale' && (
+        <div className="flex items-center justify-between px-1 pb-1.5 text-[0.62rem]">
+          <span className="type-eyebrow text-cretaceous">{tr.chapterTitle(chapter)}</span>
+        </div>
+      )}
       <div className="h-2 w-full overflow-hidden rounded-full bg-white/20">
-        <div ref={fillRef} className="h-full bg-gradient-to-r from-jurassic to-cretaceous" style={{ width: '0%' }} />
+        <div
+          ref={fillRef}
+          className="h-full bg-gradient-to-r from-jurassic to-cretaceous"
+          style={{ width: '0%' }}
+        />
       </div>
     </div>
   );

@@ -1,5 +1,36 @@
 # Current Project State
 
+# Session 2026-07-16 #5 (Codex) — mobile finale cleanup + repository audit
+
+Verified: typecheck 0, tests 42/42, lint 0 warnings/errors, production build 0. Runtime asset
+cross-check: 27/27 models, 13/13 images, 3/3 videos, and 1/1 audio file are referenced; no missing
+or extra deployed files in those folders.
+
+- Created a rollback archive before cleanup at
+  `C:\Users\mctob\.codex\visualizations\2026\07\16\019f6ab5-8d87-7712-afe9-e77fc0dd36be\mesozoica-pre-cleanup-2026-07-16.zip`.
+  It contains a complete Git bundle, the pre-cleanup working-tree binary patch (including the user's
+  uncommitted mobile model overrides), and restore instructions. The ZIP was opened and its entries
+  verified after creation.
+- The mobile timeline's finale label “DIE DINOSAURIER SIND NIE VERSCHWUNDEN” is hidden while the
+  finale is active; the main finale heading and its “Vögel sind lebende Dinosaurier” eyebrow remain
+  visible and unchanged.
+- Removed the scientific-mode toggle and its manifest/store/filter plumbing because every creature
+  was allowed and the timeline never consumed the filter, so the control had no visible effect.
+  Scientific-status badges and the Methodology page remain.
+- Removed the dormant global ambience controls/manager and missing-file expectations. The separate,
+  credited one-shot T. rex sound remains available from its facts panel.
+- Credits now derive only from enabled, local-model creatures referenced by a live chapter. All 27
+  timeline models still receive a credit; the nine unresolved entries are genuinely used models and
+  remain marked for author/licence verification. Added a regression test for this correspondence.
+- Removed unused manifest fields/functions and promoted the directly imported `postprocessing` and
+  `three-stdlib` packages from transitive to direct dependencies.
+- Moved eight verified-unreferenced deployed assets (three models, three original videos, one old
+  background, and one unused extinction still) to the Windows Recycle Bin, recovering about 27 MB
+  without permanent deletion. Raw/source assets outside `public` remain untouched.
+- Production dependency audit: 0 vulnerabilities. The full development audit still reports five
+  Vite 5/esbuild advisories whose automated fix is a breaking Vite 8 upgrade; no forced major
+  upgrade was applied during this cleanup.
+
 # Session 2026-07-16 #4 (Codex) — finale overflow audit + mobile transform verification
 
 Verified: typecheck 0, tests 40/40, lint 0 errors (1 pre-existing Fast Refresh warning), build 0.
@@ -45,7 +76,7 @@ the REAL `GLTFLoader` in the browser to confirm textures/clips (not just JSON in
   proportionally slimmer/more accurate).
 - **Lystrosaurus "no texture" — ROOT CAUSE FOUND.** Not the loader, not the mesh, not the Blender
   file. The runtime GLB declared `extensionsRequired: [EXT_texture_webp,
-  KHR_materials_pbrSpecularGlossiness]` and stored its colour maps ONLY in the specGloss extension
+KHR_materials_pbrSpecularGlossiness]` and stored its colour maps ONLY in the specGloss extension
   (`baseColorTexture: NONE` in the standard PBR slot). **three r150+ removed specGloss support and
   three-stdlib never had it** (grepped both: 0 hits), so the material loaded with `map = null` and
   rendered untextured — with nothing louder than an "unknown extension" console warning.
@@ -74,7 +105,7 @@ Verified: typecheck 0, tests 40/40 (2 new water tests), lint 0 errors (1 pre-exi
 build 0. Browser at 1280x800 + 375x812.
 
 - **Water rises later** ([water.ts](src/utils/water.ts)): rise moved 0→0.35 to **0.15→0.45** local.
-  Also **deleted the "pre-rise"** that ran in the tail (0.78→1.0) of the land chapter *before* an
+  Also **deleted the "pre-rise"** that ran in the tail (0.78→1.0) of the land chapter _before_ an
   aquatic one — it made the water appear a whole chapter early AND popped from 0.85 straight back
   to 0 at the boundary, because the aquatic chapter's own rise restarts from 0. New unit tests
   assert the late rise, the dry preceding chapter, and continuity across the boundary (no step > 0.05).
@@ -126,7 +157,7 @@ Browser at 1280x800: EN default, toggle → DE flips nav/timeline/panels/chapter
   layer, so a creature/chapter without a German entry falls back to English instead of breaking.
   Proper nouns (genus names, institutions, licences) are deliberately untranslated. `lang` lives in
   [experienceStore](src/store/experienceStore.ts) beside the other persisted prefs.
-  Translations are hand-written and DeepL-checked; the DeepL *site* was not used programmatically
+  Translations are hand-written and DeepL-checked; the DeepL _site_ was not used programmatically
   (no API key configured — worth revisiting if the copy grows).
 - **Water drains earlier** ([water.ts](src/utils/water.ts)): the fall now runs 0.55→0.85 local
   (was 0.7→1.0), so an aquatic chapter is fully dry well before its next heading arrives.
@@ -385,8 +416,6 @@ fonts loading, sand headings, **0 failed resources**, 0 console errors).
   literal base so cmd/PowerShell can't mangle it. Republished with correct `/mesozoica/` base.
   NOTE: build the deploy from PowerShell/cmd, NOT Git Bash (Bash mangles the `/mesozoica/` arg).
 
-
-
 # Session 2026-07-15 #2 (Claude) — content + polish pass
 
 Verified: typecheck 0, tests 22/22, lint 0 errors, build 0. Browser: SEO title/description live, 37
@@ -416,8 +445,6 @@ so the active chapter can't advance; validated via asset fetch, DOM/computed-sty
 - **Timeline structure**: added a **"The Late Cretaceous"** time-slice before Spinosaurus, and
   **moved Pistosaurus into the Middle Triassic** (between Lystrosaurus and Herrerasaurus; period enum
   has no "Middle Triassic" so it uses `Triassic` with the age in the text). 37 sections total.
-
-
 
 # Session 2026-07-15 (Claude) — 6-point pass
 
@@ -460,10 +487,11 @@ errors (1 pre-existing warning), build 0, dev server no console errors.
 6. **3D rotation on every device**: unified pointer events + pointer capture already handle
    mouse/touch/pen; added explicit `canvas { touch-action: pan-y }` in
    [src/styles/globals.css](src/styles/globals.css) so horizontal drag rotates and vertical scrolls
-   the page on every touch browser (R3F only sets touch-action on the canvas *container*). Verified
+   the page on every touch browser (R3F only sets touch-action on the canvas _container_). Verified
    the canvas element now computes `pan-y`.
 
 # Prior state
+
 Last updated: 2026-07-14 (Claude session — mobile order + per-model tuning pass)
 
 # Mobile framing overhaul (2026-07-14, Claude)
@@ -489,6 +517,7 @@ mobile (no side panel) models were pushed off the narrow frame.
 # Tuning Pass (2026-07-14, Claude — follow-up)
 
 Per-model scale/position/rotation/animation adjustments in [src/data/creatures.ts](src/data/creatures.ts):
+
 - Herrerasaurus scale 1→1.6; Plateosaurus 1→0.2; Dilophosaurus 1.05→0.4; Cryolophosaurus 0.95→0.85 + pos y −0.5; Plesiosaurus pos →[-0.6,1.1,0.65]; Pistosaur 0.5→0.35, pos y→0.9, +7s anim pause; Cetiosaurus 0.7→0.07; Megalosaurus 1.05→1.15 + x+0.6; Huayangosaurus 1→0.1; Allosaurus 1.05→2.6 + rotated 180° (y 2.6416) to face viewer; Stegosaurus +7s pause; Diplodocus 0.5→1.3; Baryonyx 0.9→0.99 + x+0.5; Iguanodon 1→0.3 + 7s pause; Argentinosaurus 0.55→0.055; Alex pos x→−1.8 (more centred); Quetzalcoatlus 0.32→0.13 + 7s pause.
 - **Spinosaurus "not shown" root cause**: the model normalises to ~3.2 units tall at rest and is visible, but its native clip `Armature|ArmatureAction` stores bone translations in a different unit space than the mesh, so playing it collapses the skeleton to a near-zero point → invisible in a live browser (fine in the frozen-rAF pane). Fix: set `animationMode: 'static'` (no native clip). Now renders ~3.68 units tall. Clip kept in `availableAnimations` for reference.
 - Global: models now fade in later — `smoothstep(local, 0.46, 0.64)` in [src/experience/CreatureModel.tsx](src/experience/CreatureModel.tsx) (was 0.24–0.42), so a creature only appears once its chapter text is on screen.
@@ -499,6 +528,7 @@ Per-model scale/position/rotation/animation adjustments in [src/data/creatures.t
 Objective: add all supplied new GLB models into the correct epochs in the existing style, wire full clickable credits, and move each chapter's short text to sit with a small gap beside the facts panel.
 
 Done:
+
 - Copied 17 GLBs from `Downloads\Claude\Websites\3D Modelle\Neue Modelle` into [public/models](public/models) with clean names.
 - Added 16 new creature entries in [src/data/creatures.ts](src/data/creatures.ts) and upgraded Spinosaurus to the new animated model (`spinosaurus-animated.glb`, native clip `Armature|ArmatureAction`, credits filled). New: Lystrosaurus, Herrerasaurus, Plateosaurus (Triassic); Dilophosaurus, Cryolophosaurus, Pistosaur (Early Jurassic); Cetiosaurus, Megalosaurus, Huayangosaurus (Middle Jurassic); Allosaurus, Stegosaurus, Diplodocus (Late Jurassic); Baryonyx, Iguanodon (Early Cretaceous); Argentinosaurus (Late Cretaceous); Ankylosaurus (Latest Cretaceous).
 - Wove new chapters into [src/data/eras.ts](src/data/eras.ts) in chronological order; added a **Late Jurassic** time-slice section (uses the previously-unused `late-jurassic` background) and a `blurb` field for time-slice copy. Timeline is now 36 sections.
@@ -507,6 +537,7 @@ Done:
 - Layout: in [src/components/experience/ChapterSection.tsx](src/components/experience/ChapterSection.tsx) the short creature text is now `lg:absolute` anchored just right of the fixed facts panel (constant ~1rem gap, vertically centred beside it) so it no longer drifts on wide screens.
 
 Verification (all run):
+
 - `npm run typecheck` → exit 0.
 - `npm test` → 20/20 passed.
 - `npm run lint` → 0 errors, 1 pre-existing warning.
@@ -514,6 +545,7 @@ Verification (all run):
 - Dev server + in-app browser: all 17 new GLBs return HTTP 200; 36 sections present in correct order; Allosaurus chapter activates and every model fetches with **no console errors** (only pre-existing React Router future-flag warnings). Measured layout at 1920px: facts panel right edge 752px, short text left 768px → 16px (1rem) gap. Credits page shows new rows with clickable licence + Sketchfab links; unresolved banner dropped to the 9 older TODO_VERIFY models.
 
 Manual tuning notes (may need visual pass in a normal browser — in-app pane freezes rAF so 3D isn't visually confirmed):
+
 - Elongated models scaled down to frame on screen: Diplodocus 0.5, Argentinosaurus 0.55, Cetiosaurus 0.7, Pistosaur 0.5, Ankylosaurus 0.85, Baryonyx 0.9, Stegosaurus 0.95. Others ~1.0–1.15.
 - All land creatures use `rotation:[0,-0.5,0]`; if any faces away, flip the sign (add/subtract π).
 - Animated models use their native idle/animation clip; static ones (Cryolophosaurus, Megalosaurus, Cetiosaurus, Argentinosaurus have no GLB clips) use idle-sway.
@@ -552,30 +584,30 @@ What currently works:
 
 Commands run during the latest session:
 
-| Category | Command | Actual result |
-|---|---|---|
-| model inspection | `node scripts/inspect-glb.mjs Models\quetzal_animated.glb` | Detected one native clip named `Animation`; GLB has mesh, skin, material, and embedded image data. |
-| typecheck | `npm.cmd run typecheck` | Exit 0; `tsc -b --noEmit` passed. |
-| lint | `npm.cmd run lint` | Exit 0; 0 errors, 1 existing warning in `ScientificStatusBadge.tsx` (`react-refresh/only-export-components`). |
-| tests | `npm.cmd test` | Exit 0 after rerun outside sandbox; 3 files passed, 20 tests passed. |
-| production build | `npm.cmd run build` | Exit 0 after rerun outside sandbox; Vite built successfully. |
-| browser verification | local Vite app at `http://127.0.0.1:5173/` | Desktop 1280x720 checked during tuning: facts panel and text no longer overlap, Quetzalcoatlus uses the animated GLB and appears on the right. |
+| Category             | Command                                                    | Actual result                                                                                                                                  |
+| -------------------- | ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| model inspection     | `node scripts/inspect-glb.mjs Models\quetzal_animated.glb` | Detected one native clip named `Animation`; GLB has mesh, skin, material, and embedded image data.                                             |
+| typecheck            | `npm.cmd run typecheck`                                    | Exit 0; `tsc -b --noEmit` passed.                                                                                                              |
+| lint                 | `npm.cmd run lint`                                         | Exit 0; 0 errors, 1 existing warning in `ScientificStatusBadge.tsx` (`react-refresh/only-export-components`).                                  |
+| tests                | `npm.cmd test`                                             | Exit 0 after rerun outside sandbox; 3 files passed, 20 tests passed.                                                                           |
+| production build     | `npm.cmd run build`                                        | Exit 0 after rerun outside sandbox; Vite built successfully.                                                                                   |
+| browser verification | local Vite app at `http://127.0.0.1:5173/`                 | Desktop 1280x720 checked during tuning: facts panel and text no longer overlap, Quetzalcoatlus uses the animated GLB and appears on the right. |
 
 # Active Model Snapshot
 
-| Creature | Local path | Animation status | Scale/orientation status | License status |
-|---|---|---|---|---|
-| Carnotaurus | `public/models/carnotaurus.glb` | static/no clips | scale 1.12, rotation `[0,-0.6,0]` | TODO_VERIFY |
-| Velociraptor-like Dromaeosaur | `public/models/dinosaur-velociraptor-like.glb` | static/no clips | scale 1, rotation `[0,2.44,0]` | TODO_VERIFY |
-| Alexornis | `public/models/alex-alexornis.glb` | native clip with 7s replay pause | scale 1.15, rotation `[0,-0.5,0]` | TODO_VERIFY |
-| Spinosaurus | `public/models/spinosaurus.glb` | static/no clips | scale 1.25, rotation `[0,-0.15,0]` | TODO_VERIFY |
-| Triceratops | `public/models/triceratops.glb` | static/no clips | scale 1.12, rotation `[0,-0.55,0]` | TODO_VERIFY |
-| Tyrannosaurus rex | `public/models/tyrannosaurus-rex-male.glb` | static/no clips; one-shot audio | scale 1.2, rotation `[0,-0.6,0]` | TODO_VERIFY |
-| Mosasaurus | `public/models/mosasaurus.glb` | procedural whole-object | scale 1.3, position `[-1.6,-2.5,0.35]`, rotation `[0,-0.18,-0.5]` | TODO_VERIFY |
-| Dunkleosteus | `public/models/dunkleosteus.glb` | procedural whole-object | scale 0.9, position `[0,1.2,0.25]` | hendrikReyneke, CC BY-NC 4.0 |
-| Plesiosaurus | `public/models/plesiosaurus.glb` | procedural whole-object | scale 0.45, position `[0,1.3,0.65]` | TODO_VERIFY |
-| Tylosaurus | `public/models/tylosaurus.glb` | procedural whole-object | scale 0.44, position `[0,1.25,0.35]` | TODO_VERIFY |
-| Quetzalcoatlus | `public/models/quetzalcoatlus.glb` | native clip `Animation` | scale 0.32, position `[1.2,-0.2,0.5]`, rotation `[-0.2,0,0]` | TODO_VERIFY |
+| Creature                      | Local path                                     | Animation status                 | Scale/orientation status                                          | License status               |
+| ----------------------------- | ---------------------------------------------- | -------------------------------- | ----------------------------------------------------------------- | ---------------------------- |
+| Carnotaurus                   | `public/models/carnotaurus.glb`                | static/no clips                  | scale 1.12, rotation `[0,-0.6,0]`                                 | TODO_VERIFY                  |
+| Velociraptor-like Dromaeosaur | `public/models/dinosaur-velociraptor-like.glb` | static/no clips                  | scale 1, rotation `[0,2.44,0]`                                    | TODO_VERIFY                  |
+| Alexornis                     | `public/models/alex-alexornis.glb`             | native clip with 7s replay pause | scale 1.15, rotation `[0,-0.5,0]`                                 | TODO_VERIFY                  |
+| Spinosaurus                   | `public/models/spinosaurus.glb`                | static/no clips                  | scale 1.25, rotation `[0,-0.15,0]`                                | TODO_VERIFY                  |
+| Triceratops                   | `public/models/triceratops.glb`                | static/no clips                  | scale 1.12, rotation `[0,-0.55,0]`                                | TODO_VERIFY                  |
+| Tyrannosaurus rex             | `public/models/tyrannosaurus-rex-male.glb`     | static/no clips; one-shot audio  | scale 1.2, rotation `[0,-0.6,0]`                                  | TODO_VERIFY                  |
+| Mosasaurus                    | `public/models/mosasaurus.glb`                 | procedural whole-object          | scale 1.3, position `[-1.6,-2.5,0.35]`, rotation `[0,-0.18,-0.5]` | TODO_VERIFY                  |
+| Dunkleosteus                  | `public/models/dunkleosteus.glb`               | procedural whole-object          | scale 0.9, position `[0,1.2,0.25]`                                | hendrikReyneke, CC BY-NC 4.0 |
+| Plesiosaurus                  | `public/models/plesiosaurus.glb`               | procedural whole-object          | scale 0.45, position `[0,1.3,0.65]`                               | TODO_VERIFY                  |
+| Tylosaurus                    | `public/models/tylosaurus.glb`                 | procedural whole-object          | scale 0.44, position `[0,1.25,0.35]`                              | TODO_VERIFY                  |
+| Quetzalcoatlus                | `public/models/quetzalcoatlus.glb`             | native clip `Animation`          | scale 0.32, position `[1.2,-0.2,0.5]`, rotation `[-0.2,0,0]`      | TODO_VERIFY                  |
 
 # Known Issues
 

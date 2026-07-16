@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { Search, FlaskConical, Bird, Info, ScrollText, BookOpen } from 'lucide-react';
+import { Search, Bird, Info, ScrollText, BookOpen } from 'lucide-react';
 import { useExperience } from '@/store/experienceStore';
 import { scrollToChapter, setScrollLocked } from '@/hooks/useScrollController';
 import { CHAPTERS } from '@/data/eras';
@@ -16,13 +16,12 @@ interface Item {
   run: () => void;
 }
 
-/** Cmd/Ctrl+K palette: jump to any era/creature, open pages, toggle scientific mode. */
+/** Cmd/Ctrl+K palette: jump to any era/creature or open a secondary page. */
 export function CommandPalette() {
   const tr = useTr();
   const { t } = tr;
   const open = useExperience((s) => s.commandOpen);
   const setOpen = useExperience((s) => s.setCommandOpen);
-  const toggleSci = useExperience((s) => s.toggleScientificMode);
   const navigate = useNavigate();
   const location = useLocation();
   const [query, setQuery] = useState('');
@@ -46,16 +45,6 @@ export function CommandPalette() {
       };
     });
     const actions: Item[] = [
-      {
-        id: 'sci',
-        label: t('paletteToggleSci'),
-        hint: t('paletteToggleSciHint'),
-        icon: <FlaskConical size={15} />,
-        run: () => {
-          toggleSci();
-          setOpen(false);
-        },
-      },
       {
         id: 'creatures',
         label: t('paletteCreatures'),
@@ -88,7 +77,7 @@ export function CommandPalette() {
       },
     ];
     return [...chapterItems, ...actions];
-  }, [location.pathname, navigate, setOpen, toggleSci, t, tr]);
+  }, [location.pathname, navigate, setOpen, t, tr]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -136,7 +125,10 @@ export function CommandPalette() {
           aria-modal="true"
           aria-label={t('paletteAria')}
         >
-          <div className="absolute inset-0 bg-ink-900/70 backdrop-blur-sm" onClick={() => setOpen(false)} />
+          <div
+            className="absolute inset-0 bg-ink-900/70 backdrop-blur-sm"
+            onClick={() => setOpen(false)}
+          />
           <motion.div
             initial={{ opacity: 0, y: -12, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -160,7 +152,9 @@ export function CommandPalette() {
             </div>
             <ul data-lenis-prevent className="max-h-[50vh] overflow-y-auto py-2">
               {filtered.length === 0 && (
-                <li className="px-4 py-6 text-center text-sm text-muted">{t('paletteNoMatches')}</li>
+                <li className="px-4 py-6 text-center text-sm text-muted">
+                  {t('paletteNoMatches')}
+                </li>
               )}
               {filtered.map((i, idx) => (
                 <li key={i.id}>

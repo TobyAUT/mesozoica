@@ -26,53 +26,31 @@ npm run lint       # ESLint
 - **Scroll**: Lenis smooth-scroll on capable devices and passive native scrolling in low-power or
   reduced-motion mode. Progress lives in a plain ref (`src/store/scrollRef.ts`), never React state;
   DOM read-outs update only on scroll events. Only discrete chapter changes enter the Zustand store.
-- **Backgrounds**: each era is a tuned CSS gradient (`src/data/backgrounds.ts`) that also serves as
-  the low-power fallback. The one supplied photo backs the prologue & extinction.
+- **Backgrounds**: each era combines a local WebP image with a tuned CSS gradient fallback. The
+  extinction and finale additionally use scroll-scrubbed local video.
 
 ## Asset checklist
 
-### Local GLB models expected under `public/models/`
+### Runtime assets under `public/`
 
-Present now (rendered live): `dinosaur-velociraptor-like.glb`, `alex-alexornis.glb`,
-`carnotaurus.glb`, `triceratops.glb`, `tyrannosaurus-rex-male.glb`, `generic-pterosaur.glb`,
-`stylized-indoraptor.glb`.
+- `public/models/` contains exactly the 27 GLBs used by the active creature and chapter manifests.
+- `public/Images/` contains the WebP backgrounds referenced by `src/data/backgrounds.ts`.
+- `public/videos/` contains only the three scroll-optimized runtime videos.
+- `public/audio/` contains the credited one-shot T. rex effect used by its facts panel.
 
-Pending (manifest entry exists, `enabled: false` — drop the GLB in and flip `enabled: true` +
-set `modelPath`): `protoceratops-andrewsi.glb`, `stegoceras-validum.glb`,
-`mosasaurus-hoffmannii.glb`, `tyrannosaurus-rex-alternate.glb`, `generic-sauropod.glb`,
-`styracosaurus-albertensis.glb`, `tupuxuara-leonardii.glb`, `spinosaurus.glb`, `saichania.glb`,
-`morrison-dinosaurs.glb`, `stylized-crested-theropod.glb`.
-
-### Background images under `public/backgrounds/`
-
-Only `wasteland.png` is supplied (used for prologue + extinction). Every other era uses a
-procedural gradient. To use real photos, add files and set `image` on the matching entry in
-`src/data/backgrounds.ts` (ids: `late-triassic`, `early-jurassic`, `middle-jurassic`,
-`late-jurassic`, `early-cretaceous`, `late-cretaceous-delta`, `late-cretaceous-coast`,
-`latest-cretaceous`).
-
-### Audio under `public/audio/` (optional)
-
-None supplied. The audio system is wired but silent. Expected paths:
-`ambience-triassic.mp3`, `ambience-jurassic.mp3`, `ambience-cretaceous.mp3`,
-`ambience-extinction.mp3`.
+Keep runtime additions manifest-backed. The detailed inventory and source/licence notes live in
+`docs/ASSET_MAP.md`.
 
 ## Before publishing — unresolved credits
 
-**Every model licence/author is unverified.** They show as `TODO_VERIFY` on the Credits page (not
-omitted). Open each Sketchfab page (linked in the manifest), confirm the author + licence, and fill
-`author` / `license` in `src/data/creatures.ts`. `resolved` flips automatically once both are set.
-
-## DEVELOPER NOTE — Morrison group scene
-
-`morrison-dinosaurs` is a `groupScene`. The GLB has **not** been supplied, so the meshes it
-actually contains are **unknown**. Do NOT name any species from it (Allosaurus, Stegosaurus, etc.)
-until the downloaded GLB is inspected — list the real mesh names here once it is.
+Nine models that are actually used on the timeline still have an unverified author or licence.
+They remain visibly marked `TODO_VERIFY` rather than being hidden. Confirm their linked source pages
+and fill `author` / `license` in `src/data/creatures.ts`; `resolved` then flips automatically.
 
 ## Known environment note
 
 The in-app Browser preview throttles hidden tabs (rAF frozen), so the 3D scene won't animate and
-screenshots time out *there only*. WebGL2 initialises with no errors and all assets load (verified
+screenshots time out _there only_. WebGL2 initialises with no errors and all assets load (verified
 via network + console); rendering is normal in any visible browser.
 
 ## Performance decisions
@@ -81,5 +59,5 @@ via network + console); rendering is normal in any visible browser.
   Balanced/Low).
 - Only the active model is mounted; the next enabled model is preloaded; models are lazy-loaded per
   section. Route bundles are code-split; the heavy 3D home bundle is lazy.
-- `carnotaurus.glb` is ~98 MB — it loads only when its section is active, but should be
-  Draco/Meshopt-compressed and its textures reduced to ~1–2K before production.
+- Runtime GLBs have WebP-compressed textures; the model folder is about 111 MB in total and the
+  largest individual model is about 16 MB.

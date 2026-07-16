@@ -4,8 +4,6 @@ import { Command, Menu } from 'lucide-react';
 import { useExperience } from '@/store/experienceStore';
 import { scrollToChapter, scrollToTop } from '@/hooks/useScrollController';
 import { YearCounter } from '@/components/timeline/YearCounter';
-import { ScientificModeToggle } from '@/components/controls/ScientificModeToggle';
-import { AudioControls } from '@/components/controls/AudioControls';
 import { QualitySelector } from '@/components/controls/QualitySelector';
 import { LanguageToggle } from '@/components/controls/LanguageToggle';
 import { ERA_LINKS, ROUTE_LINKS } from './navItems';
@@ -100,12 +98,8 @@ export function MainNavigation() {
             <Command size={13} /> <span className="hidden md:inline">{t('navJumpTo')}</span>
           </button>
           <div className="hidden sm:block">
-            <ScientificModeToggle />
-          </div>
-          <div className="hidden sm:block">
             <QualitySelector />
           </div>
-          <AudioControls />
           <button
             onClick={() => setMenuOpen(true)}
             aria-label={t('navMenuOpen')}

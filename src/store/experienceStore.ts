@@ -12,17 +12,8 @@ interface ExperienceState {
   setLang: (l: Lang) => void;
   toggleLang: () => void;
 
-  scientificMode: boolean;
-  toggleScientificMode: () => void;
-
   quality: Quality;
   setQuality: (q: Quality) => void;
-
-  audioEnabled: boolean;
-  setAudioEnabled: (v: boolean) => void;
-  ambienceVolume: number;
-  effectsVolume: number;
-  setVolume: (kind: 'ambience' | 'effects', v: number) => void;
 
   reducedMotion: boolean;
   setReducedMotion: (v: boolean) => void;
@@ -46,10 +37,7 @@ interface ExperienceState {
 
 const KEY = 'mesozoica.prefs.v1';
 
-type Persisted = Pick<
-  ExperienceState,
-  'scientificMode' | 'quality' | 'audioEnabled' | 'ambienceVolume' | 'effectsVolume' | 'lang'
->;
+type Persisted = Pick<ExperienceState, 'quality' | 'lang'>;
 
 function loadPrefs(): Partial<Persisted> {
   try {
@@ -64,11 +52,7 @@ function savePrefs(s: ExperienceState) {
   try {
     const data: Persisted = {
       lang: s.lang,
-      scientificMode: s.scientificMode,
       quality: s.quality,
-      audioEnabled: s.audioEnabled,
-      ambienceVolume: s.ambienceVolume,
-      effectsVolume: s.effectsVolume,
     };
     localStorage.setItem(KEY, JSON.stringify(data));
   } catch {
@@ -99,27 +83,9 @@ export const useExperience = create<ExperienceState>((set, get) => ({
   },
   toggleLang: () => get().setLang(get().lang === 'en' ? 'de' : 'en'),
 
-  scientificMode: prefs.scientificMode ?? false,
-  toggleScientificMode: () => {
-    set((s) => ({ scientificMode: !s.scientificMode }));
-    savePrefs(get());
-  },
-
   quality: prefs.quality ?? 'auto',
   setQuality: (quality) => {
     set({ quality });
-    savePrefs(get());
-  },
-
-  audioEnabled: prefs.audioEnabled ?? false,
-  setAudioEnabled: (audioEnabled) => {
-    set({ audioEnabled });
-    savePrefs(get());
-  },
-  ambienceVolume: prefs.ambienceVolume ?? 0.5,
-  effectsVolume: prefs.effectsVolume ?? 0.6,
-  setVolume: (kind, v) => {
-    set(kind === 'ambience' ? { ambienceVolume: v } : { effectsVolume: v });
     savePrefs(get());
   },
 
