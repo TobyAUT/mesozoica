@@ -8,6 +8,7 @@ import {
   clamp,
   smoothstep,
   creatureFade,
+  panelFade,
   MOBILE_PHASES,
   mobileModelFade,
   mobilePanelFade,
@@ -102,6 +103,15 @@ describe('creatureFade', () => {
     expect(creatureFade(0.7)).toBeCloseTo(1, 5); // fully visible mid-section
     expect(creatureFade(0.95)).toBe(0); // faded out before the next heading
     expect(creatureFade(1)).toBe(0);
+  });
+});
+
+describe('panelFade', () => {
+  it('rises with the heading (earlier than the model) and leaves on the same tail', () => {
+    expect(panelFade(0)).toBe(0);
+    expect(panelFade(0.35)).toBeCloseTo(1, 5); // visible while the heading is on screen
+    expect(panelFade(0.35)).toBeGreaterThan(creatureFade(0.35));
+    expect(panelFade(0.95)).toBe(0); // gone before the next heading, like the model
   });
 });
 

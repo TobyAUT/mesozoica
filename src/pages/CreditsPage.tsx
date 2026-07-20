@@ -1,6 +1,7 @@
 import { AlertTriangle, ExternalLink, CheckCircle2, Volume2 } from 'lucide-react';
 import { PageShell } from './PageShell';
 import { MODEL_CREDITS, AUDIO_CREDITS, ASSET_CREDITS } from '@/data/credits';
+import { useTr } from '@/i18n';
 
 /**
  * Credits page. Unresolved licences are surfaced LOUDLY (amber warning) so attribution can never
@@ -8,38 +9,34 @@ import { MODEL_CREDITS, AUDIO_CREDITS, ASSET_CREDITS } from '@/data/credits';
  * Sketchfab page — we never invent them.
  */
 export default function CreditsPage() {
+  const { t } = useTr();
   const unresolvedCount = MODEL_CREDITS.filter((m) => !m.resolved).length;
 
   return (
-    <PageShell
-      title="Credits & licenses"
-      intro="Every model, background, font, and data source used in this project. Attribution is required and tracked here."
-    >
+    <PageShell title={t('creditsTitle')} intro={t('creditsIntro')}>
       {unresolvedCount > 0 && (
         <div className="mb-8 flex items-start gap-3 rounded-xl border border-amber-400/30 bg-amber-400/10 p-4 text-amber-100">
           <AlertTriangle size={18} className="mt-0.5 shrink-0" />
           <div className="text-sm">
             <strong>
-              {unresolvedCount} model licence{unresolvedCount > 1 ? 's' : ''} still need
-              verification.
+              {unresolvedCount} {t('creditsWarning')}
             </strong>{' '}
-            Author and licence must be confirmed on each Sketchfab page before publishing. These are
-            shown below with blank fields — they are not omitted.
+            {t('creditsWarningBody')}
           </div>
         </div>
       )}
 
-      <h2 className="type-title mb-4 text-2xl text-bone">3D models</h2>
+      <h2 className="type-title mb-4 text-2xl text-bone">{t('creditsModels')}</h2>
       <div className="mb-12 overflow-x-auto">
         <table className="w-full min-w-[46rem] border-collapse text-sm">
           <thead>
             <tr className="border-b border-white/10 text-left text-xs text-muted">
-              <th className="py-2 pr-4 font-medium">Display name</th>
-              <th className="py-2 pr-4 font-medium">Source title</th>
-              <th className="py-2 pr-4 font-medium">Author</th>
-              <th className="py-2 pr-4 font-medium">License</th>
-              <th className="py-2 pr-4 font-medium">Source</th>
-              <th className="py-2 font-medium">Status</th>
+              <th className="py-2 pr-4 font-medium">{t('creditsColDisplayName')}</th>
+              <th className="py-2 pr-4 font-medium">{t('creditsColSourceTitle')}</th>
+              <th className="py-2 pr-4 font-medium">{t('creditsColAuthor')}</th>
+              <th className="py-2 pr-4 font-medium">{t('creditsColLicense')}</th>
+              <th className="py-2 pr-4 font-medium">{t('creditsColSource')}</th>
+              <th className="py-2 font-medium">{t('creditsColStatus')}</th>
             </tr>
           </thead>
           <tbody>
@@ -92,11 +89,11 @@ export default function CreditsPage() {
                 <td className="py-3">
                   {m.resolved ? (
                     <span className="inline-flex items-center gap-1 text-emerald-300">
-                      <CheckCircle2 size={13} /> Verified
+                      <CheckCircle2 size={13} /> {t('creditsVerified')}
                     </span>
                   ) : (
                     <span className="inline-flex items-center gap-1 text-amber-300">
-                      <AlertTriangle size={13} /> Unresolved
+                      <AlertTriangle size={13} /> {t('creditsUnresolved')}
                     </span>
                   )}
                 </td>
@@ -106,7 +103,7 @@ export default function CreditsPage() {
         </table>
       </div>
 
-      <h2 className="type-title mb-4 text-2xl text-bone">Audio</h2>
+      <h2 className="type-title mb-4 text-2xl text-bone">{t('creditsAudio')}</h2>
       <div className="mb-12 grid gap-3 sm:grid-cols-2">
         {AUDIO_CREDITS.map((audio) => (
           <div
@@ -116,13 +113,15 @@ export default function CreditsPage() {
             <Volume2 size={17} className="mt-0.5 shrink-0 text-cretaceous" />
             <div>
               <div className="text-sm font-medium text-bone">{audio.displayName}</div>
-              <p className="mt-1 text-xs text-bone/60">Audio creator: {audio.author}</p>
+              <p className="mt-1 text-xs text-bone/60">
+                {t('creditsAudioCreator')}: {audio.author}
+              </p>
             </div>
           </div>
         ))}
       </div>
 
-      <h2 className="type-title mb-4 text-2xl text-bone">Backgrounds, sound, fonts & sources</h2>
+      <h2 className="type-title mb-4 text-2xl text-bone">{t('creditsOther')}</h2>
       <div className="grid gap-3 sm:grid-cols-2">
         {ASSET_CREDITS.map((a) => (
           <div key={a.name} className="rounded-xl border border-white/10 bg-ink-800/50 p-4">
@@ -140,10 +139,7 @@ export default function CreditsPage() {
         ))}
       </div>
 
-      <p className="mt-10 text-xs text-muted">
-        The user downloaded each model under their own Sketchfab permissions. This project renders
-        local GLB files and does not hotlink or bypass any download restrictions.
-      </p>
+      <p className="mt-10 text-xs text-muted">{t('creditsNote')}</p>
     </PageShell>
   );
 }

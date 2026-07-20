@@ -4,6 +4,7 @@ import type { Chapter } from '@/data/eras';
 import { eraById } from '@/data/eras';
 import { CREATURE_BY_ID } from '@/data/creatures';
 import { ScrollHint } from './ScrollHint';
+import { useTr } from '@/i18n';
 import { cn } from '@/utils/cn';
 
 const reveal = {
@@ -18,6 +19,8 @@ const reveal = {
  * info-panel overlay react to the active chapter. Text stays in the DOM for accessibility.
  */
 export function ChapterSection({ chapter }: { chapter: Chapter }) {
+  const tr = useTr();
+  const { t } = tr;
   const era = chapter.eraId ? eraById(chapter.eraId) : null;
   const creature = chapter.creatureId ? CREATURE_BY_ID[chapter.creatureId] : null;
   const minH = `${Math.round(chapter.weight * 100)}svh`;
@@ -26,7 +29,7 @@ export function ChapterSection({ chapter }: { chapter: Chapter }) {
   return (
     <section
       id={chapter.id}
-      aria-label={chapter.title}
+      aria-label={tr.chapterTitle(chapter)}
       // Creature chapters: on phone/tablet the heading sits at the TOP of the section and scrolls
       // out first; the model, then the info card, follow as scroll phases. On lg+ everything
       // re-centres. Below lg EVERY section is uniformly 1.7× taller to give the three phases
@@ -52,13 +55,10 @@ export function ChapterSection({ chapter }: { chapter: Chapter }) {
         {chapter.kind === 'prologue' && (
           <div className="relative flex min-h-[100svh] flex-col items-center justify-center text-center">
             <motion.div {...reveal}>
-              <div className="type-eyebrow mb-5 text-cretaceous">{chapter.subtitle}</div>
+              <div className="type-eyebrow mb-5 text-cretaceous">{tr.chapterSubtitle(chapter)}</div>
               <h1 className="type-display mb-6 heading-hero">Mesozoica</h1>
               <p className="mx-auto max-w-xl text-base leading-relaxed text-bone/70">
-                Travel through more than 300 million years of prehistoric life, from the armoured
-                fishes of the Devonian to the last non-avian dinosaurs of the Cretaceous. Explore
-                scientifically informed 3D reconstructions and discover how ancient animals,
-                ecosystems and continents changed through deep time.
+                {t('prologueIntro')}
               </p>
             </motion.div>
             <ScrollHint />
@@ -67,20 +67,17 @@ export function ChapterSection({ chapter }: { chapter: Chapter }) {
 
         {chapter.kind === 'era-intro' && era && (
           <motion.div {...reveal} className="mx-auto max-w-2xl text-center">
-            <div className="type-eyebrow mb-4 text-cretaceous">{era.epoch}</div>
-            <h2 className="type-display mb-6 heading-hero">The {era.label}</h2>
-            <p className="text-lg leading-relaxed text-bone/75">{era.intro}</p>
+            <div className="type-eyebrow mb-4 text-cretaceous">{tr.eraEpoch(era)}</div>
+            <h2 className="type-display mb-6 heading-hero">{tr.eraHeading(era)}</h2>
+            <p className="text-lg leading-relaxed text-bone/75">{tr.eraIntro(era)}</p>
           </motion.div>
         )}
 
         {chapter.kind === 'time-slice' && (
           <motion.div {...reveal} className="mx-auto max-w-2xl text-center">
-            <div className="type-eyebrow mb-4 text-cretaceous">{chapter.subtitle}</div>
-            <h2 className="type-display mb-6 heading-hero">{chapter.title}</h2>
-            <p className="text-lg leading-relaxed text-bone/75">
-              {chapter.blurb ??
-                'Warm, humid river deltas spread between muddy banks and dense fern growth.'}
-            </p>
+            <div className="type-eyebrow mb-4 text-cretaceous">{tr.chapterSubtitle(chapter)}</div>
+            <h2 className="type-display mb-6 heading-hero">{tr.chapterTitle(chapter)}</h2>
+            <p className="text-lg leading-relaxed text-bone/75">{tr.chapterBlurb(chapter)}</p>
           </motion.div>
         )}
 
@@ -103,11 +100,13 @@ export function ChapterSection({ chapter }: { chapter: Chapter }) {
               className="max-w-xl sm:max-w-md lg:max-w-[17rem] xl:max-w-[19rem] 2xl:max-w-sm"
             >
               <div className="mb-3 flex items-center justify-center gap-3 lg:justify-start">
-                <span className="type-eyebrow text-[0.68rem] text-cretaceous">{chapter.title}</span>
+                <span className="type-eyebrow text-[0.68rem] text-cretaceous">
+                  {tr.chapterTitle(chapter)}
+                </span>
               </div>
               <h2 className="type-title mb-3 heading-hero">{creature.displayName}</h2>
               <p className="max-w-lg text-[1.05rem] leading-relaxed text-bone/80">
-                {creature.shortDescription}
+                {tr.creatureDescription(creature)}
               </p>
             </motion.div>
           </div>
@@ -117,33 +116,33 @@ export function ChapterSection({ chapter }: { chapter: Chapter }) {
           // Sticky: the copy stays on screen while the meteor video is scrubbed through the whole
           // (extra-long) section, releasing right as the next section arrives.
           <motion.div {...reveal} className="sticky top-[34svh] mx-auto max-w-2xl text-center">
-            <div className="type-eyebrow mb-4 text-extinction">{chapter.subtitle}</div>
-            <h2 className="type-display mb-6 heading-hero">Impact</h2>
-            <p className="text-lg leading-relaxed text-bone/75">
-              About 66 million years ago, a large asteroid struck near today’s Yucatán Peninsula.
-              Dust, aerosols and wildfire products disrupted sunlight, climate and food webs around
-              the world. All non-avian dinosaurs became extinct, while birds—the only surviving
-              dinosaur lineage—continued into the modern world.
-            </p>
+            <div className="type-eyebrow mb-4 text-extinction">{tr.chapterSubtitle(chapter)}</div>
+            <h2 className="type-display mb-6 heading-hero">{t('impactHeading')}</h2>
+            <p className="text-lg leading-relaxed text-bone/75">{t('impactBody')}</p>
           </motion.div>
         )}
 
         {chapter.kind === 'finale' && (
           // Sticky like the extinction copy: visible over the birds video until the footer.
-          <motion.div {...reveal} className="sticky top-[30svh] mx-auto max-w-2xl text-center">
-            <div className="type-eyebrow mb-4 text-cretaceous">{chapter.subtitle}</div>
-            <h2 className="type-display mb-6 heading-hero">The dinosaurs never left</h2>
-            <p className="mb-8 text-lg leading-relaxed text-bone/75">
-              Dinosaurs did not disappear completely. Modern birds evolved within the theropod
-              dinosaur lineage and are therefore living dinosaurs. From hummingbirds to eagles, more
-              than 10,000 bird species continue a history that began among small feathered dinosaurs
-              during the Mesozoic Era.
+          // The birds video is by far the brightest backdrop in the experience, so unlike every
+          // other chapter this copy needs its own scrim — bone/75 body text on a bright sky was
+          // unreadable. The heading already carries heading-hero's text-shadow.
+          <motion.div
+            {...reveal}
+            className="sticky top-[30svh] mx-auto max-w-4xl rounded-3xl bg-ink-900/55 px-6 py-8 text-center backdrop-blur-[3px] sm:px-10"
+          >
+            <div className="type-eyebrow mb-4 text-cretaceous">{tr.chapterSubtitle(chapter)}</div>
+            <h2 className="type-display mb-6 !text-[clamp(2.35rem,8vw,7rem)] text-balance heading-hero sm:!text-[clamp(2.75rem,8vw,7rem)]">
+              {t('finaleHeading')}
+            </h2>
+            <p className="mb-8 text-lg leading-relaxed text-bone/95 [text-shadow:0_1px_10px_rgba(0,0,0,0.55)]">
+              {t('finaleBody')}
             </p>
             <a
               href={`${import.meta.env.BASE_URL}creatures`}
               className="pointer-events-auto inline-flex items-center gap-2 rounded-full bg-bone px-5 py-2.5 text-sm font-medium text-ink-900 transition hover:bg-white"
             >
-              Explore every creature
+              {t('finaleCta')}
             </a>
           </motion.div>
         )}

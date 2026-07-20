@@ -1,4 +1,5 @@
 import { CREATURES } from './creatures';
+import { CHAPTERS } from './eras';
 import type { Creature } from './types';
 
 /**
@@ -17,13 +18,20 @@ export interface ModelCredit {
   license: string | null;
   licenseUrl: string | null;
   sourceUrl: string | null;
-  changesMade: string;
   attributionText: string | null;
   /** true only once a human has verified author + license on the source page. */
   resolved: boolean;
 }
 
-export const MODEL_CREDITS: ModelCredit[] = CREATURES.map((c: Creature) => ({
+const USED_CREATURE_IDS = new Set(
+  CHAPTERS.flatMap((chapter) => (chapter.creatureId ? [chapter.creatureId] : [])),
+);
+
+/** Only models that are enabled, locally backed, and actually referenced by the live timeline. */
+export const MODEL_CREDITS: ModelCredit[] = CREATURES.filter(
+  (creature) =>
+    creature.enabled && creature.modelPath.length > 0 && USED_CREATURE_IDS.has(creature.id),
+).map((c: Creature) => ({
   creatureId: c.id,
   sourceTitle: c.sourceTitle,
   displayName: c.displayName,
@@ -31,8 +39,6 @@ export const MODEL_CREDITS: ModelCredit[] = CREATURES.map((c: Creature) => ({
   license: c.license,
   licenseUrl: c.licenseUrl,
   sourceUrl: c.sourceUrl,
-  changesMade:
-    'Converted/streamed as local GLB; auto-centred, scale-normalised, and re-lit for the scene. Geometry and textures unmodified.',
   attributionText: c.attributionText,
   resolved: c.author != null && c.license != null,
 }));
@@ -42,7 +48,6 @@ export interface AudioCredit {
   displayName: string;
   file: string;
   author: string;
-  resolved: boolean;
 }
 
 export const AUDIO_CREDITS: AudioCredit[] = [
@@ -51,12 +56,11 @@ export const AUDIO_CREDITS: AudioCredit[] = [
     displayName: 'Tyrannosaurus rex sound',
     file: '/audio/tyrannosaurus-rex-studiomod.mp3',
     author: 'StudioMod',
-    resolved: true,
   },
 ];
 
 export interface AssetCredit {
-  category: 'Background' | 'Sound' | 'Font' | 'Data source' | 'Library';
+  category: 'Background' | 'Font' | 'Data source' | 'Library';
   name: string;
   detail: string;
   resolved: boolean;
@@ -65,23 +69,16 @@ export interface AssetCredit {
 export const ASSET_CREDITS: AssetCredit[] = [
   {
     category: 'Background',
-    name: 'Volcanic wasteland (prologue & extinction)',
+    name: 'Timeline backgrounds and chapter videos',
     detail:
-      'Supplied by the project owner (AI-generated concept image). All other era backdrops are procedurally rendered CSS gradients.',
+      'AI-generated visual media supplied by the project owner and served locally. Gradient fallbacks are rendered by the application.',
     resolved: true,
   },
   {
-    category: 'Sound',
-    name: 'Ambient beds (per era)',
-    detail:
-      'No looping era ambience has been supplied yet. Creature one-shot sounds are credited separately.',
-    resolved: false,
-  },
-  {
     category: 'Font',
-    name: 'System font stack',
+    name: 'Self-hosted variable fonts',
     detail:
-      'Uses the OS system sans-serif and serif (Inter/Fraunces if installed) — loaded locally, no third-party font requests, DSGVO-friendly.',
+      'Fraunces, Inter and Space Grotesk are bundled locally from their OFL-licensed Fontsource packages; no third-party font requests are made.',
     resolved: true,
   },
   {
@@ -99,10 +96,3 @@ export const ASSET_CREDITS: AssetCredit[] = [
     resolved: true,
   },
 ];
-
-export function unresolvedCredits(): { models: ModelCredit[]; assets: AssetCredit[] } {
-  return {
-    models: MODEL_CREDITS.filter((m) => !m.resolved),
-    assets: ASSET_CREDITS.filter((a) => !a.resolved),
-  };
-}

@@ -212,6 +212,13 @@ html[data-model-hover='true'] .cursor-ring {
   display: none;
 }
 
+/* The creature card is frosted glass: backdrop-blur only, no background tint. Low-power mode
+   switches backdrop filters off (see .performance-low above), which would leave the card fully
+   transparent and its text sitting on the bare photographic backdrop. Give it a real tint there. */
+.performance-low [data-creature-panel] {
+  background-color: rgba(11, 12, 14, 0.85);
+}
+
 /* The WebGL canvas: reserve horizontal drags for model rotation, let vertical gestures scroll the
    page. Set on the canvas element itself (R3F's touch-action lives on its container) so every
    touch device — including browsers that don't apply the ancestor's touch-action — rotates on

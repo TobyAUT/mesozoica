@@ -4,6 +4,7 @@ import { X, Rotate3d, Play } from 'lucide-react';
 import { useExperience } from '@/store/experienceStore';
 import { useActiveCreature } from '@/hooks/useActiveCreature';
 import { setScrollLocked } from '@/hooks/useScrollController';
+import { useTr } from '@/i18n';
 
 /**
  * Explore-mode chrome. While active, OrbitControls (in CameraController) drive the camera and
@@ -16,6 +17,7 @@ export function CreatureExplorer() {
   const animationPlaying = useExperience((s) => s.exploreAnimationPlaying);
   const playAnimation = useExperience((s) => s.playExploreAnimation);
   const creature = useActiveCreature();
+  const { t } = useTr();
   const closeRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -51,17 +53,17 @@ export function CreatureExplorer() {
     >
       <div className="flex items-start justify-between">
         <div className="pointer-events-auto rounded-xl border border-white/10 bg-ink-900/60 px-4 py-2 backdrop-blur-md">
-          <div className="type-eyebrow text-[0.58rem] text-cretaceous">Explore mode</div>
-          <div className="text-sm text-bone">{creature?.displayName ?? 'Model'}</div>
+          <div className="type-eyebrow text-[0.58rem] text-cretaceous">{t('exploreMode')}</div>
+          <div className="text-sm text-bone">{creature?.displayName ?? t('exploreModel')}</div>
         </div>
         <button
           ref={closeRef}
           type="button"
-          aria-label="Close 3D explore mode"
+          aria-label={t('exploreCloseAria')}
           onClick={() => setExplore(false)}
           className="pointer-events-auto inline-flex min-h-12 items-center gap-2 rounded-full border-2 border-white/80 bg-cretaceous px-5 py-3 text-base font-bold text-ink-900 shadow-[0_0_0_4px_rgba(11,12,14,0.55),0_8px_30px_rgba(0,0,0,0.55)] transition hover:scale-105 hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
         >
-          <X size={20} strokeWidth={3} /> Close
+          <X size={20} strokeWidth={3} /> {t('exploreClose')}
         </button>
       </div>
       <div className="pointer-events-auto mx-auto flex flex-col items-center gap-2">
@@ -74,14 +76,14 @@ export function CreatureExplorer() {
           <Play size={17} fill="currentColor" />
           <span aria-live="polite">
             {animationPlaying
-              ? 'Playing Animation…'
+              ? t('explorePlaying')
               : animationAvailable
-                ? 'Play Animation'
-                : 'No Animation Available'}
+                ? t('explorePlay')
+                : t('exploreNoAnimation')}
           </span>
         </button>
         <div className="flex items-center gap-2 rounded-full border border-white/15 bg-ink-900/80 px-4 py-2 text-xs text-bone/80 shadow-lg backdrop-blur-md">
-          <Rotate3d size={14} /> Drag to orbit · wheel or pinch to zoom · Esc to exit
+          <Rotate3d size={14} /> {t('exploreHint')}
         </div>
       </div>
     </motion.div>

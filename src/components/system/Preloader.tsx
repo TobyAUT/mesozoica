@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useExperience } from '@/store/experienceStore';
+import { useTr } from '@/i18n';
 
 /**
  * Cinematic first-load screen. Waits a beat for the initial bundle/first paint, then reveals the
@@ -9,6 +10,7 @@ import { useExperience } from '@/store/experienceStore';
 export function Preloader() {
   const ready = useExperience((s) => s.ready);
   const setReady = useExperience((s) => s.setReady);
+  const { t } = useTr();
   const [count, setCount] = useState(0);
 
   useEffect(() => {
@@ -44,7 +46,7 @@ export function Preloader() {
             className="text-center"
           >
             <div className="type-eyebrow mb-4 text-[0.6rem] text-cretaceous">
-              An interactive age of dinosaurs
+              {t('preloaderEyebrow')}
             </div>
             <div className="font-serif text-5xl font-light tracking-tight text-bone sm:text-7xl">
               Mesozoica

@@ -5,6 +5,7 @@ import { CHAPTER_RANGES } from '@/utils/timeline';
 import { SCROLL_PROGRESS_EVENT, scrollRef } from '@/store/scrollRef';
 import { useExperience } from '@/store/experienceStore';
 import { scrollToChapter } from '@/hooks/useScrollController';
+import { useTr } from '@/i18n';
 import { cn } from '@/utils/cn';
 
 // Every timeline point gets its own colour, anchored on the chapter's geological period so the
@@ -45,6 +46,7 @@ export function GeologicalTimeline() {
   const fillRef = useRef<HTMLDivElement>(null);
   const dotRefs = useRef(new Map<string, HTMLSpanElement>());
   const activeId = useExperience((s) => s.activeChapterId);
+  const tr = useTr();
 
   useEffect(() => {
     const update = () => {
@@ -90,10 +92,7 @@ export function GeologicalTimeline() {
         <ul className="relative flex h-full flex-col justify-between">
           {CHAPTER_RANGES.map(({ chapter }) => {
             const creature = chapter.creatureId ? CREATURE_BY_ID[chapter.creatureId] : null;
-            const label =
-              creature?.displayName ??
-              chapter.title ??
-              chapter.id;
+            const label = creature?.displayName ?? tr.chapterTitle(chapter) ?? chapter.id;
             const isActive = chapter.id === activeId;
             const dotColor = chapterDotColor(chapter.accent, chapter.id);
             return (
@@ -110,7 +109,13 @@ export function GeologicalTimeline() {
                     }}
                     className={cn(
                       'relative z-10 block h-4 w-4 rounded-full border-2 transition-all',
-                      isActive ? 'scale-[1.65] shadow-[0_0_14px_currentColor]' : 'scale-100 group-hover:scale-125',
+                      // 37 dots share a 66vh track, leaving only ~1.6px between neighbours, so a
+                      // ~20px dot can grow at most ~1.15x before it collides with the dot above or
+                      // below (measured in-browser at 1280x800). The active point is carried by its
+                      // fill colour and glow, not by size.
+                      isActive
+                        ? 'scale-[1.15] shadow-[0_0_14px_currentColor]'
+                        : 'scale-100 group-hover:scale-110',
                     )}
                     style={{
                       backgroundColor: isActive ? dotColor : '#0b0c0e',
@@ -141,6 +146,7 @@ export function GeologicalTimeline() {
 export function MobileTimelineBar() {
   const fillRef = useRef<HTMLDivElement>(null);
   const activeId = useExperience((s) => s.activeChapterId);
+  const tr = useTr();
   const chapter = CHAPTERS.find((c) => c.id === activeId) ?? CHAPTERS[0];
 
   useEffect(() => {
@@ -154,11 +160,17 @@ export function MobileTimelineBar() {
 
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-0 z-30 px-4 pb-3 lg:hidden">
-      <div className="flex items-center justify-between px-1 pb-1.5 text-[0.62rem]">
-        <span className="type-eyebrow text-cretaceous">{chapter.title}</span>
-      </div>
+      {chapter.kind !== 'finale' && (
+        <div className="flex items-center justify-between px-1 pb-1.5 text-[0.62rem]">
+          <span className="type-eyebrow text-cretaceous">{tr.chapterTitle(chapter)}</span>
+        </div>
+      )}
       <div className="h-2 w-full overflow-hidden rounded-full bg-white/20">
-        <div ref={fillRef} className="h-full bg-gradient-to-r from-jurassic to-cretaceous" style={{ width: '0%' }} />
+        <div
+          ref={fillRef}
+          className="h-full bg-gradient-to-r from-jurassic to-cretaceous"
+          style={{ width: '0%' }}
+        />
       </div>
     </div>
   );

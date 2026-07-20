@@ -1,5 +1,6 @@
 import { useProgress } from '@react-three/drei';
 import { motion, AnimatePresence } from 'motion/react';
+import { useTr } from '@/i18n';
 
 /**
  * DOM-based model loading indicator (lives outside the canvas). Reads drei's global load
@@ -7,6 +8,7 @@ import { motion, AnimatePresence } from 'motion/react';
  */
 export function ModelLoadingIndicator() {
   const { active, progress, item } = useProgress();
+  const { t } = useTr();
   return (
     <AnimatePresence>
       {active && (
@@ -19,7 +21,7 @@ export function ModelLoadingIndicator() {
           <div className="flex items-center gap-3 rounded-full border border-white/10 bg-ink-900/70 px-4 py-2 backdrop-blur-md">
             <span className="h-2 w-2 animate-pulse rounded-full bg-cretaceous" />
             <span className="text-xs text-bone/80">
-              Loading specimen… {Math.round(progress)}%
+              {t('loadingSpecimen')} {Math.round(progress)}%
             </span>
             {import.meta.env.DEV && item && (
               <span className="max-w-[10rem] truncate text-[0.6rem] text-muted">{item}</span>
